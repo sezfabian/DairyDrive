@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils import timezone
+from farms.models import Farm
 
 
 # Define user roles
@@ -17,7 +18,7 @@ class UserProfile(models.Model):
     last_name = models.CharField(max_length=50, blank=True, null=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
     company = models.CharField(max_length=50, blank=True, null=True)
-    farms = models.CharField(max_length=50, blank=True, null=True)
+    farms = models.ManyToManyField(Farm)
     profile_img = models.CharField(max_length=255, blank=True, null=True)
     img_refference = models.CharField(max_length=255, blank=True, null=True)
     token = models.CharField(max_length=255, blank=True, null=True)
@@ -26,3 +27,6 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.email

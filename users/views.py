@@ -65,6 +65,18 @@ def login(request):
         return Response(serializer.data, status=200)
     return Response(serializer.errors, status=400)
 
+@api_view(['POST'])
+def logout(request):
+    """Logout user"""
+    try:
+        refresh_token = request.data["refresh"]
+        token = RefreshToken(refresh_token)
+        token
+
+        return Response({"success": "Logged out successfully"}, status=200)
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)
+
 
 @api_view(['GET'])
 def get_profile(request):
@@ -74,7 +86,7 @@ def get_profile(request):
     return Response(serializer.data, status=200)
 
 @api_view(['POST'])
-def update_profile(request):
+def edit_profile(request):
     """Update user profile"""
     profile = UserProfile.objects.get(user=request.user)
     serializer = UserProfileSerializer(profile, data=request.data)
