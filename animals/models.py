@@ -5,7 +5,7 @@ from datetime import date
 
 
 class AnimalType(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     description = models.CharField(max_length=255, null=True, blank=True)
 
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -17,7 +17,7 @@ class AnimalType(models.Model):
 
 class AnimalBreed(models.Model):
     type = models.ForeignKey(AnimalType, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     description = models.CharField(max_length=255, null=True, blank=True)
 
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -28,7 +28,7 @@ class AnimalBreed(models.Model):
         return self.name
 
 class Animal(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     type = models.ForeignKey(AnimalType, on_delete=models.CASCADE)
     breed = models.ForeignKey(AnimalBreed, on_delete=models.CASCADE, null=True, blank=True)
     description = models.CharField(max_length=255, null=True, blank=True)

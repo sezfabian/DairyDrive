@@ -16,25 +16,27 @@ def get_farms(request):
 @api_view(['POST'])
 def create_farm(request):
     """Create farm"""
-    request.data["created_by"] = request.user.id
     request.data["phone"] = fix_phone_number(request.data["phone"])
     serializer = FarmSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
+        serializer.save(created_by=request.user)
         return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
 
 @api_view(['POST'])
 def edit_farm(request, id):
     """Edit farm"""
+    request.data["phone"] = fix_phone_number(request.data["phone"])
+    request.data["created_by"] = request.user.id
     serializer = FarmSerializer(data=request.data)
     if serializer.is_valid():
         try:
             farm = Farm.objects.get(id=id)
             for key, value in request.data.items():
-                if key != "id":
+                if key != "id" and key != "created_by":
                     setattr(farm, key, value)
             farm.save()
+            serializer=FarmSerializer(farm)
             return Response(serializer.data, status=200)
         except Farm.DoesNotExist:
             return Response({"message": f"Farm id:{id} not found"}, status=404)
@@ -46,6 +48,6 @@ def delete_farm(request, id):
     try:
         farm = Farm.objects.get(id=id)
         farm.delete()
-        return Response(status=200)
+        return Response({"message": f"Farm id:{id} deleted successfully"}, status=200)
     except Farm.DoesNotExist:
         return Response({"message": f"Farm id:{id} not found"}, status=404)

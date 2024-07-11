@@ -13,12 +13,12 @@ USER_ROLES = (
     )
 
 class UserProfile(models.Model):
-    email = models.EmailField(max_length=50)
+    email = models.EmailField(max_length=50, unique=True)
     first_name = models.CharField(max_length=50, blank=True, null=True)
     last_name = models.CharField(max_length=50, blank=True, null=True)
-    phone = models.CharField(max_length=20, blank=True, null=True)
+    phone = models.CharField(max_length=20, blank=True, null=True, unique=True)
     company = models.CharField(max_length=50, blank=True, null=True)
-    farms = models.ManyToManyField(Farm)
+    farms = models.ManyToManyField(Farm, blank=True, null=True)
     profile_img = models.CharField(max_length=255, blank=True, null=True)
     img_refference = models.CharField(max_length=255, blank=True, null=True)
     token = models.CharField(max_length=255, blank=True, null=True)

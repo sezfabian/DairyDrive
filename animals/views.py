@@ -1,5 +1,8 @@
 from django.contrib.auth.models import User
 from .serializers import *
+from farms.models import Farm
+from datetime import date
+from users.models import UserProfile
 from rest_framework.decorators import authentication_classes, permission_classes, api_view
 from rest_framework.response import Response
 
@@ -17,7 +20,7 @@ def add_animal_type(request):
     """Add animal type"""
     serializer = AnimalTypeSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
+        serializer.save(created_by=request.user)
         return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
 
@@ -69,7 +72,7 @@ def add_animal_breed(request):
     """Add animal breed"""
     serializer = AnimalBreedSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
+        serializer.save(created_by=request.user)
         return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
 
@@ -102,8 +105,15 @@ def delete_animal_breed(request, id):
 
 @api_view(['GET'])
 def get_animals(request):
-    """Get animals"""
-    animals = Animal.objects.all()
+    """Get animals, Returns animals in users farms"""
+    # Get the user's profile
+    user = request.user
+    user_profile = UserProfile.objects.get(user=user)
+    # Get the farms associated with the user
+    farms = user_profile.farms.all()
+    # Get animals in the user's farms
+    animals = Animal.objects.filter(farm__in=farms)
+    # Serialize the animal data
     serializer = AnimalSerializer(animals, many=True)
     return Response(serializer.data, status=200)
 
@@ -120,23 +130,39 @@ def get_animal(request, id):
 @api_view(['POST'])
 def create_animal(request):
     """Create animal"""
+    request.data["created_by"] = request.user.id
     serializer = AnimalSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
+        serializer.save(created_by=request.user)
         return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
 
 @api_view(['POST'])
-def edit_animal(request):
+def edit_animal(request, id):
     """Edit animal"""
-    serializer = AnimalSerializer(data=request.data)
-    if serializer.is_valid():
-        animal = Animal.objects.get(id=request.data["id"])
+    request.data["created_by"] = request.user.id
+    try:
+        animal = Animal.objects.get(id=id)
         for key, value in request.data.items():
-            if key != "id":
+            if key == "type":
+                animal_type = AnimalType.objects.get(id=value)
+                setattr(animal, key, animal_type)
+            elif key == "breed":
+                animal_breed = AnimalBreed.objects.get(id=value)
+                setattr(animal, key, animal_breed)
+            elif key == "farm":
+                farm = Farm.objects.get(id=value)
+                setattr(animal, key, farm)
+            elif key != "id" and key != "created_by":
                 setattr(animal, key, value)
         animal.save()
+        serializer = AnimalSerializer(animal)
         return Response(serializer.data, status=200)
+    except Animal.DoesNotExist:
+        return Response({"error": f"Animal with this id:{id} does not exist"}, status=400)
+    except KeyError:
+        return Response({"error": "Invalid data"}, status=400)
+
     return Response(serializer.errors, status=400)
 
 @api_view(['POST'])
