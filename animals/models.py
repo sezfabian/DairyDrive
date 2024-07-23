@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 from farms.models import Farm
 from datetime import date
 
+GENDER = (
+    ('Male', 'Male'),
+    ('Female', 'Female'),)
 
 class AnimalType(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -31,6 +34,8 @@ class Animal(models.Model):
     name = models.CharField(max_length=255, unique=True)
     type = models.ForeignKey(AnimalType, on_delete=models.CASCADE)
     breed = models.ForeignKey(AnimalBreed, on_delete=models.CASCADE, null=True, blank=True)
+    gender = models.CharField(max_length=255, choices=GENDER)
+    weight = models.DecimalField(decimal_places=2,  max_digits=10, blank=True, null=True)
     description = models.CharField(max_length=255, null=True, blank=True)
     date_of_birth = models.DateField()
     date_of_death = models.DateField(null=True, blank=True)
@@ -59,7 +64,7 @@ class Animal(models.Model):
             if months < 0:
                 years -= 1
                 months += 12
-            return {'years': years, 'months': months}
+            return years * 12 + months
         return {}
 
     def __str__(self):

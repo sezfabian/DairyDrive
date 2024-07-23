@@ -14,7 +14,7 @@ class AnimalBreedAdmin(ImportExportModelAdmin):
 
 @admin.register(Animal)
 class AnimalAdmin(ImportExportModelAdmin):
-    list_display = ('id', 'name', 'type', 'breed', 'description', 'farm', 'age', 'date_of_birth', 'date_of_death',
+    list_display = ('id', 'name', 'type', 'breed', 'gender', 'weight', 'description', 'farm', 'age', 'date_of_birth', 'date_of_death',
                     'dam', 'sire', 'date_of_purchase', 'date_of_sale', 'is_on_sale', 'price',
                     'purchase_price', 'to_be_archived', 'created_by', 'created_at', 'updated_at')
     search_fields = ['name']

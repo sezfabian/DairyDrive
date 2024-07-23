@@ -3,6 +3,7 @@ from users.functions import fix_phone_number
 from .serializers import *
 from rest_framework.decorators import authentication_classes, permission_classes, api_view
 from rest_framework.response import Response
+import random
 
 
 @api_view(['GET'])
@@ -16,6 +17,9 @@ def get_farms(request):
 @api_view(['POST'])
 def create_farm(request):
     """Create farm"""
+    generated_code = random.randint(1000, 9999)
+    request.data["created_by"] = request.user.id
+    request.data["code"] = request.data["name"].upper()[0] + "F" + str(generated_code)
     request.data["phone"] = fix_phone_number(request.data["phone"])
     serializer = FarmSerializer(data=request.data)
     if serializer.is_valid():

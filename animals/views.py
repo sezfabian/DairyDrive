@@ -113,6 +113,11 @@ def get_animals(request):
     farms = user_profile.farms.all()
     # Get animals in the user's farms
     animals = Animal.objects.filter(farm__in=farms)
+
+    # if type is specified
+    if "type" in request.query_params:
+        type = request.query_params["type"]
+        animals = animals.filter(type__name=type)
     # Serialize the animal data
     serializer = AnimalSerializer(animals, many=True)
     return Response(serializer.data, status=200)

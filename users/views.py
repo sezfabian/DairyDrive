@@ -7,6 +7,7 @@ from .functions import fix_phone_number
 from .serializers import *
 from rest_framework.decorators import authentication_classes, permission_classes, api_view
 from rest_framework.response import Response
+from farms.models import Farm
 
 
 @api_view(['POST'])
@@ -40,6 +41,12 @@ def signup(request):
 @authentication_classes([])
 @permission_classes([])
 def login(request):
+    # Check Farm Code
+    if "farm_code" in request.data:
+        try:
+            farm = Farm.objects.get(code=request.data["farm_code"].upper())
+        except Farm.DoesNotExist:
+            return Response({"error": "Farm with this code does not exist"}, status=400)
     serializer = LoginSerializer(data=request.data)
     if serializer.is_valid():
         # Check if email or phone number
@@ -51,18 +58,25 @@ def login(request):
         except UserProfile.DoesNotExist:
             return Response({"error": "User with this email or phone number does not exist"}, status=400)
         email = profile.email
-        # Check if user exists
+
+
+        # Check if user has acces to farm
+        if farm:
+            if farm.id in profile.farms.all().values_list('id', flat=True):
+                pass
+            else:
+                return Response({"error": "User does not have access to this farm"}, status=400)
+
+        # Login user
         try:
             user = User.objects.get(email=email)
             user = authenticate(request, username=email, password=serializer.data["password"])
             refresh = RefreshToken.for_user(user)
             serializer = UserProfileSerializer(profile)
-            # Return access, refresh token and user profile
-            return Response({"refresh": str(refresh), "access": str(refresh.access_token), "profile": serializer.data}, status=200)
+            # Return access, refresh token, farm id and user profile
+            return Response({"refresh": str(refresh), "access": str(refresh.access_token), "farm": farm.id, "profile": serializer.data}, status=200)
         except User.DoesNotExist:
             return Response({"error": "User with this email does not exist"}, status=400)
-        login(request, user)
-        return Response(serializer.data, status=200)
     return Response(serializer.errors, status=400)
 
 @api_view(['POST'])
