@@ -17,9 +17,23 @@ def signup(request):
     #Fix phone number
     request.data["phone"] = fix_phone_number(request.data["phone"])
 
+    # Check if farm code is valid
+    if "farm_code" in request.data:
+        if Farm.objects.filter(code=request.data["farm_code"].upper()).exists():
+            farm = Farm.objects.get(code=request.data["farm_code"].upper())
+            farm_details = FarmSerializer(farm).data
+            farm_details["id"] = farm.id
+        elif request.data["farm_code"].upper() == "":
+            pass
+        else:
+            return Response({"error": "The farm code you have entered is not valid"}, status=400)
+
     # Check if user already exists
     if User.objects.filter(email=request.data["email"]).exists():
         return Response({"error": "User with this email already exists"}, status=400)
+    if  UserProfile.objects.filter(phone=request.data["phone"]).exists():
+        return Response({"error": "User with this phone number already exists"}, status=400)
+    
     # Create user
     user = User.objects.create_user(username=request.data["email"], password=request.data["password"], email=request.data["email"])
     user.save()
@@ -29,11 +43,17 @@ def signup(request):
 
     if serializer.is_valid():
         serializer.save()
+        # Get user profile
+        user_profile = UserProfile.objects.get(email=request.data["email"])
+        if "farm_code" in request.data:
+            user_profile.farms.add(farm)
+            user_profile.save()
+        user_profile = UserProfileSerializer(user_profile).data
         # Login user
         user = authenticate(request, username=serializer.data["email"], password=request.data["password"])
         refresh = RefreshToken.for_user(user)
         # Return access, refresh token and user profile
-        return Response({"refresh": str(refresh), "access": str(refresh.access_token), "profile": serializer.data}, status=201)
+        return Response({"refresh": str(refresh), "access": str(refresh.access_token), "farm": farm_details, "profile": user_profile}, status=201)
     return Response(serializer.errors, status=400)
 
 
@@ -63,7 +83,8 @@ def login(request):
         # Check if user has acces to farm
         if farm:
             if farm.id in profile.farms.all().values_list('id', flat=True):
-                pass
+                farm_details = FarmSerializer(farm)
+                farm_details.data["id"] = farm.id
             else:
                 return Response({"error": "User does not have access to this farm"}, status=400)
 
@@ -71,10 +92,12 @@ def login(request):
         try:
             user = User.objects.get(email=email)
             user = authenticate(request, username=email, password=serializer.data["password"])
+            if not user:
+                return Response({"error": "Your email or password is Invalid"}, status=400)
             refresh = RefreshToken.for_user(user)
             serializer = UserProfileSerializer(profile)
             # Return access, refresh token, farm id and user profile
-            return Response({"refresh": str(refresh), "access": str(refresh.access_token), "farm": farm.id, "profile": serializer.data}, status=200)
+            return Response({"refresh": str(refresh), "access": str(refresh.access_token), "farm": farm_details.data, "profile": serializer.data}, status=200)
         except User.DoesNotExist:
             return Response({"error": "User with this email does not exist"}, status=400)
     return Response(serializer.errors, status=400)

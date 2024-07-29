@@ -37,7 +37,7 @@ def edit_farm(request, id):
         try:
             farm = Farm.objects.get(id=id)
             for key, value in request.data.items():
-                if key != "id" and key != "created_by":
+                if key != "id" and key != "created_by" and key != "code":
                     setattr(farm, key, value)
             farm.save()
             serializer=FarmSerializer(farm)

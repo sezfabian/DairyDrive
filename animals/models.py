@@ -8,8 +8,9 @@ GENDER = (
     ('Female', 'Female'),)
 
 class AnimalType(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255)
     description = models.CharField(max_length=255, null=True, blank=True)
+    farm = models.ForeignKey(Farm, on_delete=models.CASCADE)
 
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -20,8 +21,9 @@ class AnimalType(models.Model):
 
 class AnimalBreed(models.Model):
     type = models.ForeignKey(AnimalType, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255)
     description = models.CharField(max_length=255, null=True, blank=True)
+    farm = models.ForeignKey(Farm, on_delete=models.CASCADE)
 
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -33,7 +35,7 @@ class AnimalBreed(models.Model):
 class Animal(models.Model):
     name = models.CharField(max_length=255, unique=True)
     type = models.ForeignKey(AnimalType, on_delete=models.CASCADE)
-    breed = models.ForeignKey(AnimalBreed, on_delete=models.CASCADE, null=True, blank=True)
+    breed = models.ForeignKey(AnimalBreed, on_delete=models.CASCADE,  null=True, blank=True)
     gender = models.CharField(max_length=255, choices=GENDER)
     weight = models.DecimalField(decimal_places=2,  max_digits=10, blank=True, null=True)
     description = models.CharField(max_length=255, null=True, blank=True)
