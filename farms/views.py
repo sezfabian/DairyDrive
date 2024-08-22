@@ -32,18 +32,22 @@ def edit_farm(request, id):
     """Edit farm"""
     request.data["phone"] = fix_phone_number(request.data["phone"])
     request.data["created_by"] = request.user.id
-    serializer = FarmSerializer(data=request.data)
+
+    try:
+        farm = Farm.objects.get(id=id)
+    except Farm.DoesNotExist:
+        return Response({"message": f"Farm id:{id} not found"}, status=404)
+    
+    # Ensure we're not creating a new farm with the same name
+    if farm.name == request.data.get("name"):
+        request.data.pop("name", None)
+
+    serializer = FarmSerializer(farm, data=request.data, partial=True)
+
     if serializer.is_valid():
-        try:
-            farm = Farm.objects.get(id=id)
-            for key, value in request.data.items():
-                if key != "id" and key != "created_by" and key != "code":
-                    setattr(farm, key, value)
-            farm.save()
-            serializer=FarmSerializer(farm)
-            return Response(serializer.data, status=200)
-        except Farm.DoesNotExist:
-            return Response({"message": f"Farm id:{id} not found"}, status=404)
+        serializer.save()
+        return Response(serializer.data, status=200)
+    
     return Response(serializer.errors, status=400)
 
 @api_view(['POST'])

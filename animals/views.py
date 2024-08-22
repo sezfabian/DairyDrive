@@ -9,17 +9,23 @@ from rest_framework.response import Response
 
 ###################### ANIMAL TYPES ########################
 @api_view(['GET'])
-def get_animal_types(request):
-    """Get animal types"""
-    animal_types = AnimalType.objects.all()
+def get_animal_types(request, farm_id):
+    """Get animal types in a farm"""
+    farm = Farm.objects.get(id=farm_id)
+    animal_types = AnimalType.objects.filter(farm=farm)
     serializer = AnimalTypeSerializer(animal_types, many=True)
     return Response(serializer.data, status=200)
 
+
 @api_view(['POST'])
-def add_animal_type(request):
+def add_animal_type(request, farm_id):
     """Add animal type"""
+    request.data["farm"] = farm_id
+    request.data["created_by"] = request.user.id
     serializer = AnimalTypeSerializer(data=request.data)
     if serializer.is_valid():
+        if serializer.validated_data["name"] in [type.name for type in AnimalType.objects.filter(farm=farm_id)]:
+            return Response({"error": "Animal type with this name already exists"}, status=400)
         serializer.save(created_by=request.user)
         return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
@@ -51,9 +57,10 @@ def delete_animal_type(request, id):
 ###################### ANIMAL BREEDS ########################
 
 @api_view(['GET'])
-def get_animal_breeds(request):
+def get_animal_breeds(request, farm_id):
     """Get animal breeds"""
-    animal_breeds = AnimalBreed.objects.all()
+    farm = Farm.objects.get(id=farm_id)
+    animal_breeds = AnimalBreed.objects.filter(farm=farm)
     serializer = AnimalBreedSerializer(animal_breeds, many=True)
     return Response(serializer.data, status=200)
 
@@ -68,8 +75,9 @@ def get_animal_breeds_by_type(request, id):
         return Response({"error": f"Animal type with this id:{id} does not exist"}, status=400)
 
 @api_view(['POST'])
-def add_animal_breed(request):
+def add_animal_breed(request, farm_id):
     """Add animal breed"""
+    request.data["farm"] = farm_id
     serializer = AnimalBreedSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save(created_by=request.user)
@@ -104,15 +112,19 @@ def delete_animal_breed(request, id):
 ###################### ANIMALS ########################
 
 @api_view(['GET'])
-def get_animals(request):
+def get_animals(request, farm_id):
     """Get animals, Returns animals in users farms"""
-    # Get the user's profile
-    user = request.user
-    user_profile = UserProfile.objects.get(user=user)
-    # Get the farms associated with the user
-    farms = user_profile.farms.all()
-    # Get animals in the user's farms
-    animals = Animal.objects.filter(farm__in=farms)
+    farm = Farm.objects.get(id=farm_id)
+    animals = Animal.objects.filter(farm=farm)
+    # if breed is specified
+    if "breed" in request.query_params:
+        breed = request.query_params["breed"]
+        animals = animals.filter(breed__name=breed)
+
+    # if name is specified
+    if "name" in request.query_params:
+        name = request.query_params["name"]
+        animals = animals.filter(name__icontains=name)
 
     # if type is specified
     if "type" in request.query_params:
@@ -133,8 +145,9 @@ def get_animal(request, id):
         return Response({"message": f"Animal id:{id} not found"}, status=404)
 
 @api_view(['POST'])
-def create_animal(request):
+def create_animal(request, farm_id):
     """Create animal"""
+    request.data["farm"] = farm_id
     request.data["created_by"] = request.user.id
     serializer = AnimalSerializer(data=request.data)
     if serializer.is_valid():

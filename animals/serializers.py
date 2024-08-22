@@ -5,7 +5,7 @@ class AnimalTypeSerializer(serializers.ModelSerializer):
     breeds = serializers.SerializerMethodField()
     class Meta:
         model = AnimalType
-        fields = ['id', 'name', 'description', 'breeds']
+        fields = ['id', 'name', 'farm', 'description', 'breeds']
     
     def get_breeds(self, obj):
         breeds = AnimalBreed.objects.filter(type=obj)
@@ -14,7 +14,7 @@ class AnimalTypeSerializer(serializers.ModelSerializer):
 class AnimalBreedSerializer(serializers.ModelSerializer):
     class Meta:
         model = AnimalBreed
-        fields = ['id', 'type', 'name', 'description']
+        fields = ['id', 'type', 'name', 'farm', 'description']
 
 class AnimalImageSerializer(serializers.ModelSerializer):
     class Meta:
