@@ -8,6 +8,8 @@ from .serializers import *
 from rest_framework.decorators import authentication_classes, permission_classes, api_view
 from rest_framework.response import Response
 from farms.models import Farm
+from animals.models import Animal, AnimalType, AnimalBreed
+from animals.serializers import AnimalSerializer, AnimalTypeSerializer, AnimalBreedSerializer
 
 
 @api_view(['POST'])
@@ -84,10 +86,17 @@ def login(request):
         if farm:
             if farm.id in profile.farms.all().values_list('id', flat=True):
                 farm_details = FarmSerializer(farm)
-                farm_details.data["id"] = farm.id
+                animals = Animal.objects.filter(farm=farm)
+                types = AnimalType.objects.filter(farm=farm)
+                breeds = AnimalBreed.objects.filter(farm=farm)
             else:
                 return Response({"error": "User does not have access to this farm"}, status=400)
 
+        farm_details = farm_details.data
+        farm_details["id"] = farm.id
+        farm_details["animals"] = AnimalSerializer(animals, many=True).data
+        farm_details["types"] = AnimalTypeSerializer(types, many=True).data
+        farm_details["breeds"] = AnimalBreedSerializer(breeds, many=True).data
         # Login user
         try:
             user = User.objects.get(email=email)
@@ -97,7 +106,7 @@ def login(request):
             refresh = RefreshToken.for_user(user)
             serializer = UserProfileSerializer(profile)
             # Return access, refresh token, farm id and user profile
-            return Response({"refresh": str(refresh), "access": str(refresh.access_token), "farm": farm_details.data, "profile": serializer.data}, status=200)
+            return Response({"refresh": str(refresh), "access": str(refresh.access_token), "farm": farm_details, "profile": serializer.data}, status=200)
         except User.DoesNotExist:
             return Response({"error": "User with this email does not exist"}, status=400)
     return Response(serializer.errors, status=400)
