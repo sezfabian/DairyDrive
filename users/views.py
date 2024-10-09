@@ -140,3 +140,20 @@ def edit_profile(request):
         serializer.save()
         return Response(serializer.data, status=200)
     return Response(serializer.errors, status=400)
+
+@api_view(['GET'])
+def get_farm(request, farm_id):
+    """Get farm"""
+    farm = Farm.objects.get(id=farm_id)
+    animals = Animal.objects.filter(farm=farm)
+    types = AnimalType.objects.filter(farm=farm)
+    breeds = AnimalBreed.objects.filter(farm=farm)
+
+    farm_details = FarmSerializer(farm)
+    farm_details = farm_details.data
+    farm_details["id"] = farm.id
+    farm_details["animals"] = AnimalSerializer(animals, many=True).data
+    farm_details["types"] = AnimalTypeSerializer(types, many=True).data
+    farm_details["breeds"] = AnimalBreedSerializer(breeds, many=True).data
+
+    return Response(farm_details, status=200)

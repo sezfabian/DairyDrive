@@ -9,4 +9,5 @@ urlpatterns = [
     path("logout", logout, name="clientlogout"),
     path("profile", get_profile, name="profile"),
     path("edit_profile", edit_profile, name="edit_profile"),
+    path("get_farm/<int:farm_id>", get_farm, name="get_farm"),
 ]
