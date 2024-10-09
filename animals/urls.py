@@ -22,4 +22,7 @@ urlpatterns = [
     path("create_animal/<int:farm_id>", create_animal, name="create_animal"),
     path("edit_animal/<int:id>", edit_animal, name="edit_animal"),
     path("delete_animal/<int:id>", delete_animal, name="delete_animal"),
+
+    # Animal images
+    path("post_animal_image/<int:id>", post_animal_image, name="post_animal_image"),
 ]

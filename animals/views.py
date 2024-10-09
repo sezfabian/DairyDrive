@@ -193,3 +193,17 @@ def delete_animal(request, id):
         return Response({"message": f"Animal id:{id} name:{name} deleted successfully"}, status=200)
     except Animal.DoesNotExist:
         return Response({"error": f"Animal with this id:{id} does not exist"}, status=400)
+
+@api_view(['POST'])
+def post_animal_image(request, id):
+    """Post animal image"""
+    try:
+        animal = Animal.objects.get(id=id)
+        request.data["animal"] = id
+        serializer = AnimalImageSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(animal=animal)
+            return Response(serializer.data, status=200)
+        return Response(serializer.errors, status=400)
+    except Animal.DoesNotExist:
+        return Response({"error": f"Animal with this id:{id} does not exist"}, status=400)

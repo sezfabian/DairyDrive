@@ -18,3 +18,8 @@ class AnimalAdmin(ImportExportModelAdmin):
                     'dam', 'sire', 'date_of_purchase', 'date_of_sale', 'is_on_sale', 'price',
                     'purchase_price', 'to_be_archived', 'created_by', 'created_at', 'updated_at')
     search_fields = ['name']
+
+@admin.register(AnimalImage)
+class AnimalImageAdmin(ImportExportModelAdmin):
+    list_display = ('id', 'animal', 'image_url', 'image_refference', 'created_at', 'updated_at')
+    search_fields = ['animal__name']

@@ -19,7 +19,7 @@ class AnimalBreedSerializer(serializers.ModelSerializer):
 class AnimalImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = AnimalImage
-        fields = ['id', 'image', 'uploaded_at']
+        fields = ['id', 'image_url', 'image_refference', 'animal', 'created_at', 'updated_at']
 
 class AnimalSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
@@ -36,7 +36,7 @@ class AnimalSerializer(serializers.ModelSerializer):
         ]
 
     def get_images(self, obj):
-        images = AnimalImage.objects.filter(animal=obj).order_by("id")[:10]
+        images = AnimalImage.objects.filter(animal=obj).order_by("-id")[:10]
         return AnimalImageSerializer(images, many=True).data
     
     def get_type_name(self, obj):
