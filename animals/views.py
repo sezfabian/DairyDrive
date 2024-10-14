@@ -207,3 +207,14 @@ def post_animal_image(request, id):
         return Response(serializer.errors, status=400)
     except Animal.DoesNotExist:
         return Response({"error": f"Animal with this id:{id} does not exist"}, status=400)
+
+@api_view(['POST'])
+def delete_animal_image(request, id):
+    """Delete animal image"""
+    try:
+        animal_image = AnimalImage.objects.get(id=id)
+        name = animal_image.name
+        animal_image.delete()
+        return Response({"message": f"Animal image id:{id} name:{name} deleted successfully"}, status=200)
+    except AnimalImage.DoesNotExist:
+        return Response({"error": f"Animal image with this id:{id} does not exist"}, status=400)

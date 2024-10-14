@@ -25,4 +25,5 @@ urlpatterns = [
 
     # Animal images
     path("post_animal_image/<int:id>", post_animal_image, name="post_animal_image"),
+    path("delete_animal_image/<int:id>", delete_animal_image, name="delete_animal_image"),
 ]
