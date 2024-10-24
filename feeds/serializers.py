@@ -5,7 +5,7 @@ from .models import AnimalFeedType, AnimalFeed, AnimalFeedEntry, AnimalFeedPurch
 class AnimalFeedTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = AnimalFeedType
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'farm']
         
 class AnimalFeedSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,7 +18,7 @@ class AnimalFeedSerializer(serializers.ModelSerializer):
 class AnimalFeedEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = AnimalFeedEntry
-        fields = ['id', 'animal_feed', 'animal', 'quantity', 'created_by', 'created_at', 'updated_at']
+        fields = ['id', 'animal_feed', 'animal_type', 'quantity', 'created_by', 'created_at', 'updated_at', 'is_deleted', 'deleted_by', 'deleted_at']
     
     # On save decrease animal feed inventory 
 
@@ -28,7 +28,7 @@ class AnimalFeedEntrySerializer(serializers.ModelSerializer):
 class AnimalFeedPurchaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = AnimalFeedPurchase
-        fields = ['id', 'animal_feed', 'quantity', 'cost', 'created_by', 'created_at', 'updated_at']
+        fields = ['id', 'animal_feed', 'quantity', 'cost', 'created_by', 'created_at', 'updated_at', 'is_deleted', 'deleted_by', 'deleted_at']
 
     def __str__(self):
         return f"{self.animal_feed.name} - {self.quantity} - {self.created_at.strftime('%Y-%m-%d %H:%M')}"
