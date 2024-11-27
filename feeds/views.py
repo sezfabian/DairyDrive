@@ -110,7 +110,7 @@ def edit_feed(request, id):
         return Response(serializer.data, status=200)
     return Response(serializer.errors, status=400)
 
-@api_view(['DELETE'])
+@api_view(['POST'])
 def delete_feed(request, id):
     """Delete feed"""
     # Check if userprofile has admin role
