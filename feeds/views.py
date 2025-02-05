@@ -29,13 +29,14 @@ def get_feeds(request, farm_id):
     feedPurchases = AnimalFeedPurchase.objects.filter(animal_feed__in=feeds)
     purchaseserializer = AnimalFeedPurchaseSerializer(feedPurchases, many=True)
 
-    return Response({"feedTypes": typeserializer.data, "feeds": feedserializer.data, "feedEntrys": entryserializer.data, "feedPurchases": purchaseserializer.data}, status=200)
+    return Response({"feedTypes": typeserializer.data, "feeds": feedserializer.data, "feedEntries": entryserializer.data, "feedPurchases": purchaseserializer.data}, status=200)
 
 
 @api_view(['POST'])
 def add_feed_type(request, farm_id):
     """Add feed type"""
     request.data["farm"] = farm_id
+    request.data["created_by"] = request.user.id
     serializer = AnimalFeedTypeSerializer(data=request.data)
     if serializer.is_valid():
         if serializer.validated_data["name"] in [type.name for type in AnimalFeedType.objects.filter(farm=farm_id)]:
@@ -80,6 +81,7 @@ def delete_feed_type(request, id):
 def add_feed(request, farm_id):
     """Add feed"""
     request.data["farm"] = farm_id
+    request.data["created_by"] = request.user.id
     serializer = AnimalFeedSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()

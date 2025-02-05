@@ -7,6 +7,11 @@ from datetime import date, datetime
 class AnimalFeedType(models.Model):
     name = models.CharField(max_length=255, unique=True)
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE)
+    description = models.CharField(max_length=255, null=True, blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+   
 
 
     def __str__(self):
@@ -29,6 +34,8 @@ class AnimalFeedEntry(models.Model):
     animal_feed = models.ForeignKey(AnimalFeed, on_delete=models.CASCADE)
     animal_type = models.ForeignKey(AnimalType, on_delete=models.CASCADE)
     quantity = models.DecimalField(decimal_places=2,  max_digits=10, null=True, blank=True)
+    feed_date = models.DateField(null=True, blank=True)
+    feed_time = models.TimeField(null=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
