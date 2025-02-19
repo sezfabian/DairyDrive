@@ -22,7 +22,7 @@ def get_feeds(request, farm_id):
     feedserializer = AnimalFeedSerializer(feeds, many=True)
 
     # get feed entries
-    feedEntrys = AnimalFeedEntry.objects.filter(animal_feed__in=feeds)
+    feedEntrys = AnimalFeedEntry.objects.filter(animal_feed__in=feeds).order_by('-created_at')
     entryserializer = AnimalFeedEntrySerializer(feedEntrys, many=True)
 
     # get feed purchases
@@ -139,7 +139,7 @@ def delete_feed(request, id):
 @api_view(['POST'])
 def add_feed_entry(request, farm_id):
     """Add feed entry"""
-    farm = Farm.objects.get(id=farm_id)
+    request.data["farm"] = farm_id
     request.data["created_by"] = request.user.id
     serializer = AnimalFeedEntrySerializer(data=request.data)
     if serializer.is_valid():
