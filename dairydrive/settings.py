@@ -30,7 +30,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*', '13.58.161.110']
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173", "http://172.16.0.103:5173",
+    "http://localhost:5173", "http://172.16.0.103:5173", "https://dairydrive.netlify.app"
 ]
 
 # Application definition
