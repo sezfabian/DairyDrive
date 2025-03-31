@@ -26,4 +26,12 @@ urlpatterns = [
     # Animal images
     path("post_animal_image/<int:id>", post_animal_image, name="post_animal_image"),
     path("delete_animal_image/<int:id>", delete_animal_image, name="delete_animal_image"),
+
+    # Artificial Insemination
+    path("get_ai_records/<int:farm_id>", get_ai_records, name="get_ai_records"),
+    path("add_ai_record/<int:farm_id>", add_ai_record, name="add_ai_record"),
+    path("edit_ai_record/<int:id>", edit_ai_record, name="edit_ai_record"),
+    path("delete_ai_record/<int:id>", delete_ai_record, name="delete_ai_record"),
+    path("set_ai_sire/<int:animal_id>", set_ai_sire, name="set_ai_sire"),
+    path("clear_ai_sire/<int:animal_id>", clear_ai_sire, name="clear_ai_sire"),
 ]

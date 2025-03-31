@@ -32,6 +32,29 @@ class AnimalBreed(models.Model):
     def __str__(self):
         return self.name
 
+class ArtificialInsemination(models.Model):
+    STATUS_CHOICES = [
+        ('SUCCESSFUL', 'Successful'),
+        ('UNSUCCESSFUL', 'Unsuccessful'),
+        ('PENDING', 'Pending'),
+    ]
+
+    animal = models.ForeignKey('Animal', on_delete=models.CASCADE, related_name='ai_records')
+    semen_code = models.CharField(max_length=100)
+    breed = models.ForeignKey(AnimalBreed, on_delete=models.CASCADE)
+    insemination_date = models.DateField()
+    technician = models.CharField(max_length=255)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
+    cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    notes = models.TextField(blank=True, null=True)
+    farm = models.ForeignKey(Farm, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.animal.name} - {self.semen_code} - {self.insemination_date}"
+
 class Animal(models.Model):
     name = models.CharField(max_length=255, unique=True)
     type = models.ForeignKey(AnimalType, on_delete=models.CASCADE)
@@ -43,6 +66,7 @@ class Animal(models.Model):
     date_of_death = models.DateField(null=True, blank=True)
     dam = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='offspring_dam')
     sire = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='offspring_sire')
+    ai_sire = models.ForeignKey(ArtificialInsemination, on_delete=models.SET_NULL, null=True, blank=True, related_name='offspring_ai')
     date_of_purchase = models.DateField(null=True, blank=True)
     date_of_sale = models.DateField(null=True, blank=True)
     is_on_sale = models.BooleanField(default=False)

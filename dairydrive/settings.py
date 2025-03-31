@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'farms',
     'animals',
     'feeds',
+    'health',
 ]
 
 MIDDLEWARE = [
@@ -87,20 +88,18 @@ WSGI_APPLICATION = 'dairydrive.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'dairydrive',
-#         'USER': 'dairyadmin',
-#         'PASSWORD': '2121#',
-#         'HOST': 'localhost',
-#         'PORT': '',
+# Development database settings
+# if DEBUG:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': BASE_DIR / 'db.sqlite3',
+#         }
 #     }
-# }
-
+# else:
+# Production database settings
 DATABASES = {
     'default': dj_database_url.config(
-        # Replace this value with your local database's connection string.
         default='postgresql://postgres:postgres@localhost:5432/mysite',
         conn_max_age=600
     )

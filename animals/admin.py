@@ -23,3 +23,10 @@ class AnimalAdmin(ImportExportModelAdmin):
 class AnimalImageAdmin(ImportExportModelAdmin):
     list_display = ('id', 'animal', 'image_url', 'image_refference', 'created_at', 'updated_at')
     search_fields = ['animal__name']
+
+@admin.register(ArtificialInsemination)
+class ArtificialInseminationAdmin(ImportExportModelAdmin):
+    list_display = ('animal', 'semen_code', 'breed', 'insemination_date', 'technician', 'status', 'cost')
+    list_filter = ('status', 'breed', 'insemination_date', 'farm')
+    search_fields = ('animal__name', 'semen_code', 'technician')
+    ordering = ('-insemination_date',)

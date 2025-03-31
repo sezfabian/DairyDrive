@@ -10,4 +10,5 @@ urlpatterns = [
     path('farms/', include('farms.urls')),
     path('animals/', include('animals.urls')),
     path('feeds/', include('feeds.urls')),
+    path('health/', include('health.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
