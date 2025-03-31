@@ -89,14 +89,13 @@ WSGI_APPLICATION = 'dairydrive.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 # Development database settings
-# if DEBUG:
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.sqlite3',
-#             'NAME': BASE_DIR / 'db.sqlite3',
-#         }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
-# else:
+# }
+
 # Production database settings
 DATABASES = {
     'default': dj_database_url.config(
@@ -192,3 +191,36 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 import os
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+# Stripe Configuration
+STRIPE_PUBLIC_KEY = 'your_stripe_public_key'
+STRIPE_SECRET_KEY = 'your_stripe_secret_key'
+STRIPE_WEBHOOK_SECRET = 'your_stripe_webhook_secret'
+
+# Feature Flags
+FEATURE_FLAGS = {
+    'basic': {
+        'max_animals': 10,
+        'max_farms': 1,
+        'health_records': True,
+        'basic_analytics': True,
+    },
+    'premium': {
+        'max_animals': 100,
+        'max_farms': 5,
+        'health_records': True,
+        'advanced_analytics': True,
+        'ai_predictions': True,
+        'priority_support': True,
+    },
+    'enterprise': {
+        'max_animals': 1000,
+        'max_farms': 20,
+        'health_records': True,
+        'advanced_analytics': True,
+        'ai_predictions': True,
+        'priority_support': True,
+        'custom_features': True,
+        'api_access': True,
+    }
+}

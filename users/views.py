@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import UserProfile
+from .models import UserProfile, SubscriptionPlan, UserSubscription, PaymentHistory
 from .functions import fix_phone_number
 from .serializers import *
 from rest_framework.decorators import authentication_classes, permission_classes, api_view
@@ -10,7 +10,13 @@ from rest_framework.response import Response
 from farms.models import Farm
 from animals.models import Animal, AnimalType, AnimalBreed
 from animals.serializers import AnimalSerializer, AnimalTypeSerializer, AnimalBreedSerializer
+from rest_framework.permissions import IsAuthenticated
+from django.conf import settings
+import stripe
+from .decorators import require_feature
+from datetime import datetime, timedelta
 
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 @api_view(['POST'])
 @authentication_classes([])
@@ -157,3 +163,118 @@ def get_farm(request, farm_id):
     farm_details["breeds"] = AnimalBreedSerializer(breeds, many=True).data
 
     return Response(farm_details, status=200)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_subscription_plans(request):
+    """Get available subscription plans"""
+    plans = SubscriptionPlan.objects.all()
+    return Response([{
+        'id': plan.id,
+        'name': plan.name,
+        'description': plan.description,
+        'price': plan.price,
+        'duration_days': plan.duration_days,
+        'features': plan.features
+    } for plan in plans])
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_subscription(request):
+    """Create a new subscription"""
+    try:
+        plan_id = request.data.get('plan_id')
+        plan = SubscriptionPlan.objects.get(id=plan_id)
+        
+        # Create or get Stripe customer
+        if not request.user.stripe_customer_id:
+            customer = stripe.Customer.create(
+                email=request.user.email,
+                metadata={'user_id': request.user.id}
+            )
+            request.user.stripe_customer_id = customer.id
+            request.user.save()
+        
+        # Create Stripe subscription
+        subscription = stripe.Subscription.create(
+            customer=request.user.stripe_customer_id,
+            items=[{'price': plan.stripe_price_id}],
+            payment_behavior='default_incomplete',
+            payment_settings={'save_default_payment_method': 'on_subscription'},
+            expand=['latest_invoice.payment_intent'],
+        )
+        
+        # Create subscription record
+        user_subscription = UserSubscription.objects.create(
+            user=request.user,
+            plan=plan,
+            start_date=datetime.now(),
+            end_date=datetime.now() + timedelta(days=plan.duration_days),
+            stripe_subscription_id=subscription.id,
+            stripe_customer_id=request.user.stripe_customer_id
+        )
+        
+        return Response({
+            'subscription_id': subscription.id,
+            'client_secret': subscription.latest_invoice.payment_intent.client_secret
+        })
+        
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def cancel_subscription(request):
+    """Cancel current subscription"""
+    try:
+        subscription = UserSubscription.objects.get(
+            user=request.user,
+            status='active'
+        )
+        
+        # Cancel Stripe subscription
+        stripe.Subscription.delete(subscription.stripe_subscription_id)
+        
+        # Update subscription status
+        subscription.status = 'canceled'
+        subscription.save()
+        
+        return Response({'message': 'Subscription cancelled successfully'})
+        
+    except UserSubscription.DoesNotExist:
+        return Response({'error': 'No active subscription found'}, status=404)
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_subscription_status(request):
+    """Get current subscription status"""
+    try:
+        subscription = UserSubscription.objects.get(
+            user=request.user,
+            status='active'
+        )
+        
+        return Response({
+            'plan_name': subscription.plan.name,
+            'start_date': subscription.start_date,
+            'end_date': subscription.end_date,
+            'features': subscription.plan.features,
+            'is_active': subscription.is_active()
+        })
+        
+    except UserSubscription.DoesNotExist:
+        return Response({'error': 'No active subscription found'}, status=404)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_payment_history(request):
+    """Get user's payment history"""
+    payments = PaymentHistory.objects.filter(user=request.user).order_by('-payment_date')
+    return Response([{
+        'amount': payment.amount,
+        'status': payment.status,
+        'payment_date': payment.payment_date,
+        'plan_name': payment.subscription.plan.name
+    } for payment in payments])

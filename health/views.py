@@ -181,12 +181,6 @@ def get_health_record(request, id):
 @api_view(['POST'])
 def add_health_record(request):
     """Add health record"""
-    # Handle image URL if provided
-    if 'image' in request.data and request.data['image']:
-        # Ensure the image URL is properly formatted
-        if not request.data['image'].startswith(('http://', 'https://')):
-            request.data['image'] = 'https://' + request.data['image']
-    
     serializer = HealthRecordSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
@@ -196,12 +190,6 @@ def add_health_record(request):
 @api_view(['POST'])
 def edit_health_record(request, id):
     """Edit health record"""
-    # Handle image URL if provided
-    if 'image' in request.data and request.data['image']:
-        # Ensure the image URL is properly formatted
-        if not request.data['image'].startswith(('http://', 'https://')):
-            request.data['image'] = 'https://' + request.data['image']
-    
     serializer = HealthRecordSerializer(data=request.data)
     if serializer.is_valid():
         record = HealthRecord.objects.get(id=id)
