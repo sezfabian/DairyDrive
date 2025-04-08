@@ -32,28 +32,27 @@ def add_animal_type(request, farm_id):
     return Response(serializer.errors, status=400)
 
 @api_view(['POST'])
-def edit_animal_type(request, id):
+def edit_animal_type(request, farm_id, id):
     """Edit animal type"""
-    serializer = AnimalTypeSerializer(data=request.data)
-    if serializer.is_valid():
-        animal_type = AnimalType.objects.get(id=id)
-        for key, value in request.data.items():
-            if key != "id":
-                setattr(animal_type, key, value)
-        animal_type.save()
-        return Response(serializer.data, status=200)
-    return Response(serializer.errors, status=400)
+    try:
+        animal_type = AnimalType.objects.get(id=id, farm_id=farm_id)
+        serializer = AnimalTypeSerializer(animal_type, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200)
+        return Response(serializer.errors, status=400)
+    except AnimalType.DoesNotExist:
+        return Response({"error": f"Animal type with id:{id} not found in farm:{farm_id}"}, status=404)
 
 @api_view(['POST'])
-def delete_animal_type(request, id):
+def delete_animal_type(request, farm_id, id):
     """Delete animal type"""
     try:
-        animal_type = AnimalType.objects.get(id=id)
-        name = animal_type.name
+        animal_type = AnimalType.objects.get(id=id, farm_id=farm_id)
         animal_type.delete()
-        return Response({"message": f"Animal type id:{id} name:{name} deleted successfully"}, status=200)
+        return Response({"message": "Animal type deleted successfully"}, status=200)
     except AnimalType.DoesNotExist:
-        return Response({"error": f"Animal type with this id:{id} does not exist"}, status=400)
+        return Response({"error": f"Animal type with id:{id} not found in farm:{farm_id}"}, status=404)
 
 ###################### ANIMAL BREEDS ########################
 
@@ -86,28 +85,27 @@ def add_animal_breed(request, farm_id):
     return Response(serializer.errors, status=400)
 
 @api_view(['POST'])
-def edit_animal_breed(request, id):
+def edit_animal_breed(request, farm_id, id):
     """Edit animal breed"""
-    serializer = AnimalBreedSerializer(data=request.data)
-    if serializer.is_valid():
-        animal_breed = AnimalBreed.objects.get(id=id)
-        for key, value in request.data.items():
-            if key != "id":
-                setattr(animal_breed, key, value)
-        animal_breed.save()
-        return Response(serializer.data, status=200)
-    return Response(serializer.errors, status=400)
+    try:
+        animal_breed = AnimalBreed.objects.get(id=id, farm_id=farm_id)
+        serializer = AnimalBreedSerializer(animal_breed, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200)
+        return Response(serializer.errors, status=400)
+    except AnimalBreed.DoesNotExist:
+        return Response({"error": f"Animal breed with id:{id} not found in farm:{farm_id}"}, status=404)
 
 @api_view(['POST'])
-def delete_animal_breed(request, id):
+def delete_animal_breed(request, farm_id, id):
     """Delete animal breed"""
     try:
-        animal_breed = AnimalBreed.objects.get(id=id)
-        name = animal_breed.name
+        animal_breed = AnimalBreed.objects.get(id=id, farm_id=farm_id)
         animal_breed.delete()
-        return Response({"message": f"Animal breed id:{id} name:{name} deleted successfully"}, status=200)
+        return Response({"message": "Animal breed deleted successfully"}, status=200)
     except AnimalBreed.DoesNotExist:
-        return Response({"error": f"Animal breed with this id:{id} does not exist"}, status=400)
+        return Response({"error": f"Animal breed with id:{id} not found in farm:{farm_id}"}, status=404)
 
 
 ###################### ANIMALS ########################
@@ -136,18 +134,18 @@ def get_animals(request, farm_id):
     return Response(serializer.data, status=200)
 
 @api_view(['GET'])
-def get_animal(request, id):
-    """Get animal"""
+def get_animal(request, farm_id, id):
+    """Get specific animal"""
     try:
-        animal = Animal.objects.get(id=id)
+        animal = Animal.objects.get(id=id, farm_id=farm_id)
         serializer = AnimalSerializer(animal)
         return Response(serializer.data, status=200)
     except Animal.DoesNotExist:
-        return Response({"message": f"Animal id:{id} not found"}, status=404)
+        return Response({"error": f"Animal with id:{id} not found in farm:{farm_id}"}, status=404)
 
 @api_view(['POST'])
-def create_animal(request, farm_id):
-    """Create animal"""
+def add_animal(request, farm_id):
+    """Add animal"""
     request.data["farm"] = farm_id
     request.data["created_by"] = request.user.id
     serializer = AnimalSerializer(data=request.data)
@@ -157,43 +155,27 @@ def create_animal(request, farm_id):
     return Response(serializer.errors, status=400)
 
 @api_view(['POST'])
-def edit_animal(request, id):
+def edit_animal(request, farm_id, id):
     """Edit animal"""
-    request.data["created_by"] = request.user.id
     try:
-        animal = Animal.objects.get(id=id)
-        for key, value in request.data.items():
-            if key == "type":
-                animal_type = AnimalType.objects.get(id=value)
-                setattr(animal, key, animal_type)
-            elif key == "breed":
-                animal_breed = AnimalBreed.objects.get(id=value)
-                setattr(animal, key, animal_breed)
-            elif key == "farm":
-                farm = Farm.objects.get(id=value)
-                setattr(animal, key, farm)
-            elif key != "id" and key != "created_by":
-                setattr(animal, key, value)
-        animal.save()
-        serializer = AnimalSerializer(animal)
-        return Response(serializer.data, status=200)
+        animal = Animal.objects.get(id=id, farm_id=farm_id)
+        serializer = AnimalSerializer(animal, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200)
+        return Response(serializer.errors, status=400)
     except Animal.DoesNotExist:
-        return Response({"error": f"Animal with this id:{id} does not exist"}, status=400)
-    except KeyError:
-        return Response({"error": "Invalid data"}, status=400)
-
-    return Response(serializer.errors, status=400)
+        return Response({"error": f"Animal with id:{id} not found in farm:{farm_id}"}, status=404)
 
 @api_view(['POST'])
-def delete_animal(request, id):
+def delete_animal(request, farm_id, id):
     """Delete animal"""
     try:
-        animal = Animal.objects.get(id=id)
-        name = animal.name
+        animal = Animal.objects.get(id=id, farm_id=farm_id)
         animal.delete()
-        return Response({"message": f"Animal id:{id} name:{name} deleted successfully"}, status=200)
+        return Response({"message": "Animal deleted successfully"}, status=200)
     except Animal.DoesNotExist:
-        return Response({"error": f"Animal with this id:{id} does not exist"}, status=400)
+        return Response({"error": f"Animal with id:{id} not found in farm:{farm_id}"}, status=404)
 
 @api_view(['POST'])
 def post_animal_image(request, id):
@@ -210,14 +192,14 @@ def post_animal_image(request, id):
         return Response({"error": f"Animal with this id:{id} does not exist"}, status=400)
 
 @api_view(['POST'])
-def delete_animal_image(request, id):
+def delete_animal_image(request, farm_id, id):
     """Delete animal image"""
     try:
-        animal_image = AnimalImage.objects.get(id=id)
+        animal_image = AnimalImage.objects.get(id=id, animal__farm_id=farm_id)
         animal_image.delete()
-        return Response({"message": f"Animal image id:{id} deleted successfully"}, status=200)
+        return Response({"message": "Animal image deleted successfully"}, status=200)
     except AnimalImage.DoesNotExist:
-        return Response({"error": f"Animal image with this id:{id} does not exist"}, status=400)
+        return Response({"error": f"Animal image with id:{id} not found in farm:{farm_id}"}, status=404)
 
 ###################### ARTIFICIAL INSEMINATION ########################
 
@@ -252,27 +234,27 @@ def add_ai_record(request, farm_id):
     return Response(serializer.errors, status=400)
 
 @api_view(['POST'])
-def edit_ai_record(request, id):
+def edit_ai_record(request, farm_id, id):
     """Edit AI record"""
-    serializer = ArtificialInseminationSerializer(data=request.data)
-    if serializer.is_valid():
-        ai_record = ArtificialInsemination.objects.get(id=id)
-        for key, value in request.data.items():
-            if key != "id":
-                setattr(ai_record, key, value)
-        ai_record.save()
-        return Response(serializer.data, status=200)
-    return Response(serializer.errors, status=400)
+    try:
+        ai_record = ArtificialInsemination.objects.get(id=id, animal__farm_id=farm_id)
+        serializer = ArtificialInseminationSerializer(ai_record, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200)
+        return Response(serializer.errors, status=400)
+    except ArtificialInsemination.DoesNotExist:
+        return Response({"error": f"AI record with id:{id} not found in farm:{farm_id}"}, status=404)
 
 @api_view(['POST'])
-def delete_ai_record(request, id):
+def delete_ai_record(request, farm_id, id):
     """Delete AI record"""
     try:
-        ai_record = ArtificialInsemination.objects.get(id=id)
+        ai_record = ArtificialInsemination.objects.get(id=id, animal__farm_id=farm_id)
         ai_record.delete()
-        return Response({"message": f"AI record id:{id} deleted successfully"}, status=200)
+        return Response({"message": "AI record deleted successfully"}, status=200)
     except ArtificialInsemination.DoesNotExist:
-        return Response({"error": f"AI record with this id:{id} does not exist"}, status=400)
+        return Response({"error": f"AI record with id:{id} not found in farm:{farm_id}"}, status=404)
 
 @api_view(['POST'])
 def set_ai_sire(request, animal_id):

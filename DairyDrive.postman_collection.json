@@ -1,420 +1,540 @@
 {
     "info": {
-      "name": "DairyDrive Health API",
-      "description": "API endpoints for managing health records, veterinarians, conditions, services, and treatments",
+      "name": "DairyDrive Animals API",
+      "description": "API endpoints for managing animals, types, breeds, images, AI records, and health records",
       "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
     "item": [
       {
-        "name": "Veterinarians",
+        "name": "Animal Types",
         "item": [
           {
-            "name": "Get All Veterinarians",
+            "name": "Get Animal Types",
             "request": {
               "method": "GET",
-              "header": [],
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
               "url": {
-                "raw": "{{base_url}}/api/health/get_veterinarians/1",
+                "raw": "{{base_url}}/animals/get_animal_types/{{farm_id}}",
                 "host": ["{{base_url}}"],
-                "path": ["api", "health", "get_veterinarians", "1"]
+                "path": ["animals", "get_animal_types", "{{farm_id}}"]
               }
             }
           },
           {
-            "name": "Get Single Veterinarian",
-            "request": {
-              "method": "GET",
-              "header": [],
-              "url": {
-                "raw": "{{base_url}}/api/health/get_veterinarian/1",
-                "host": ["{{base_url}}"],
-                "path": ["api", "health", "get_veterinarian", "1"]
-              }
-            }
-          },
-          {
-            "name": "Add Veterinarian",
+            "name": "Add Animal Type",
             "request": {
               "method": "POST",
               "header": [
                 {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": {
-                "mode": "raw",
-                "raw": "{\n    \"name\": \"Dr. Smith\",\n    \"phone\": \"+1234567890\",\n    \"email\": \"dr.smith@example.com\",\n    \"specialization\": \"Large Animal\"\n}"
-              },
-              "url": {
-                "raw": "{{base_url}}/api/health/add_veterinarian/1",
-                "host": ["{{base_url}}"],
-                "path": ["api", "health", "add_veterinarian", "1"]
-              }
-            }
-          },
-          {
-            "name": "Edit Veterinarian",
-            "request": {
-              "method": "POST",
-              "header": [
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                },
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json",
+                  "type": "text"
                 }
               ],
               "body": {
                 "mode": "raw",
-                "raw": "{\n    \"name\": \"Dr. Smith Updated\",\n    \"phone\": \"+1234567890\",\n    \"email\": \"dr.smith@example.com\",\n    \"specialization\": \"Large Animal\"\n}"
+                "raw": "{\n    \"name\": \"Cow\",\n    \"description\": \"Dairy cattle\"\n}"
               },
               "url": {
-                "raw": "{{base_url}}/api/health/edit_veterinarian/1",
+                "raw": "{{base_url}}/animals/add_animal_type/{{farm_id}}",
                 "host": ["{{base_url}}"],
-                "path": ["api", "health", "edit_veterinarian", "1"]
+                "path": ["animals", "add_animal_type", "{{farm_id}}"]
               }
             }
           },
           {
-            "name": "Delete Veterinarian",
+            "name": "Edit Animal Type",
             "request": {
-              "method": "POST",
-              "header": [],
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"name\": \"Updated Cow\",\n    \"description\": \"Updated description\"\n}"
+              },
               "url": {
-                "raw": "{{base_url}}/api/health/delete_veterinarian/1",
+                "raw": "{{base_url}}/animals/edit_animal_type/{{farm_id}}/{{type_id}}",
                 "host": ["{{base_url}}"],
-                "path": ["api", "health", "delete_veterinarian", "1"]
+                "path": ["animals", "edit_animal_type", "{{farm_id}}", "{{type_id}}"]
+              }
+            }
+          },
+          {
+            "name": "Delete Animal Type",
+            "request": {
+              "method": "DELETE",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/animals/delete_animal_type/{{farm_id}}/{{type_id}}",
+                "host": ["{{base_url}}"],
+                "path": ["animals", "delete_animal_type", "{{farm_id}}", "{{type_id}}"]
+              }
+            }
+          },
+          {
+            "name": "Get Animal Breeds by Type",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/animals/get_animal_breeds_by_type/{{type_id}}",
+                "host": ["{{base_url}}"],
+                "path": ["animals", "get_animal_breeds_by_type", "{{type_id}}"]
               }
             }
           }
         ]
       },
       {
-        "name": "Health Conditions",
+        "name": "Animal Breeds",
         "item": [
           {
-            "name": "Get All Health Conditions",
+            "name": "Get Animal Breeds",
             "request": {
               "method": "GET",
-              "header": [],
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
               "url": {
-                "raw": "{{base_url}}/api/health/get_health_conditions/1",
+                "raw": "{{base_url}}/animals/get_animal_breeds/{{farm_id}}",
                 "host": ["{{base_url}}"],
-                "path": ["api", "health", "get_health_conditions", "1"]
+                "path": ["animals", "get_animal_breeds", "{{farm_id}}"]
               }
             }
           },
           {
-            "name": "Get Single Health Condition",
-            "request": {
-              "method": "GET",
-              "header": [],
-              "url": {
-                "raw": "{{base_url}}/api/health/get_health_condition/1",
-                "host": ["{{base_url}}"],
-                "path": ["api", "health", "get_health_condition", "1"]
-              }
-            }
-          },
-          {
-            "name": "Add Health Condition",
+            "name": "Add Animal Breed",
             "request": {
               "method": "POST",
               "header": [
                 {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": {
-                "mode": "raw",
-                "raw": "{\n    \"name\": \"Mastitis\",\n    \"description\": \"Inflammation of the mammary gland\"\n}"
-              },
-              "url": {
-                "raw": "{{base_url}}/api/health/add_health_condition/1",
-                "host": ["{{base_url}}"],
-                "path": ["api", "health", "add_health_condition", "1"]
-              }
-            }
-          },
-          {
-            "name": "Edit Health Condition",
-            "request": {
-              "method": "POST",
-              "header": [
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                },
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json",
+                  "type": "text"
                 }
               ],
               "body": {
                 "mode": "raw",
-                "raw": "{\n    \"name\": \"Mastitis Updated\",\n    \"description\": \"Inflammation of the mammary gland\"\n}"
+                "raw": "{\n    \"name\": \"Holstein\",\n    \"type\": {{type_id}},\n    \"description\": \"Dairy breed\"\n}"
               },
               "url": {
-                "raw": "{{base_url}}/api/health/edit_health_condition/1",
+                "raw": "{{base_url}}/animals/add_animal_breed/{{farm_id}}",
                 "host": ["{{base_url}}"],
-                "path": ["api", "health", "edit_health_condition", "1"]
+                "path": ["animals", "add_animal_breed", "{{farm_id}}"]
               }
             }
           },
           {
-            "name": "Delete Health Condition",
+            "name": "Edit Animal Breed",
             "request": {
-              "method": "POST",
-              "header": [],
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"name\": \"Updated Holstein\",\n    \"type\": {{type_id}},\n    \"description\": \"Updated description\"\n}"
+              },
               "url": {
-                "raw": "{{base_url}}/api/health/delete_health_condition/1",
+                "raw": "{{base_url}}/animals/edit_animal_breed/{{farm_id}}/{{breed_id}}",
                 "host": ["{{base_url}}"],
-                "path": ["api", "health", "delete_health_condition", "1"]
+                "path": ["animals", "edit_animal_breed", "{{farm_id}}", "{{breed_id}}"]
+              }
+            }
+          },
+          {
+            "name": "Delete Animal Breed",
+            "request": {
+              "method": "DELETE",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/animals/delete_animal_breed/{{farm_id}}/{{breed_id}}",
+                "host": ["{{base_url}}"],
+                "path": ["animals", "delete_animal_breed", "{{farm_id}}", "{{breed_id}}"]
               }
             }
           }
         ]
       },
       {
-        "name": "Vet Services",
+        "name": "Animals",
         "item": [
           {
-            "name": "Get All Vet Services",
+            "name": "Get Animals",
             "request": {
               "method": "GET",
-              "header": [],
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
               "url": {
-                "raw": "{{base_url}}/api/health/get_vet_services/1",
+                "raw": "{{base_url}}/animals/get_animals/{{farm_id}}",
                 "host": ["{{base_url}}"],
-                "path": ["api", "health", "get_vet_services", "1"]
+                "path": ["animals", "get_animals", "{{farm_id}}"]
               }
             }
           },
           {
-            "name": "Get Single Vet Service",
+            "name": "Get Animal",
             "request": {
               "method": "GET",
-              "header": [],
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
               "url": {
-                "raw": "{{base_url}}/api/health/get_vet_service/1",
+                "raw": "{{base_url}}/animals/get_animal/{{farm_id}}/{{animal_id}}",
                 "host": ["{{base_url}}"],
-                "path": ["api", "health", "get_vet_service", "1"]
+                "path": ["animals", "get_animal", "{{farm_id}}", "{{animal_id}}"]
               }
             }
           },
           {
-            "name": "Add Vet Service",
+            "name": "Create Animal",
             "request": {
               "method": "POST",
               "header": [
                 {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": {
-                "mode": "raw",
-                "raw": "{\n    \"name\": \"Antibiotic Treatment\",\n    \"description\": \"Administration of antibiotics\",\n    \"cost\": \"50.00\"\n}"
-              },
-              "url": {
-                "raw": "{{base_url}}/api/health/add_vet_service/1",
-                "host": ["{{base_url}}"],
-                "path": ["api", "health", "add_vet_service", "1"]
-              }
-            }
-          },
-          {
-            "name": "Edit Vet Service",
-            "request": {
-              "method": "POST",
-              "header": [
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                },
                 {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json",
+                  "type": "text"
                 }
               ],
               "body": {
                 "mode": "raw",
-                "raw": "{\n    \"name\": \"Antibiotic Treatment Updated\",\n    \"description\": \"Administration of antibiotics\",\n    \"cost\": \"60.00\"\n}"
+                "raw": "{\n    \"name\": \"Bessie\",\n    \"type\": {{type_id}},\n    \"breed\": {{breed_id}},\n    \"gender\": \"F\",\n    \"date_of_birth\": \"2020-01-01\",\n    \"weight\": 500.5,\n    \"tag_number\": \"TAG123\",\n    \"status\": \"active\"\n}"
               },
               "url": {
-                "raw": "{{base_url}}/api/health/edit_vet_service/1",
+                "raw": "{{base_url}}/animals/create_animal/{{farm_id}}",
                 "host": ["{{base_url}}"],
-                "path": ["api", "health", "edit_vet_service", "1"]
+                "path": ["animals", "create_animal", "{{farm_id}}"]
               }
             }
           },
           {
-            "name": "Delete Vet Service",
+            "name": "Edit Animal",
             "request": {
-              "method": "POST",
-              "header": [],
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"name\": \"Updated Bessie\",\n    \"type\": {{type_id}},\n    \"breed\": {{breed_id}},\n    \"gender\": \"F\",\n    \"date_of_birth\": \"2020-01-01\",\n    \"weight\": 550.5,\n    \"tag_number\": \"TAG123\",\n    \"status\": \"active\"\n}"
+              },
               "url": {
-                "raw": "{{base_url}}/api/health/delete_vet_service/1",
+                "raw": "{{base_url}}/animals/edit_animal/{{farm_id}}/{{animal_id}}",
                 "host": ["{{base_url}}"],
-                "path": ["api", "health", "delete_vet_service", "1"]
+                "path": ["animals", "edit_animal", "{{farm_id}}", "{{animal_id}}"]
+              }
+            }
+          },
+          {
+            "name": "Delete Animal",
+            "request": {
+              "method": "DELETE",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/animals/delete_animal/{{farm_id}}/{{animal_id}}",
+                "host": ["{{base_url}}"],
+                "path": ["animals", "delete_animal", "{{farm_id}}", "{{animal_id}}"]
               }
             }
           }
         ]
       },
       {
-        "name": "Health Records",
+        "name": "Animal Images",
         "item": [
           {
-            "name": "Get All Health Records",
-            "request": {
-              "method": "GET",
-              "header": [],
-              "url": {
-                "raw": "{{base_url}}/api/health/get_health_records/1",
-                "host": ["{{base_url}}"],
-                "path": ["api", "health", "get_health_records", "1"]
-              }
-            }
-          },
-          {
-            "name": "Get Single Health Record",
-            "request": {
-              "method": "GET",
-              "header": [],
-              "url": {
-                "raw": "{{base_url}}/api/health/get_health_record/1",
-                "host": ["{{base_url}}"],
-                "path": ["api", "health", "get_health_record", "1"]
-              }
-            }
-          },
-          {
-            "name": "Add Health Record",
+            "name": "Post Animal Image",
             "request": {
               "method": "POST",
               "header": [
                 {
-                  "key": "Content-Type",
-                  "value": "application/json"
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
                 }
               ],
               "body": {
-                "mode": "raw",
-                "raw": "{\n    \"animal\": 1,\n    \"condition\": 1,\n    \"veterinarian\": 1,\n    \"diagnosis_date\": \"2024-03-20\",\n    \"symptoms\": \"Swollen udder, fever\",\n    \"notes\": \"Acute case\",\n    \"image\": \"https://example.com/image.jpg\",\n    \"image_reference\": \"Udder examination\"\n}"
+                "mode": "formdata",
+                "formdata": [
+                  {
+                    "key": "image",
+                    "type": "file",
+                    "src": "/path/to/image.jpg"
+                  }
+                ]
               },
               "url": {
-                "raw": "{{base_url}}/api/health/add_health_record",
+                "raw": "{{base_url}}/animals/post_animal_image/{{animal_id}}",
                 "host": ["{{base_url}}"],
-                "path": ["api", "health", "add_health_record"]
+                "path": ["animals", "post_animal_image", "{{animal_id}}"]
               }
             }
           },
           {
-            "name": "Edit Health Record",
+            "name": "Delete Animal Image",
             "request": {
-              "method": "POST",
+              "method": "DELETE",
               "header": [
                 {
-                  "key": "Content-Type",
-                  "value": "application/json"
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
                 }
               ],
-              "body": {
-                "mode": "raw",
-                "raw": "{\n    \"animal\": 1,\n    \"condition\": 1,\n    \"veterinarian\": 1,\n    \"diagnosis_date\": \"2024-03-20\",\n    \"symptoms\": \"Swollen udder, fever\",\n    \"notes\": \"Acute case\",\n    \"is_resolved\": true,\n    \"resolution_date\": \"2024-03-25\",\n    \"image\": \"https://example.com/image.jpg\",\n    \"image_reference\": \"Udder examination\"\n}"
-              },
               "url": {
-                "raw": "{{base_url}}/api/health/edit_health_record/1",
+                "raw": "{{base_url}}/animals/delete_animal_image/{{farm_id}}/{{image_id}}",
                 "host": ["{{base_url}}"],
-                "path": ["api", "health", "edit_health_record", "1"]
-              }
-            }
-          },
-          {
-            "name": "Delete Health Record",
-            "request": {
-              "method": "POST",
-              "header": [],
-              "url": {
-                "raw": "{{base_url}}/api/health/delete_health_record/1",
-                "host": ["{{base_url}}"],
-                "path": ["api", "health", "delete_health_record", "1"]
+                "path": ["animals", "delete_animal_image", "{{farm_id}}", "{{image_id}}"]
               }
             }
           }
         ]
       },
       {
-        "name": "Treatments",
+        "name": "Artificial Insemination",
         "item": [
           {
-            "name": "Get All Treatments",
+            "name": "Get AI Records",
             "request": {
               "method": "GET",
-              "header": [],
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
               "url": {
-                "raw": "{{base_url}}/api/health/get_treatments/1",
+                "raw": "{{base_url}}/animals/get_ai_records/{{farm_id}}",
                 "host": ["{{base_url}}"],
-                "path": ["api", "health", "get_treatments", "1"]
+                "path": ["animals", "get_ai_records", "{{farm_id}}"]
               }
             }
           },
           {
-            "name": "Get Single Treatment",
-            "request": {
-              "method": "GET",
-              "header": [],
-              "url": {
-                "raw": "{{base_url}}/api/health/get_treatment/1",
-                "host": ["{{base_url}}"],
-                "path": ["api", "health", "get_treatment", "1"]
-              }
-            }
-          },
-          {
-            "name": "Add Treatment",
+            "name": "Add AI Record",
             "request": {
               "method": "POST",
               "header": [
                 {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                },
+                {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json",
+                  "type": "text"
                 }
               ],
               "body": {
                 "mode": "raw",
-                "raw": "{\n    \"health_record\": 1,\n    \"service\": 1,\n    \"treatment_date\": \"2024-03-20\",\n    \"quantity\": 1,\n    \"unit_cost\": \"50.00\",\n    \"notes\": \"Administered antibiotics\"\n}"
+                "raw": "{\n    \"animal\": {{animal_id}},\n    \"date\": \"2024-03-20\",\n    \"semen_brand\": \"Brand X\",\n    \"semen_code\": \"S123\",\n    \"technician\": \"John Doe\",\n    \"status\": \"successful\",\n    \"cost\": 50.00\n}"
               },
               "url": {
-                "raw": "{{base_url}}/api/health/add_treatment",
+                "raw": "{{base_url}}/animals/add_ai_record/{{farm_id}}",
                 "host": ["{{base_url}}"],
-                "path": ["api", "health", "add_treatment"]
+                "path": ["animals", "add_ai_record", "{{farm_id}}"]
               }
             }
           },
           {
-            "name": "Edit Treatment",
+            "name": "Edit AI Record",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"animal\": {{animal_id}},\n    \"date\": \"2024-03-20\",\n    \"semen_brand\": \"Updated Brand X\",\n    \"semen_code\": \"S123\",\n    \"technician\": \"John Doe\",\n    \"status\": \"successful\",\n    \"cost\": 55.00\n}"
+              },
+              "url": {
+                "raw": "{{base_url}}/animals/edit_ai_record/{{farm_id}}/{{ai_record_id}}",
+                "host": ["{{base_url}}"],
+                "path": ["animals", "edit_ai_record", "{{farm_id}}", "{{ai_record_id}}"]
+              }
+            }
+          },
+          {
+            "name": "Delete AI Record",
+            "request": {
+              "method": "DELETE",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/animals/delete_ai_record/{{farm_id}}/{{ai_record_id}}",
+                "host": ["{{base_url}}"],
+                "path": ["animals", "delete_ai_record", "{{farm_id}}", "{{ai_record_id}}"]
+              }
+            }
+          },
+          {
+            "name": "Set AI Sire",
             "request": {
               "method": "POST",
               "header": [
                 {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                },
+                {
                   "key": "Content-Type",
-                  "value": "application/json"
+                  "value": "application/json",
+                  "type": "text"
                 }
               ],
               "body": {
                 "mode": "raw",
-                "raw": "{\n    \"health_record\": 1,\n    \"service\": 1,\n    \"treatment_date\": \"2024-03-20\",\n    \"quantity\": 2,\n    \"unit_cost\": \"50.00\",\n    \"notes\": \"Administered antibiotics\"\n}"
+                "raw": "{\n    \"ai_record\": {{ai_record_id}}\n}"
               },
               "url": {
-                "raw": "{{base_url}}/api/health/edit_treatment/1",
+                "raw": "{{base_url}}/animals/set_ai_sire/{{animal_id}}",
                 "host": ["{{base_url}}"],
-                "path": ["api", "health", "edit_treatment", "1"]
+                "path": ["animals", "set_ai_sire", "{{animal_id}}"]
               }
             }
           },
           {
-            "name": "Delete Treatment",
+            "name": "Clear AI Sire",
             "request": {
               "method": "POST",
-              "header": [],
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
               "url": {
-                "raw": "{{base_url}}/api/health/delete_treatment/1",
+                "raw": "{{base_url}}/animals/clear_ai_sire/{{animal_id}}",
                 "host": ["{{base_url}}"],
-                "path": ["api", "health", "delete_treatment", "1"]
+                "path": ["animals", "clear_ai_sire", "{{animal_id}}"]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Animal Health Records",
+        "item": [
+          {
+            "name": "Get Animal Health Records",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/animals/get_animal_health_records/{{animal_id}}",
+                "host": ["{{base_url}}"],
+                "path": ["animals", "get_animal_health_records", "{{animal_id}}"]
               }
             }
           }
@@ -424,7 +544,42 @@
     "variable": [
       {
         "key": "base_url",
-        "value": "http://localhost:8000",
+        "value": "http://localhost:8000/api",
+        "type": "string"
+      },
+      {
+        "key": "token",
+        "value": "your_jwt_token_here",
+        "type": "string"
+      },
+      {
+        "key": "farm_id",
+        "value": "1",
+        "type": "string"
+      },
+      {
+        "key": "type_id",
+        "value": "1",
+        "type": "string"
+      },
+      {
+        "key": "breed_id",
+        "value": "1",
+        "type": "string"
+      },
+      {
+        "key": "animal_id",
+        "value": "1",
+        "type": "string"
+      },
+      {
+        "key": "image_id",
+        "value": "1",
+        "type": "string"
+      },
+      {
+        "key": "ai_record_id",
+        "value": "1",
         "type": "string"
       }
     ]

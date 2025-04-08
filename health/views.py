@@ -19,15 +19,15 @@ def get_veterinarians(request, farm_id):
     serializer = VeterinarianSerializer(veterinarians, many=True)
     return Response(serializer.data, status=200)
 
-@api_view
-def get_veterinarian(request, id):
+@api_view(['GET'])
+def get_veterinarian(request, farm_id, id):
     """Get specific veterinarian"""
     try:
-        veterinarian = Veterinarian.objects.get(id=id)
+        veterinarian = Veterinarian.objects.get(id=id, farm_id=farm_id)
         serializer = VeterinarianSerializer(veterinarian)
         return Response(serializer.data, status=200)
     except Veterinarian.DoesNotExist:
-        return Response({"error": f"Veterinarian with id:{vet_id} not found"}, status=404)
+        return Response({"error": f"Veterinarian with id:{id} not found in farm:{farm_id}"}, status=404)
 
 
 @api_view(['POST'])
@@ -41,28 +41,27 @@ def add_veterinarian(request, farm_id):
     return Response(serializer.errors, status=400)
 
 @api_view(['POST'])
-def edit_veterinarian(request, id):
+def edit_veterinarian(request, farm_id, id):
     """Edit veterinarian"""
-    serializer = VeterinarianSerializer(data=request.data)
-    if serializer.is_valid():
-        veterinarian = Veterinarian.objects.get(id=id)
-        for key, value in request.data.items():
-            if key != "id":
-                setattr(veterinarian, key, value)
-        veterinarian.save()
-        return Response(serializer.data, status=200)
-    return Response(serializer.errors, status=400)
+    try:
+        veterinarian = Veterinarian.objects.get(id=id, farm_id=farm_id)
+        serializer = VeterinarianSerializer(veterinarian, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200)
+        return Response(serializer.errors, status=400)
+    except Veterinarian.DoesNotExist:
+        return Response({"error": f"Veterinarian with id:{id} not found in farm:{farm_id}"}, status=404)
 
 @api_view(['POST'])
-def delete_veterinarian(request, id):
+def delete_veterinarian(request, farm_id, id):
     """Delete veterinarian"""
     try:
-        veterinarian = Veterinarian.objects.get(id=id)
-        name = veterinarian.name
+        veterinarian = Veterinarian.objects.get(id=id, farm_id=farm_id)
         veterinarian.delete()
-        return Response({"message": f"Veterinarian id:{id} name:{name} deleted successfully"}, status=200)
+        return Response({"message": "Veterinarian deleted successfully"}, status=200)
     except Veterinarian.DoesNotExist:
-        return Response({"error": f"Veterinarian with this id:{id} does not exist"}, status=400)
+        return Response({"error": f"Veterinarian with id:{id} not found in farm:{farm_id}"}, status=404)
 
 ###################### HEALTH CONDITIONS ########################
 
@@ -75,14 +74,14 @@ def get_health_conditions(request, farm_id):
     return Response(serializer.data, status=200)
 
 @api_view(['GET'])
-def get_health_condition(requests, id):
-    """Get health condition by id"""
+def get_health_condition(request, farm_id, id):
+    """Get specific health condition"""
     try:
-        health_record = HealthRecord.objects.get(id=id)
-        serializer = HealthRecordSerializer(health_record)
+        condition = HealthCondition.objects.get(id=id, farm_id=farm_id)
+        serializer = HealthConditionSerializer(condition)
         return Response(serializer.data, status=200)
-    except HealthRecord.DoesNotExist:
-        return Response({"error": f"Health record with id:{hr_id} not found"}, status=404)
+    except HealthCondition.DoesNotExist:
+        return Response({"error": f"Health condition with id:{id} not found in farm:{farm_id}"}, status=404)
 
 @api_view(['POST'])
 def add_health_condition(request, farm_id):
@@ -95,28 +94,27 @@ def add_health_condition(request, farm_id):
     return Response(serializer.errors, status=400)
 
 @api_view(['POST'])
-def edit_health_condition(request, id):
+def edit_health_condition(request, farm_id, id):
     """Edit health condition"""
-    serializer = HealthConditionSerializer(data=request.data)
-    if serializer.is_valid():
-        condition = HealthCondition.objects.get(id=id)
-        for key, value in request.data.items():
-            if key != "id":
-                setattr(condition, key, value)
-        condition.save()
-        return Response(serializer.data, status=200)
-    return Response(serializer.errors, status=400)
+    try:
+        condition = HealthCondition.objects.get(id=id, farm_id=farm_id)
+        serializer = HealthConditionSerializer(condition, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200)
+        return Response(serializer.errors, status=400)
+    except HealthCondition.DoesNotExist:
+        return Response({"error": f"Health condition with id:{id} not found in farm:{farm_id}"}, status=404)
 
 @api_view(['POST'])
-def delete_health_condition(request, id):
+def delete_health_condition(request, farm_id, id):
     """Delete health condition"""
     try:
-        condition = HealthCondition.objects.get(id=id)
-        name = condition.name
+        condition = HealthCondition.objects.get(id=id, farm_id=farm_id)
         condition.delete()
-        return Response({"message": f"Health condition id:{id} name:{name} deleted successfully"}, status=200)
+        return Response({"message": "Health condition deleted successfully"}, status=200)
     except HealthCondition.DoesNotExist:
-        return Response({"error": f"Health condition with this id:{id} does not exist"}, status=400)
+        return Response({"error": f"Health condition with id:{id} not found in farm:{farm_id}"}, status=404)
 
 ###################### VET SERVICES ########################
 
@@ -139,38 +137,37 @@ def add_vet_service(request, farm_id):
     return Response(serializer.errors, status=400)
 
 @api_view(['POST'])
-def edit_vet_service(request, id):
+def edit_vet_service(request, id, farm_id):
     """Edit vet service"""
-    serializer = VetServiceSerializer(data=request.data)
-    if serializer.is_valid():
-        service = VetService.objects.get(id=id)
-        for key, value in request.data.items():
-            if key != "id":
-                setattr(service, key, value)
-        service.save()
-        return Response(serializer.data, status=200)
-    return Response(serializer.errors, status=400)
+    try:
+        service = VetService.objects.get(id=id, farm_id=farm_id)
+        serializer = VetServiceSerializer(service, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200)
+        return Response(serializer.errors, status=400)
+    except VetService.DoesNotExist:
+        return Response({"error": f"Vet service with id:{id} not found in farm:{farm_id}"}, status=404)
 
 @api_view(['POST'])
-def delete_vet_service(request, id):
+def delete_vet_service(request, id, farm_id):
     """Delete vet service"""
     try:
-        service = VetService.objects.get(id=id)
-        name = service.name
+        service = VetService.objects.get(id=id, farm_id=farm_id)
         service.delete()
-        return Response({"message": f"Vet service id:{id} name:{name} deleted successfully"}, status=200)
+        return Response({"message": "Vet service deleted successfully"}, status=200)
     except VetService.DoesNotExist:
-        return Response({"error": f"Vet service with this id:{id} does not exist"}, status=400)
+        return Response({"error": f"Vet service with id:{id} not found in farm:{farm_id}"}, status=404)
 
 @api_view(['GET'])
-def get_vet_service(request, id):
+def get_vet_service(request, farm_id, id):
     """Get specific vet service"""
     try:
-        service = VetService.objects.get(id=id)
+        service = VetService.objects.get(id=id, farm_id=farm_id)
         serializer = VetServiceSerializer(service)
         return Response(serializer.data, status=200)
     except VetService.DoesNotExist:
-        return Response({"error": f"Vet service with id:{id} not found"}, status=404)
+        return Response({"error": f"Vet service with id:{id} not found in farm:{farm_id}"}, status=404)
 
 ###################### HEALTH RECORDS ########################
 
@@ -200,14 +197,14 @@ def get_health_records(request, farm_id):
     return Response(serializer.data, status=200)
 
 @api_view(['GET'])
-def get_health_record(request, id):
+def get_health_record(request, farm_id, id):
     """Get specific health record"""
     try:
-        record = HealthRecord.objects.get(id=id)
+        record = HealthRecord.objects.get(id=id, animal__farm_id=farm_id)
         serializer = HealthRecordSerializer(record)
         return Response(serializer.data, status=200)
     except HealthRecord.DoesNotExist:
-        return Response({"error": f"Health record with id:{id} not found"}, status=404)
+        return Response({"error": f"Health record with id:{id} not found in farm:{farm_id}"}, status=404)
 
 @api_view(['POST'])
 def add_health_record(request):
@@ -219,27 +216,27 @@ def add_health_record(request):
     return Response(serializer.errors, status=400)
 
 @api_view(['POST'])
-def edit_health_record(request, id):
+def edit_health_record(request, farm_id, id):
     """Edit health record"""
-    serializer = HealthRecordSerializer(data=request.data)
-    if serializer.is_valid():
-        record = HealthRecord.objects.get(id=id)
-        for key, value in request.data.items():
-            if key != "id":
-                setattr(record, key, value)
-        record.save()
-        return Response(serializer.data, status=200)
-    return Response(serializer.errors, status=400)
+    try:
+        record = HealthRecord.objects.get(id=id, animal__farm_id=farm_id)
+        serializer = HealthRecordSerializer(record, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200)
+        return Response(serializer.errors, status=400)
+    except HealthRecord.DoesNotExist:
+        return Response({"error": f"Health record with id:{id} not found in farm:{farm_id}"}, status=404)
 
 @api_view(['POST'])
-def delete_health_record(request, id):
+def delete_health_record(request, farm_id, id):
     """Delete health record"""
     try:
-        record = HealthRecord.objects.get(id=id)
+        record = HealthRecord.objects.get(id=id, animal__farm_id=farm_id)
         record.delete()
-        return Response({"message": f"Health record id:{id} deleted successfully"}, status=200)
+        return Response({"message": "Health record deleted successfully"}, status=200)
     except HealthRecord.DoesNotExist:
-        return Response({"error": f"Health record with this id:{id} does not exist"}, status=400)
+        return Response({"error": f"Health record with id:{id} not found in farm:{farm_id}"}, status=404)
 
 ###################### TREATMENTS ########################
 
@@ -260,34 +257,34 @@ def add_treatment(request):
     return Response(serializer.errors, status=400)
 
 @api_view(['POST'])
-def edit_treatment(request, id):
+def edit_treatment(request, farm_id, id):
     """Edit treatment"""
-    serializer = TreatmentSerializer(data=request.data)
-    if serializer.is_valid():
-        treatment = Treatment.objects.get(id=id)
-        for key, value in request.data.items():
-            if key != "id":
-                setattr(treatment, key, value)
-        treatment.save()
-        return Response(serializer.data, status=200)
-    return Response(serializer.errors, status=400)
+    try:
+        treatment = Treatment.objects.get(id=id, health_record__animal__farm_id=farm_id)
+        serializer = TreatmentSerializer(treatment, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200)
+        return Response(serializer.errors, status=400)
+    except Treatment.DoesNotExist:
+        return Response({"error": f"Treatment with id:{id} not found in farm:{farm_id}"}, status=404)
 
 @api_view(['POST'])
-def delete_treatment(request, id):
+def delete_treatment(request, farm_id, id):
     """Delete treatment"""
     try:
-        treatment = Treatment.objects.get(id=id)
+        treatment = Treatment.objects.get(id=id, health_record__animal__farm_id=farm_id)
         treatment.delete()
-        return Response({"message": f"Treatment id:{id} deleted successfully"}, status=200)
+        return Response({"message": "Treatment deleted successfully"}, status=200)
     except Treatment.DoesNotExist:
-        return Response({"error": f"Treatment with this id:{id} does not exist"}, status=404)
+        return Response({"error": f"Treatment with id:{id} not found in farm:{farm_id}"}, status=404)
 
 @api_view(['GET'])
-def get_treatment(request, id):
+def get_treatment(request, farm_id, id):
     """Get specific treatment"""
     try:
-        treatment = Treatment.objects.get(id=id)
+        treatment = Treatment.objects.get(id=id, health_record__animal__farm_id=farm_id)
         serializer = TreatmentSerializer(treatment)
         return Response(serializer.data, status=200)
     except Treatment.DoesNotExist:
-        return Response({"error": f"Treatment with id:{id} not found"}, status=404)
+        return Response({"error": f"Treatment with id:{id} not found in farm:{farm_id}"}, status=404)
