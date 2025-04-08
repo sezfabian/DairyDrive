@@ -70,7 +70,7 @@ class HealthRecord(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.animal.tag_number} - {self.condition.name} ({self.diagnosis_date})"
+        return f"{self.animal.name} - {self.condition.name} ({self.diagnosis_date})"
 
     class Meta:
         ordering = ['-diagnosis_date']
@@ -91,7 +91,7 @@ class Treatment(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.health_record.animal.tag_number} - {self.service.name} ({self.treatment_date})"
+        return f"{self.health_record.animal.name} - {self.service.name} ({self.treatment_date})"
 
     class Meta:
         ordering = ['-treatment_date']

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Animal, AnimalImage, AnimalType, AnimalBreed, ArtificialInsemination
+from health.models import HealthRecord, Treatment, VetService
 
 class AnimalTypeSerializer(serializers.ModelSerializer):
     breeds = serializers.SerializerMethodField()
@@ -39,6 +40,38 @@ class ArtificialInseminationSerializer(serializers.ModelSerializer):
     def get_breed_name(self, obj):
         return obj.breed.name if obj.breed else None
 
+class TreatmentSerializer(serializers.ModelSerializer):
+    service_name = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Treatment
+        fields = [
+            'id', 'service', 'service_name', 'treatment_date', 'quantity',
+            'unit_cost', 'total_cost', 'notes', 'created_at', 'updated_at'
+        ]
+    
+    def get_service_name(self, obj):
+        return obj.service.name if obj.service else None
+
+class HealthRecordSerializer(serializers.ModelSerializer):
+    condition_name = serializers.SerializerMethodField()
+    veterinarian_name = serializers.SerializerMethodField()
+    treatments = TreatmentSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = HealthRecord
+        fields = [
+            'id', 'animal', 'condition', 'condition_name', 'veterinarian', 'veterinarian_name',
+            'diagnosis_date', 'symptoms', 'notes', 'is_resolved', 'resolution_date',
+            'image', 'image_reference', 'treatments', 'created_at', 'updated_at'
+        ]
+
+    def get_condition_name(self, obj):
+        return obj.condition.name if obj.condition else None
+
+    def get_veterinarian_name(self, obj):
+        return obj.veterinarian.name if obj.veterinarian else None
+
 class AnimalSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
     type_name = serializers.SerializerMethodField()
@@ -46,6 +79,7 @@ class AnimalSerializer(serializers.ModelSerializer):
     ai_records = serializers.SerializerMethodField()
     ai_sire_details = serializers.SerializerMethodField()
     sire_type = serializers.SerializerMethodField()
+    health_records = serializers.SerializerMethodField()
 
     class Meta:
         model = Animal
@@ -53,7 +87,7 @@ class AnimalSerializer(serializers.ModelSerializer):
             'id', 'name', 'type', 'type_name', 'breed', 'breed_name', 'gender', 'weight', 'description', 'age', 'date_of_birth', 'date_of_death',
             'dam', 'sire', 'ai_sire', 'ai_sire_details', 'sire_type', 'date_of_purchase', 'date_of_sale', 'is_on_sale', 'price',
             'purchase_price', 'farm', 'to_be_archived', 'created_by', 'created_at', 'updated_at',
-            'images', 'ai_records'
+            'images', 'ai_records', 'health_records'
         ]
 
     def get_images(self, obj):
@@ -81,3 +115,7 @@ class AnimalSerializer(serializers.ModelSerializer):
         elif obj.sire:
             return 'Natural'
         return None
+
+    def get_health_records(self, obj):
+        health_records = HealthRecord.objects.filter(animal=obj).order_by('-diagnosis_date')
+        return HealthRecordSerializer(health_records, many=True).data

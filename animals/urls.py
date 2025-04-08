@@ -34,4 +34,7 @@ urlpatterns = [
     path("delete_ai_record/<int:id>", delete_ai_record, name="delete_ai_record"),
     path("set_ai_sire/<int:animal_id>", set_ai_sire, name="set_ai_sire"),
     path("clear_ai_sire/<int:animal_id>", clear_ai_sire, name="clear_ai_sire"),
+
+    # Animal health records
+    path('get_animal_health_records/<int:animal_id>/', get_animal_health_records, name='get_animal_health_records'),
 ]

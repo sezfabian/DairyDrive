@@ -1,0 +1,158 @@
+{
+    "info": {
+        "name": "DairyDrive API",
+        "description": "API collection for DairyDrive project",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Animals",
+            "item": [
+                {
+                    "name": "Get Animals",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{access_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/animals/get_animals/{{farm_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["animals", "get_animals", "{{farm_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Animal",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{access_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/animals/get_animal/{{animal_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["animals", "get_animal", "{{animal_id}}"]
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success Response",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{access_token}}"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/animals/get_animal/{{animal_id}}"
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": {
+                                "id": 1,
+                                "name": "Animal Name",
+                                "tag_number": "TAG123",
+                                "type": {
+                                    "id": 1,
+                                    "name": "Cow"
+                                },
+                                "breed": {
+                                    "id": 1,
+                                    "name": "Holstein"
+                                },
+                                "gender": "FEMALE",
+                                "date_of_birth": "2020-01-01",
+                                "weight": 500.00,
+                                "farm": 1,
+                                "health_records": [
+                                    {
+                                        "id": 1,
+                                        "condition": {
+                                            "id": 1,
+                                            "name": "Mastitis"
+                                        },
+                                        "veterinarian": {
+                                            "id": 1,
+                                            "name": "Dr. Smith"
+                                        },
+                                        "diagnosis_date": "2024-03-20",
+                                        "symptoms": "Swollen udder, fever",
+                                        "notes": "Initial diagnosis",
+                                        "image": "https://example.com/image.jpg",
+                                        "image_reference": "Image reference",
+                                        "treatments": [
+                                            {
+                                                "id": 1,
+                                                "name": "Antibiotics",
+                                                "dosage": "10ml",
+                                                "frequency": "Twice daily",
+                                                "start_date": "2024-03-20",
+                                                "end_date": "2024-03-27"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Get Animal Health Records",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{access_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/animals/get_animal_health_records/{{animal_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["animals", "get_animal_health_records", "{{animal_id}}"]
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000",
+            "type": "string"
+        },
+        {
+            "key": "access_token",
+            "value": "your_access_token",
+            "type": "string"
+        },
+        {
+            "key": "farm_id",
+            "value": "1",
+            "type": "string"
+        },
+        {
+            "key": "animal_id",
+            "value": "1",
+            "type": "string"
+        }
+    ]
+} 

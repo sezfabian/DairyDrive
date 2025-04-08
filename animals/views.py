@@ -5,6 +5,7 @@ from datetime import date
 from users.models import UserProfile
 from rest_framework.decorators import authentication_classes, permission_classes, api_view
 from rest_framework.response import Response
+from health.models import HealthRecord
 
 
 ###################### ANIMAL TYPES ########################
@@ -311,3 +312,14 @@ def clear_ai_sire(request, animal_id):
         return Response({"message": f"AI sire cleared successfully for animal {animal.name}"}, status=200)
     except Animal.DoesNotExist:
         return Response({"error": f"Animal with id:{animal_id} does not exist"}, status=400)
+
+@api_view(['GET'])
+def get_animal_health_records(request, animal_id):
+    """Get health records for a specific animal"""
+    try:
+        animal = Animal.objects.get(id=animal_id)
+        health_records = HealthRecord.objects.filter(animal=animal).order_by('-diagnosis_date')
+        serializer = HealthRecordSerializer(health_records, many=True)
+        return Response(serializer.data, status=200)
+    except Animal.DoesNotExist:
+        return Response({"error": f"Animal with id:{animal_id} does not exist"}, status=404)
