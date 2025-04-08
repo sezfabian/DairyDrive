@@ -19,6 +19,17 @@ def get_veterinarians(request, farm_id):
     serializer = VeterinarianSerializer(veterinarians, many=True)
     return Response(serializer.data, status=200)
 
+@api_view
+def get_veterinarian(request, id):
+    """Get specific veterinarian"""
+    try:
+        veterinarian = Veterinarian.objects.get(id=id)
+        serializer = VeterinarianSerializer(veterinarian)
+        return Response(serializer.data, status=200)
+    except Veterinarian.DoesNotExist:
+        return Response({"error": f"Veterinarian with id:{vet_id} not found"}, status=404)
+
+
 @api_view(['POST'])
 def add_veterinarian(request, farm_id):
     """Add veterinarian"""
@@ -62,6 +73,16 @@ def get_health_conditions(request, farm_id):
     conditions = HealthCondition.objects.filter(farm=farm)
     serializer = HealthConditionSerializer(conditions, many=True)
     return Response(serializer.data, status=200)
+
+@api_view(['GET'])
+def get_health_condition(requests, id):
+    """Get health condition by id"""
+    try:
+        health_record = HealthRecord.objects.get(id=id)
+        serializer = HealthRecordSerializer(health_record)
+        return Response(serializer.data, status=200)
+    except HealthRecord.DoesNotExist:
+        return Response({"error": f"Health record with id:{hr_id} not found"}, status=404)
 
 @api_view(['POST'])
 def add_health_condition(request, farm_id):
@@ -140,6 +161,16 @@ def delete_vet_service(request, id):
         return Response({"message": f"Vet service id:{id} name:{name} deleted successfully"}, status=200)
     except VetService.DoesNotExist:
         return Response({"error": f"Vet service with this id:{id} does not exist"}, status=400)
+
+@api_view(['GET'])
+def get_vet_service(request, id):
+    """Get specific vet service"""
+    try:
+        service = VetService.objects.get(id=id)
+        serializer = VetServiceSerializer(service)
+        return Response(serializer.data, status=200)
+    except VetService.DoesNotExist:
+        return Response({"error": f"Vet service with id:{id} not found"}, status=404)
 
 ###################### HEALTH RECORDS ########################
 
@@ -249,4 +280,14 @@ def delete_treatment(request, id):
         treatment.delete()
         return Response({"message": f"Treatment id:{id} deleted successfully"}, status=200)
     except Treatment.DoesNotExist:
-        return Response({"error": f"Treatment with this id:{id} does not exist"}, status=400)
+        return Response({"error": f"Treatment with this id:{id} does not exist"}, status=404)
+
+@api_view(['GET'])
+def get_treatment(request, id):
+    """Get specific treatment"""
+    try:
+        treatment = Treatment.objects.get(id=id)
+        serializer = TreatmentSerializer(treatment)
+        return Response(serializer.data, status=200)
+    except Treatment.DoesNotExist:
+        return Response({"error": f"Treatment with id:{id} not found"}, status=404)
