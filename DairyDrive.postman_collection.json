@@ -1,586 +1,549 @@
 {
-    "info": {
-      "name": "DairyDrive Animals API",
-      "description": "API endpoints for managing animals, types, breeds, images, AI records, and health records",
-      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  "info": {
+    "name": "DairyDrive Products API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/products/get_products/{{farm_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "get_products", "{{farm_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Single Product",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/products/get_product/{{farm_id}}/{{product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "get_product", "{{farm_id}}", "{{product_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Add Product",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Milk\",\n    \"unit\": \"liters\",\n    \"description\": \"Fresh cow milk\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/products/add_product/{{farm_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "add_product", "{{farm_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Edit Product",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Milk\",\n    \"unit\": \"liters\",\n    \"description\": \"Fresh cow milk - updated\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/products/edit_product/{{farm_id}}/{{product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "edit_product", "{{farm_id}}", "{{product_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Product",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/products/delete_product/{{farm_id}}/{{product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "delete_product", "{{farm_id}}", "{{product_id}}"]
+            }
+          }
+        }
+      ]
     },
-    "item": [
-      {
-        "name": "Animal Types",
-        "item": [
-          {
-            "name": "Get Animal Types",
-            "request": {
-              "method": "GET",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
-                }
-              ],
-              "url": {
-                "raw": "{{base_url}}/animals/get_animal_types/{{farm_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "get_animal_types", "{{farm_id}}"]
+    {
+      "name": "Production Records",
+      "item": [
+        {
+          "name": "Get All Production Records",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
               }
-            }
-          },
-          {
-            "name": "Add Animal Type",
-            "request": {
-              "method": "POST",
-              "header": [
+            ],
+            "url": {
+              "raw": "{{base_url}}/products/get_production_records/{{farm_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "get_production_records", "{{farm_id}}"],
+              "query": [
                 {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
+                  "key": "animal_id",
+                  "value": "{{animal_id}}",
+                  "disabled": true
                 },
                 {
-                  "key": "Content-Type",
-                  "value": "application/json",
-                  "type": "text"
-                }
-              ],
-              "body": {
-                "mode": "raw",
-                "raw": "{\n    \"name\": \"Cow\",\n    \"description\": \"Dairy cattle\"\n}"
-              },
-              "url": {
-                "raw": "{{base_url}}/animals/add_animal_type/{{farm_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "add_animal_type", "{{farm_id}}"]
-              }
-            }
-          },
-          {
-            "name": "Edit Animal Type",
-            "request": {
-              "method": "PUT",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
+                  "key": "animal_type_id",
+                  "value": "{{animal_type_id}}",
+                  "disabled": true
                 },
                 {
-                  "key": "Content-Type",
-                  "value": "application/json",
-                  "type": "text"
-                }
-              ],
-              "body": {
-                "mode": "raw",
-                "raw": "{\n    \"name\": \"Updated Cow\",\n    \"description\": \"Updated description\"\n}"
-              },
-              "url": {
-                "raw": "{{base_url}}/animals/edit_animal_type/{{farm_id}}/{{type_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "edit_animal_type", "{{farm_id}}", "{{type_id}}"]
-              }
-            }
-          },
-          {
-            "name": "Delete Animal Type",
-            "request": {
-              "method": "DELETE",
-              "header": [
+                  "key": "product_id",
+                  "value": "{{product_id}}",
+                  "disabled": true
+                },
                 {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
-                }
-              ],
-              "url": {
-                "raw": "{{base_url}}/animals/delete_animal_type/{{farm_id}}/{{type_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "delete_animal_type", "{{farm_id}}", "{{type_id}}"]
-              }
-            }
-          },
-          {
-            "name": "Get Animal Breeds by Type",
-            "request": {
-              "method": "GET",
-              "header": [
+                  "key": "start_date",
+                  "value": "{{start_date}}",
+                  "disabled": true
+                },
                 {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
+                  "key": "end_date",
+                  "value": "{{end_date}}",
+                  "disabled": true
                 }
-              ],
-              "url": {
-                "raw": "{{base_url}}/animals/get_animal_breeds_by_type/{{type_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "get_animal_breeds_by_type", "{{type_id}}"]
-              }
+              ]
             }
           }
-        ]
-      },
-      {
-        "name": "Animal Breeds",
-        "item": [
-          {
-            "name": "Get Animal Breeds",
-            "request": {
-              "method": "GET",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
-                }
-              ],
-              "url": {
-                "raw": "{{base_url}}/animals/get_animal_breeds/{{farm_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "get_animal_breeds", "{{farm_id}}"]
+        },
+        {
+          "name": "Get Single Production Record",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
               }
-            }
-          },
-          {
-            "name": "Add Animal Breed",
-            "request": {
-              "method": "POST",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
-                },
-                {
-                  "key": "Content-Type",
-                  "value": "application/json",
-                  "type": "text"
-                }
-              ],
-              "body": {
-                "mode": "raw",
-                "raw": "{\n    \"name\": \"Holstein\",\n    \"type\": {{type_id}},\n    \"description\": \"Dairy breed\"\n}"
-              },
-              "url": {
-                "raw": "{{base_url}}/animals/add_animal_breed/{{farm_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "add_animal_breed", "{{farm_id}}"]
-              }
-            }
-          },
-          {
-            "name": "Edit Animal Breed",
-            "request": {
-              "method": "PUT",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
-                },
-                {
-                  "key": "Content-Type",
-                  "value": "application/json",
-                  "type": "text"
-                }
-              ],
-              "body": {
-                "mode": "raw",
-                "raw": "{\n    \"name\": \"Updated Holstein\",\n    \"type\": {{type_id}},\n    \"description\": \"Updated description\"\n}"
-              },
-              "url": {
-                "raw": "{{base_url}}/animals/edit_animal_breed/{{farm_id}}/{{breed_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "edit_animal_breed", "{{farm_id}}", "{{breed_id}}"]
-              }
-            }
-          },
-          {
-            "name": "Delete Animal Breed",
-            "request": {
-              "method": "DELETE",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
-                }
-              ],
-              "url": {
-                "raw": "{{base_url}}/animals/delete_animal_breed/{{farm_id}}/{{breed_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "delete_animal_breed", "{{farm_id}}", "{{breed_id}}"]
-              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/products/get_production_record/{{farm_id}}/{{record_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "get_production_record", "{{farm_id}}", "{{record_id}}"]
             }
           }
-        ]
-      },
-      {
-        "name": "Animals",
-        "item": [
-          {
-            "name": "Get Animals",
-            "request": {
-              "method": "GET",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
-                }
-              ],
-              "url": {
-                "raw": "{{base_url}}/animals/get_animals/{{farm_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "get_animals", "{{farm_id}}"]
-              }
-            }
-          },
-          {
-            "name": "Get Animal",
-            "request": {
-              "method": "GET",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
-                }
-              ],
-              "url": {
-                "raw": "{{base_url}}/animals/get_animal/{{farm_id}}/{{animal_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "get_animal", "{{farm_id}}", "{{animal_id}}"]
-              }
-            }
-          },
-          {
-            "name": "Create Animal",
-            "request": {
-              "method": "POST",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
-                },
-                {
-                  "key": "Content-Type",
-                  "value": "application/json",
-                  "type": "text"
-                }
-              ],
-              "body": {
-                "mode": "raw",
-                "raw": "{\n    \"name\": \"Bessie\",\n    \"type\": {{type_id}},\n    \"breed\": {{breed_id}},\n    \"gender\": \"F\",\n    \"date_of_birth\": \"2020-01-01\",\n    \"weight\": 500.5,\n    \"tag_number\": \"TAG123\",\n    \"status\": \"active\"\n}"
+        },
+        {
+          "name": "Add Production Record",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
               },
-              "url": {
-                "raw": "{{base_url}}/animals/create_animal/{{farm_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "create_animal", "{{farm_id}}"]
+              {
+                "key": "Content-Type",
+                "value": "application/json"
               }
-            }
-          },
-          {
-            "name": "Edit Animal",
-            "request": {
-              "method": "PUT",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
-                },
-                {
-                  "key": "Content-Type",
-                  "value": "application/json",
-                  "type": "text"
-                }
-              ],
-              "body": {
-                "mode": "raw",
-                "raw": "{\n    \"name\": \"Updated Bessie\",\n    \"type\": {{type_id}},\n    \"breed\": {{breed_id}},\n    \"gender\": \"F\",\n    \"date_of_birth\": \"2020-01-01\",\n    \"weight\": 550.5,\n    \"tag_number\": \"TAG123\",\n    \"status\": \"active\"\n}"
-              },
-              "url": {
-                "raw": "{{base_url}}/animals/edit_animal/{{farm_id}}/{{animal_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "edit_animal", "{{farm_id}}", "{{animal_id}}"]
-              }
-            }
-          },
-          {
-            "name": "Delete Animal",
-            "request": {
-              "method": "DELETE",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
-                }
-              ],
-              "url": {
-                "raw": "{{base_url}}/animals/delete_animal/{{farm_id}}/{{animal_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "delete_animal", "{{farm_id}}", "{{animal_id}}"]
-              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"date\": \"2024-03-20\",\n    \"quantity\": 10.5,\n    \"animal\": {{animal_id}},\n    \"product\": {{product_id}}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/products/add_production_record/{{farm_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "add_production_record", "{{farm_id}}"]
             }
           }
-        ]
-      },
-      {
-        "name": "Animal Images",
-        "item": [
-          {
-            "name": "Post Animal Image",
-            "request": {
-              "method": "POST",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
-                }
-              ],
-              "body": {
-                "mode": "formdata",
-                "formdata": [
-                  {
-                    "key": "image",
-                    "type": "file",
-                    "src": "/path/to/image.jpg"
-                  }
-                ]
+        },
+        {
+          "name": "Edit Production Record",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
               },
-              "url": {
-                "raw": "{{base_url}}/animals/post_animal_image/{{animal_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "post_animal_image", "{{animal_id}}"]
+              {
+                "key": "Content-Type",
+                "value": "application/json"
               }
-            }
-          },
-          {
-            "name": "Delete Animal Image",
-            "request": {
-              "method": "DELETE",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
-                }
-              ],
-              "url": {
-                "raw": "{{base_url}}/animals/delete_animal_image/{{farm_id}}/{{image_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "delete_animal_image", "{{farm_id}}", "{{image_id}}"]
-              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"date\": \"2024-03-20\",\n    \"quantity\": 12.5,\n    \"animal\": {{animal_id}},\n    \"product\": {{product_id}}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/products/edit_production_record/{{farm_id}}/{{record_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "edit_production_record", "{{farm_id}}", "{{record_id}}"]
             }
           }
-        ]
-      },
-      {
-        "name": "Artificial Insemination",
-        "item": [
-          {
-            "name": "Get AI Records",
-            "request": {
-              "method": "GET",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
-                }
-              ],
-              "url": {
-                "raw": "{{base_url}}/animals/get_ai_records/{{farm_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "get_ai_records", "{{farm_id}}"]
+        },
+        {
+          "name": "Delete Production Record",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
               }
-            }
-          },
-          {
-            "name": "Add AI Record",
-            "request": {
-              "method": "POST",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
-                },
-                {
-                  "key": "Content-Type",
-                  "value": "application/json",
-                  "type": "text"
-                }
-              ],
-              "body": {
-                "mode": "raw",
-                "raw": "{\n    \"animal\": {{animal_id}},\n    \"date\": \"2024-03-20\",\n    \"semen_brand\": \"Brand X\",\n    \"semen_code\": \"S123\",\n    \"technician\": \"John Doe\",\n    \"status\": \"successful\",\n    \"cost\": 50.00\n}"
-              },
-              "url": {
-                "raw": "{{base_url}}/animals/add_ai_record/{{farm_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "add_ai_record", "{{farm_id}}"]
-              }
-            }
-          },
-          {
-            "name": "Edit AI Record",
-            "request": {
-              "method": "PUT",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
-                },
-                {
-                  "key": "Content-Type",
-                  "value": "application/json",
-                  "type": "text"
-                }
-              ],
-              "body": {
-                "mode": "raw",
-                "raw": "{\n    \"animal\": {{animal_id}},\n    \"date\": \"2024-03-20\",\n    \"semen_brand\": \"Updated Brand X\",\n    \"semen_code\": \"S123\",\n    \"technician\": \"John Doe\",\n    \"status\": \"successful\",\n    \"cost\": 55.00\n}"
-              },
-              "url": {
-                "raw": "{{base_url}}/animals/edit_ai_record/{{farm_id}}/{{ai_record_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "edit_ai_record", "{{farm_id}}", "{{ai_record_id}}"]
-              }
-            }
-          },
-          {
-            "name": "Delete AI Record",
-            "request": {
-              "method": "DELETE",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
-                }
-              ],
-              "url": {
-                "raw": "{{base_url}}/animals/delete_ai_record/{{farm_id}}/{{ai_record_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "delete_ai_record", "{{farm_id}}", "{{ai_record_id}}"]
-              }
-            }
-          },
-          {
-            "name": "Set AI Sire",
-            "request": {
-              "method": "POST",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
-                },
-                {
-                  "key": "Content-Type",
-                  "value": "application/json",
-                  "type": "text"
-                }
-              ],
-              "body": {
-                "mode": "raw",
-                "raw": "{\n    \"ai_record\": {{ai_record_id}}\n}"
-              },
-              "url": {
-                "raw": "{{base_url}}/animals/set_ai_sire/{{animal_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "set_ai_sire", "{{animal_id}}"]
-              }
-            }
-          },
-          {
-            "name": "Clear AI Sire",
-            "request": {
-              "method": "POST",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
-                }
-              ],
-              "url": {
-                "raw": "{{base_url}}/animals/clear_ai_sire/{{animal_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "clear_ai_sire", "{{animal_id}}"]
-              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/products/delete_production_record/{{farm_id}}/{{record_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "delete_production_record", "{{farm_id}}", "{{record_id}}"]
             }
           }
-        ]
-      },
-      {
-        "name": "Animal Health Records",
-        "item": [
-          {
-            "name": "Get Animal Health Records",
-            "request": {
-              "method": "GET",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "Bearer {{token}}",
-                  "type": "text"
-                }
-              ],
-              "url": {
-                "raw": "{{base_url}}/animals/get_animal_health_records/{{animal_id}}",
-                "host": ["{{base_url}}"],
-                "path": ["animals", "get_animal_health_records", "{{animal_id}}"]
+        }
+      ]
+    },
+    {
+      "name": "Buyers",
+      "item": [
+        {
+          "name": "Get All Buyers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
               }
+            ],
+            "url": {
+              "raw": "{{base_url}}/products/get_buyers/{{farm_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "get_buyers", "{{farm_id}}"]
             }
           }
-        ]
-      }
-    ],
-    "variable": [
-      {
-        "key": "base_url",
-        "value": "http://localhost:8000/api",
-        "type": "string"
-      },
-      {
-        "key": "token",
-        "value": "your_jwt_token_here",
-        "type": "string"
-      },
-      {
-        "key": "farm_id",
-        "value": "1",
-        "type": "string"
-      },
-      {
-        "key": "type_id",
-        "value": "1",
-        "type": "string"
-      },
-      {
-        "key": "breed_id",
-        "value": "1",
-        "type": "string"
-      },
-      {
-        "key": "animal_id",
-        "value": "1",
-        "type": "string"
-      },
-      {
-        "key": "image_id",
-        "value": "1",
-        "type": "string"
-      },
-      {
-        "key": "ai_record_id",
-        "value": "1",
-        "type": "string"
-      }
-    ]
-  }
+        },
+        {
+          "name": "Get Single Buyer",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/products/get_buyer/{{farm_id}}/{{buyer_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "get_buyer", "{{farm_id}}", "{{buyer_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Add Buyer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"John Doe\",\n    \"phone\": \"+1234567890\",\n    \"email\": \"john@example.com\",\n    \"address\": \"123 Main St\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/products/add_buyer/{{farm_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "add_buyer", "{{farm_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Edit Buyer",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"John Doe\",\n    \"phone\": \"+1234567890\",\n    \"email\": \"john@example.com\",\n    \"address\": \"123 Main St - updated\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/products/edit_buyer/{{farm_id}}/{{buyer_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "edit_buyer", "{{farm_id}}", "{{buyer_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Buyer",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/products/delete_buyer/{{farm_id}}/{{buyer_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "delete_buyer", "{{farm_id}}", "{{buyer_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sales",
+      "item": [
+        {
+          "name": "Get All Sales",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/products/get_sales/{{farm_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "get_sales", "{{farm_id}}"],
+              "query": [
+                {
+                  "key": "buyer_id",
+                  "value": "{{buyer_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "product_id",
+                  "value": "{{product_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "start_date",
+                  "value": "{{start_date}}",
+                  "disabled": true
+                },
+                {
+                  "key": "end_date",
+                  "value": "{{end_date}}",
+                  "disabled": true
+                },
+                {
+                  "key": "payment_status",
+                  "value": "true",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Single Sale",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/products/get_sale/{{farm_id}}/{{sale_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "get_sale", "{{farm_id}}", "{{sale_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Add Sale",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"date\": \"2024-03-20\",\n    \"quantity\": 5,\n    \"unit_price\": 2.5,\n    \"buyer\": {{buyer_id}},\n    \"product\": {{product_id}}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/products/add_sale/{{farm_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "add_sale", "{{farm_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Edit Sale",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"date\": \"2024-03-20\",\n    \"quantity\": 6,\n    \"unit_price\": 2.5,\n    \"buyer\": {{buyer_id}},\n    \"product\": {{product_id}}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/products/edit_sale/{{farm_id}}/{{sale_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "edit_sale", "{{farm_id}}", "{{sale_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Sale",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/products/delete_sale/{{farm_id}}/{{sale_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "delete_sale", "{{farm_id}}", "{{sale_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Mark Sale as Paid",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/products/mark_sale_as_paid/{{farm_id}}/{{sale_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "mark_sale_as_paid", "{{farm_id}}", "{{sale_id}}"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api"
+    },
+    {
+      "key": "token",
+      "value": "your_jwt_token_here"
+    },
+    {
+      "key": "farm_id",
+      "value": "1"
+    },
+    {
+      "key": "product_id",
+      "value": "1"
+    },
+    {
+      "key": "animal_id",
+      "value": "1"
+    },
+    {
+      "key": "animal_type_id",
+      "value": "1"
+    },
+    {
+      "key": "record_id",
+      "value": "1"
+    },
+    {
+      "key": "buyer_id",
+      "value": "1"
+    },
+    {
+      "key": "sale_id",
+      "value": "1"
+    },
+    {
+      "key": "start_date",
+      "value": "2024-01-01"
+    },
+    {
+      "key": "end_date",
+      "value": "2024-12-31"
+    }
+  ]
+}

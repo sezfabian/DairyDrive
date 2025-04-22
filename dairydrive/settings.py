@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'animals',
     'feeds',
     'health',
+    'products',
 ]
 
 MIDDLEWARE = [
