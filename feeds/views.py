@@ -8,6 +8,10 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.response import Response
 from datetime import datetime
 import random
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import get_object_or_404
+from rest_framework import status
 
 @api_view(['GET'])
 def get_feeds(request, farm_id):
@@ -45,13 +49,13 @@ def add_feed_type(request, farm_id):
         return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
 
-@api_view(['POST'])
-def edit_feed_type(request, id):
+@api_view(['PUT'])
+def edit_feed_type(request, farm_id, id):
     """Edit feed type"""
     # check if feed type exists
+    request.data["farm"] = farm_id
     try:
         feed_type = AnimalFeedType.objects.get(id=id)
-
         serializer = AnimalFeedTypeSerializer(feed_type, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -89,11 +93,11 @@ def add_feed(request, farm_id):
     return Response(serializer.errors, status=400)
 
 
-@api_view(['POST'])
-def edit_feed(request, id):
+@api_view(['PUT'])
+def edit_feed(request, farm_id, id):
     """Edit feed"""
     feed = AnimalFeed.objects.get(id=id)
-    request.data["farm"] = feed.farm.id
+    request.data["farm"] = farm_id
     serializer = AnimalFeedSerializer(data=request.data, partial=True)
     if serializer.is_valid():
         feed = AnimalFeed.objects.get(id=id)
@@ -201,3 +205,166 @@ def delete_feed_purchase(request, id):
         return Response({"message": "Feed purchase deleted successfully", "feed_purchase": serializer.data}, status=200)
     except AnimalFeedPurchase.DoesNotExist:
         return Response({"error": f"Feed purchase with this id:{id} does not exist"}, status=400)
+
+# Feed Type Views
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_feed_types(request, farm_id):
+    farm = get_object_or_404(Farm, id=farm_id)
+    feed_types = AnimalFeedType.objects.filter(farm=farm)
+    serializer = AnimalFeedTypeSerializer(feed_types, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_feed_type(request, farm_id, id):
+    farm = get_object_or_404(Farm, id=farm_id)
+    feed_type = get_object_or_404(AnimalFeedType, id=id, farm=farm)
+    serializer = AnimalFeedTypeSerializer(feed_type)
+    return Response(serializer.data)
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_feed_type(request, farm_id, id):
+    farm = get_object_or_404(Farm, id=farm_id)
+    feed_type = get_object_or_404(AnimalFeedType, id=id, farm=farm)
+    feed_type.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_feed(request, farm_id, id):
+    farm = get_object_or_404(Farm, id=farm_id)
+    feed = get_object_or_404(AnimalFeed, id=id, farm=farm)
+    serializer = AnimalFeedSerializer(feed)
+    return Response(serializer.data)
+
+
+
+# Feed Entry Views
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_feed_entries(request, farm_id):
+    farm = get_object_or_404(Farm, id=farm_id)
+    feed_id = request.query_params.get('feed_id')
+    animal_id = request.query_params.get('animal_id')
+    start_date = request.query_params.get('start_date')
+    end_date = request.query_params.get('end_date')
+
+    entries = AnimalFeedEntry.objects.filter(farm=farm)
+    
+    if feed_id:
+        entries = entries.filter(animal_feed_id=feed_id)
+    if animal_id:
+        entries = entries.filter(animal_id=animal_id)
+    if start_date:
+        entries = entries.filter(created_at__gte=start_date)
+    if end_date:
+        entries = entries.filter(created_at__lte=end_date)
+
+    serializer = AnimalFeedEntrySerializer(entries, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_feed_entry(request, farm_id, id):
+    farm = get_object_or_404(Farm, id=farm_id)
+    entry = get_object_or_404(AnimalFeedEntry, id=id, farm=farm)
+    serializer = AnimalFeedEntrySerializer(entry)
+    return Response(serializer.data)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def edit_feed_entry(request, farm_id, id):
+    request.data["farm"] = farm_id
+    request.data["created_by"] = request.user.id
+    farm = get_object_or_404(Farm, id=farm_id)
+    entry = get_object_or_404(AnimalFeedEntry, id=id, farm=farm)
+    serializer = AnimalFeedEntrySerializer(entry, data=request.data)
+    if serializer.is_valid():
+        serializer.save(farm=farm)
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_feed_entry(request, farm_id, id):
+    farm = get_object_or_404(Farm, id=farm_id)
+    entry = get_object_or_404(AnimalFeedEntry, id=id, farm=farm)
+    entry.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+# Feed Purchase Views
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_feed_purchases(request, farm_id):
+    farm = get_object_or_404(Farm, id=farm_id, )
+    feed_id = request.query_params.get('feed_id')
+    supplier_id = request.query_params.get('supplier_id')
+    start_date = request.query_params.get('start_date')
+    end_date = request.query_params.get('end_date')
+    payment_status = request.query_params.get('payment_status')
+
+    purchases = AnimalFeedPurchase.objects.filter(farm=farm)
+    
+    if feed_id:
+        purchases = purchases.filter(animal_feed_id=feed_id)
+    if supplier_id:
+        purchases = purchases.filter(supplier_id=supplier_id)
+    if start_date:
+        purchases = purchases.filter(created_at__gte=start_date)
+    if end_date:
+        purchases = purchases.filter(created_at__lte=end_date)
+    if payment_status is not None:
+        purchases = purchases.filter(payment_status=payment_status.lower() == 'true')
+
+    serializer = AnimalFeedPurchaseSerializer(purchases, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_feed_purchase(request, farm_id, id):
+    farm = get_object_or_404(Farm, id=farm_id)
+    purchase = get_object_or_404(AnimalFeedPurchase, id=id, farm=farm)
+    serializer = AnimalFeedPurchaseSerializer(purchase)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_feed_purchase(request, farm_id):
+    farm = get_object_or_404(Farm, id=farm_id)
+    serializer = AnimalFeedPurchaseSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(farm=farm)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def edit_feed_purchase(request, farm_id, id):
+    farm = get_object_or_404(Farm, id=farm_id)
+    purchase = get_object_or_404(AnimalFeedPurchase, id=id, farm=farm)
+    serializer = AnimalFeedPurchaseSerializer(purchase, data=request.data)
+    if serializer.is_valid():
+        serializer.save(farm=farm)
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_feed_purchase(request, farm_id, id):
+    farm = get_object_or_404(Farm, id=farm_id)
+    purchase = get_object_or_404(AnimalFeedPurchase, id=id, farm=farm)
+    purchase.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def mark_feed_purchase_as_paid(request, farm_id, id):
+    farm = get_object_or_404(Farm, id=farm_id)
+    purchase = get_object_or_404(AnimalFeedPurchase, id=id, farm=farm)
+    purchase.payment_status = True
+    purchase.save()
+    return Response({'status': 'payment marked as completed'})

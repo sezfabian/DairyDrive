@@ -1,14 +1,14 @@
 {
   "info": {
-    "name": "DairyDrive Products API",
+    "name": "DairyDrive Feeds API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "Products",
+      "name": "Feed Types",
       "item": [
         {
-          "name": "Get All Products",
+          "name": "Get All Feed Types",
           "request": {
             "method": "GET",
             "header": [
@@ -18,14 +18,14 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/products/get_products/{{farm_id}}",
+              "raw": "{{base_url}}/feeds/get_feed_types/{{farm_id}}",
               "host": ["{{base_url}}"],
-              "path": ["products", "get_products", "{{farm_id}}"]
+              "path": ["feeds", "get_feed_types", "{{farm_id}}"]
             }
           }
         },
         {
-          "name": "Get Single Product",
+          "name": "Get Single Feed Type",
           "request": {
             "method": "GET",
             "header": [
@@ -35,14 +35,14 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/products/get_product/{{farm_id}}/{{product_id}}",
+              "raw": "{{base_url}}/feeds/get_feed_type/{{farm_id}}/{{feed_type_id}}",
               "host": ["{{base_url}}"],
-              "path": ["products", "get_product", "{{farm_id}}", "{{product_id}}"]
+              "path": ["feeds", "get_feed_type", "{{farm_id}}", "{{feed_type_id}}"]
             }
           }
         },
         {
-          "name": "Add Product",
+          "name": "Add Feed Type",
           "request": {
             "method": "POST",
             "header": [
@@ -57,17 +57,17 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"name\": \"Milk\",\n    \"unit\": \"liters\",\n    \"description\": \"Fresh cow milk\"\n}"
+              "raw": "{\n    \"name\": \"Concentrate\",\n    \"description\": \"High protein concentrate feed\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/products/add_product/{{farm_id}}",
+              "raw": "{{base_url}}/feeds/add_feed_type/{{farm_id}}",
               "host": ["{{base_url}}"],
-              "path": ["products", "add_product", "{{farm_id}}"]
+              "path": ["feeds", "add_feed_type", "{{farm_id}}"]
             }
           }
         },
         {
-          "name": "Edit Product",
+          "name": "Edit Feed Type",
           "request": {
             "method": "PUT",
             "header": [
@@ -82,17 +82,17 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"name\": \"Milk\",\n    \"unit\": \"liters\",\n    \"description\": \"Fresh cow milk - updated\"\n}"
+              "raw": "{\n    \"name\": \"Concentrate\",\n    \"description\": \"High protein concentrate feed - updated\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/products/edit_product/{{farm_id}}/{{product_id}}",
+              "raw": "{{base_url}}/feeds/edit_feed_type/{{farm_id}}/{{feed_type_id}}",
               "host": ["{{base_url}}"],
-              "path": ["products", "edit_product", "{{farm_id}}", "{{product_id}}"]
+              "path": ["feeds", "edit_feed_type", "{{farm_id}}", "{{feed_type_id}}"]
             }
           }
         },
         {
-          "name": "Delete Product",
+          "name": "Delete Feed Type",
           "request": {
             "method": "DELETE",
             "header": [
@@ -102,19 +102,19 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/products/delete_product/{{farm_id}}/{{product_id}}",
+              "raw": "{{base_url}}/feeds/delete_feed_type/{{farm_id}}/{{feed_type_id}}",
               "host": ["{{base_url}}"],
-              "path": ["products", "delete_product", "{{farm_id}}", "{{product_id}}"]
+              "path": ["feeds", "delete_feed_type", "{{farm_id}}", "{{feed_type_id}}"]
             }
           }
         }
       ]
     },
     {
-      "name": "Production Records",
+      "name": "Feeds",
       "item": [
         {
-          "name": "Get All Production Records",
+          "name": "Get All Feeds",
           "request": {
             "method": "GET",
             "header": [
@@ -124,23 +124,124 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/products/get_production_records/{{farm_id}}",
+              "raw": "{{base_url}}/feeds/get_feeds/{{farm_id}}",
               "host": ["{{base_url}}"],
-              "path": ["products", "get_production_records", "{{farm_id}}"],
+              "path": ["feeds", "get_feeds", "{{farm_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Single Feed",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/feeds/get_feed/{{farm_id}}/{{feed_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["feeds", "get_feed", "{{farm_id}}", "{{feed_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Add Feed",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Dairy Meal\",\n    \"feed_type\": {{feed_type_id}},\n    \"unit\": \"kg\",\n    \"description\": \"High quality dairy meal\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/feeds/add_feed/{{farm_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["feeds", "add_feed", "{{farm_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Edit Feed",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Dairy Meal\",\n    \"feed_type\": {{feed_type_id}},\n    \"unit\": \"kg\",\n    \"description\": \"High quality dairy meal - updated\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/feeds/edit_feed/{{farm_id}}/{{feed_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["feeds", "edit_feed", "{{farm_id}}", "{{feed_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Feed",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/feeds/delete_feed/{{farm_id}}/{{feed_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["feeds", "delete_feed", "{{farm_id}}", "{{feed_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Feed Entries",
+      "item": [
+        {
+          "name": "Get All Feed Entries",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/feeds/get_feed_entries/{{farm_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["feeds", "get_feed_entries", "{{farm_id}}"],
               "query": [
+                {
+                  "key": "feed_id",
+                  "value": "{{feed_id}}",
+                  "disabled": true
+                },
                 {
                   "key": "animal_id",
                   "value": "{{animal_id}}",
-                  "disabled": true
-                },
-                {
-                  "key": "animal_type_id",
-                  "value": "{{animal_type_id}}",
-                  "disabled": true
-                },
-                {
-                  "key": "product_id",
-                  "value": "{{product_id}}",
                   "disabled": true
                 },
                 {
@@ -158,7 +259,7 @@
           }
         },
         {
-          "name": "Get Single Production Record",
+          "name": "Get Single Feed Entry",
           "request": {
             "method": "GET",
             "header": [
@@ -168,14 +269,14 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/products/get_production_record/{{farm_id}}/{{record_id}}",
+              "raw": "{{base_url}}/feeds/get_feed_entry/{{farm_id}}/{{feed_entry_id}}",
               "host": ["{{base_url}}"],
-              "path": ["products", "get_production_record", "{{farm_id}}", "{{record_id}}"]
+              "path": ["feeds", "get_feed_entry", "{{farm_id}}", "{{feed_entry_id}}"]
             }
           }
         },
         {
-          "name": "Add Production Record",
+          "name": "Add Feed Entry",
           "request": {
             "method": "POST",
             "header": [
@@ -190,17 +291,17 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"date\": \"2024-03-20\",\n    \"quantity\": 10.5,\n    \"animal\": {{animal_id}},\n    \"product\": {{product_id}}\n}"
+              "raw": "{\n    \"date\": \"2024-03-20\",\n    \"quantity\": 5.5,\n    \"feed\": {{feed_id}},\n    \"animal\": {{animal_id}}\n}"
             },
             "url": {
-              "raw": "{{base_url}}/products/add_production_record/{{farm_id}}",
+              "raw": "{{base_url}}/feeds/add_feed_entry/{{farm_id}}",
               "host": ["{{base_url}}"],
-              "path": ["products", "add_production_record", "{{farm_id}}"]
+              "path": ["feeds", "add_feed_entry", "{{farm_id}}"]
             }
           }
         },
         {
-          "name": "Edit Production Record",
+          "name": "Edit Feed Entry",
           "request": {
             "method": "PUT",
             "header": [
@@ -215,17 +316,17 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"date\": \"2024-03-20\",\n    \"quantity\": 12.5,\n    \"animal\": {{animal_id}},\n    \"product\": {{product_id}}\n}"
+              "raw": "{\n    \"date\": \"2024-03-20\",\n    \"quantity\": 6.5,\n    \"feed\": {{feed_id}},\n    \"animal\": {{animal_id}}\n}"
             },
             "url": {
-              "raw": "{{base_url}}/products/edit_production_record/{{farm_id}}/{{record_id}}",
+              "raw": "{{base_url}}/feeds/edit_feed_entry/{{farm_id}}/{{feed_entry_id}}",
               "host": ["{{base_url}}"],
-              "path": ["products", "edit_production_record", "{{farm_id}}", "{{record_id}}"]
+              "path": ["feeds", "edit_feed_entry", "{{farm_id}}", "{{feed_entry_id}}"]
             }
           }
         },
         {
-          "name": "Delete Production Record",
+          "name": "Delete Feed Entry",
           "request": {
             "method": "DELETE",
             "header": [
@@ -235,19 +336,19 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/products/delete_production_record/{{farm_id}}/{{record_id}}",
+              "raw": "{{base_url}}/feeds/delete_feed_entry/{{farm_id}}/{{feed_entry_id}}",
               "host": ["{{base_url}}"],
-              "path": ["products", "delete_production_record", "{{farm_id}}", "{{record_id}}"]
+              "path": ["feeds", "delete_feed_entry", "{{farm_id}}", "{{feed_entry_id}}"]
             }
           }
         }
       ]
     },
     {
-      "name": "Buyers",
+      "name": "Feed Purchases",
       "item": [
         {
-          "name": "Get All Buyers",
+          "name": "Get All Feed Purchases",
           "request": {
             "method": "GET",
             "header": [
@@ -257,124 +358,18 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/products/get_buyers/{{farm_id}}",
+              "raw": "{{base_url}}/feeds/get_feed_purchases/{{farm_id}}",
               "host": ["{{base_url}}"],
-              "path": ["products", "get_buyers", "{{farm_id}}"]
-            }
-          }
-        },
-        {
-          "name": "Get Single Buyer",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/products/get_buyer/{{farm_id}}/{{buyer_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["products", "get_buyer", "{{farm_id}}", "{{buyer_id}}"]
-            }
-          }
-        },
-        {
-          "name": "Add Buyer",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"John Doe\",\n    \"phone\": \"+1234567890\",\n    \"email\": \"john@example.com\",\n    \"address\": \"123 Main St\"\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/products/add_buyer/{{farm_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["products", "add_buyer", "{{farm_id}}"]
-            }
-          }
-        },
-        {
-          "name": "Edit Buyer",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"John Doe\",\n    \"phone\": \"+1234567890\",\n    \"email\": \"john@example.com\",\n    \"address\": \"123 Main St - updated\"\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/products/edit_buyer/{{farm_id}}/{{buyer_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["products", "edit_buyer", "{{farm_id}}", "{{buyer_id}}"]
-            }
-          }
-        },
-        {
-          "name": "Delete Buyer",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/products/delete_buyer/{{farm_id}}/{{buyer_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["products", "delete_buyer", "{{farm_id}}", "{{buyer_id}}"]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Sales",
-      "item": [
-        {
-          "name": "Get All Sales",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/products/get_sales/{{farm_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["products", "get_sales", "{{farm_id}}"],
+              "path": ["feeds", "get_feed_purchases", "{{farm_id}}"],
               "query": [
                 {
-                  "key": "buyer_id",
-                  "value": "{{buyer_id}}",
+                  "key": "feed_id",
+                  "value": "{{feed_id}}",
                   "disabled": true
                 },
                 {
-                  "key": "product_id",
-                  "value": "{{product_id}}",
+                  "key": "supplier_id",
+                  "value": "{{supplier_id}}",
                   "disabled": true
                 },
                 {
@@ -397,7 +392,7 @@
           }
         },
         {
-          "name": "Get Single Sale",
+          "name": "Get Single Feed Purchase",
           "request": {
             "method": "GET",
             "header": [
@@ -407,14 +402,14 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/products/get_sale/{{farm_id}}/{{sale_id}}",
+              "raw": "{{base_url}}/feeds/get_feed_purchase/{{farm_id}}/{{feed_purchase_id}}",
               "host": ["{{base_url}}"],
-              "path": ["products", "get_sale", "{{farm_id}}", "{{sale_id}}"]
+              "path": ["feeds", "get_feed_purchase", "{{farm_id}}", "{{feed_purchase_id}}"]
             }
           }
         },
         {
-          "name": "Add Sale",
+          "name": "Add Feed Purchase",
           "request": {
             "method": "POST",
             "header": [
@@ -429,17 +424,17 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"date\": \"2024-03-20\",\n    \"quantity\": 5,\n    \"unit_price\": 2.5,\n    \"buyer\": {{buyer_id}},\n    \"product\": {{product_id}}\n}"
+              "raw": "{\n    \"date\": \"2024-03-20\",\n    \"quantity\": 100,\n    \"unit_price\": 2.5,\n    \"feed\": {{feed_id}},\n    \"supplier\": {{supplier_id}}\n}"
             },
             "url": {
-              "raw": "{{base_url}}/products/add_sale/{{farm_id}}",
+              "raw": "{{base_url}}/feeds/add_feed_purchase/{{farm_id}}",
               "host": ["{{base_url}}"],
-              "path": ["products", "add_sale", "{{farm_id}}"]
+              "path": ["feeds", "add_feed_purchase", "{{farm_id}}"]
             }
           }
         },
         {
-          "name": "Edit Sale",
+          "name": "Edit Feed Purchase",
           "request": {
             "method": "PUT",
             "header": [
@@ -454,17 +449,17 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"date\": \"2024-03-20\",\n    \"quantity\": 6,\n    \"unit_price\": 2.5,\n    \"buyer\": {{buyer_id}},\n    \"product\": {{product_id}}\n}"
+              "raw": "{\n    \"date\": \"2024-03-20\",\n    \"quantity\": 120,\n    \"unit_price\": 2.5,\n    \"feed\": {{feed_id}},\n    \"supplier\": {{supplier_id}}\n}"
             },
             "url": {
-              "raw": "{{base_url}}/products/edit_sale/{{farm_id}}/{{sale_id}}",
+              "raw": "{{base_url}}/feeds/edit_feed_purchase/{{farm_id}}/{{feed_purchase_id}}",
               "host": ["{{base_url}}"],
-              "path": ["products", "edit_sale", "{{farm_id}}", "{{sale_id}}"]
+              "path": ["feeds", "edit_feed_purchase", "{{farm_id}}", "{{feed_purchase_id}}"]
             }
           }
         },
         {
-          "name": "Delete Sale",
+          "name": "Delete Feed Purchase",
           "request": {
             "method": "DELETE",
             "header": [
@@ -474,14 +469,14 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/products/delete_sale/{{farm_id}}/{{sale_id}}",
+              "raw": "{{base_url}}/feeds/delete_feed_purchase/{{farm_id}}/{{feed_purchase_id}}",
               "host": ["{{base_url}}"],
-              "path": ["products", "delete_sale", "{{farm_id}}", "{{sale_id}}"]
+              "path": ["feeds", "delete_feed_purchase", "{{farm_id}}", "{{feed_purchase_id}}"]
             }
           }
         },
         {
-          "name": "Mark Sale as Paid",
+          "name": "Mark Feed Purchase as Paid",
           "request": {
             "method": "POST",
             "header": [
@@ -491,9 +486,9 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/products/mark_sale_as_paid/{{farm_id}}/{{sale_id}}",
+              "raw": "{{base_url}}/feeds/mark_feed_purchase_as_paid/{{farm_id}}/{{feed_purchase_id}}",
               "host": ["{{base_url}}"],
-              "path": ["products", "mark_sale_as_paid", "{{farm_id}}", "{{sale_id}}"]
+              "path": ["feeds", "mark_feed_purchase_as_paid", "{{farm_id}}", "{{feed_purchase_id}}"]
             }
           }
         }
@@ -514,7 +509,11 @@
       "value": "1"
     },
     {
-      "key": "product_id",
+      "key": "feed_type_id",
+      "value": "1"
+    },
+    {
+      "key": "feed_id",
       "value": "1"
     },
     {
@@ -522,19 +521,15 @@
       "value": "1"
     },
     {
-      "key": "animal_type_id",
+      "key": "feed_entry_id",
       "value": "1"
     },
     {
-      "key": "record_id",
+      "key": "feed_purchase_id",
       "value": "1"
     },
     {
-      "key": "buyer_id",
-      "value": "1"
-    },
-    {
-      "key": "sale_id",
+      "key": "supplier_id",
       "value": "1"
     },
     {
