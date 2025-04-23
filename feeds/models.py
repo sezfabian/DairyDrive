@@ -67,9 +67,10 @@ class AnimalFeedEntry(models.Model):
         return f"{self.animal_type.name} - {self.animal_feed.name} - {self.quantity} - {self.created_at.strftime('%Y-%m-%d %H:%M')}"
 
 class AnimalFeedPurchase(models.Model):
+    farm = models.ForeignKey(Farm, on_delete=models.CASCADE)
     animal_feed = models.ForeignKey(AnimalFeed, on_delete=models.CASCADE)
-    quantity = models.DecimalField(decimal_places=2,  max_digits=10, null=True, blank=True)
-    cost = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
+    quantity = models.DecimalField(decimal_places=2,  max_digits=10, null=False, blank=False)
+    cost = models.DecimalField(decimal_places=2, max_digits=10, null=False, blank=False)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

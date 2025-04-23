@@ -85,7 +85,7 @@ class AnimalFeedPurchaseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AnimalFeedPurchase
-        fields = ['id', 'animal_feed', 'animal_feed_name', 'quantity', 'cost', 'created_by', 'created_by_name', 'created_at', 'updated_at', 'is_deleted', 'deleted_by', 'deleted_at']
+        fields = ['id', 'animal_feed', 'animal_feed_name', 'farm', 'quantity', 'cost', 'created_by', 'created_by_name', 'created_at', 'updated_at', 'is_deleted', 'deleted_by', 'deleted_at']
 
     def get_animal_feed_name(self, obj):
         return obj.animal_feed.name if obj.animal_feed else None

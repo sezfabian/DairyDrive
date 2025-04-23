@@ -246,7 +246,6 @@ def add_sale(request, farm_id):
     request.data["farm"] = farm_id
     buyer_id = request.data.get('buyer')
     buyer = get_object_or_404(Buyer, id=buyer_id, farm=farm)
-    
     product_id = request.data.get('product')
     product = get_object_or_404(Product, id=product_id, farm=farm)
     

@@ -102,6 +102,7 @@ def delete_feed_type(request, farm_id, id):
         return Response({"error": f"Feed type with this id:{id} does not exist on your farm"}, status=400)
 
 
+# Feed Views
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_feeds(request, farm_id):
@@ -176,89 +177,8 @@ def delete_feed(request, farm_id, id):
     except AnimalFeed.DoesNotExist:
         return Response({"error": f"Feed with this id:{id} does not exist"}, status=400)
 
-    
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def add_feed_entry(request, farm_id):
-    """Add feed entry"""
-    request.data["farm"] = farm_id
-    request.data["created_by"] = request.user.id
-    serializer = AnimalFeedEntrySerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save(created_by=request.user)
-        return Response(serializer.data, status=201)
-    return Response(serializer.errors, status=400)
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def delete_feed_entry(request, id):
-    """Delete feed entry"""
-    #Check if user role is admin
-    if UserProfile.objects.get(user=request.user).role != "Admin" and UserProfile.objects.get(user=request.user).role != "Manager":
-        return Response({"error": "You do not have permission to delete this feed"}, status=400)
-
-    # check if feed entry exists
-    try:
-        feed_entry = AnimalFeedEntry.objects.get(id=id)
-        if feed_entry.is_deleted:
-            return Response({"error": f"Feed entry with this id:{id} is already deleted"}, status=400)
-        feed_entry.is_deleted = True
-        feed_entry.deleted_by = request.user
-        feed_entry.deleted_at = datetime.now()
-        feed_entry.save()
-
-        serializer = AnimalFeedEntrySerializer(feed_entry)
-        return Response({"message": "Feed entry deleted successfully", "feed_entry": serializer.data}, status=200)
-    except AnimalFeedEntry.DoesNotExist:
-        return Response({"error": f"Feed entry with this id:{id} does not exist"}, status=400)
-
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def add_feed_purchase(request, farm_id):
-    """Add feed purchase"""
-    farm = Farm.objects.get(id=farm_id)
-    request.data["created_by"] = request.user.id
-    serializer = AnimalFeedPurchaseSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save(created_by=request.user)
-        return Response(serializer.data, status=201)
-    return Response(serializer.errors, status=400)
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def delete_feed_purchase(request, id):
-    """Delete feed purchase"""
-    #Check if user role is admin
-    if UserProfile.objects.get(user=request.user).role != "Admin" and UserProfile.objects.get(user=request.user).role != "Manager":
-        return Response({"error": "You do not have permission to delete this feed"}, status=400)
-
-    # check if feed purchase exists
-    try:
-        feed_purchase = AnimalFeedPurchase.objects.get(id=id)
-        if feed_purchase.is_deleted:
-            return Response({"error": f"Feed purchase with this id:{id} is already deleted"}, status=400)
-        feed_purchase.is_deleted = True
-        feed_purchase.deleted_by = request.user
-        feed_purchase.deleted_at = datetime.now()
-        feed_purchase.save()
-        serializer = AnimalFeedPurchaseSerializer(feed_purchase)
-        return Response({"message": "Feed purchase deleted successfully", "feed_purchase": serializer.data}, status=200)
-    except AnimalFeedPurchase.DoesNotExist:
-        return Response({"error": f"Feed purchase with this id:{id} does not exist"}, status=400)
-
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_feed(request, farm_id, id):
-    farm = get_object_or_404(Farm, id=farm_id)
-    feed = get_object_or_404(AnimalFeed, id=id, farm=farm)
-    serializer = AnimalFeedSerializer(feed)
-    return Response(serializer.data)
-
-
-
-# Feed Entry Views
+# Feed entry views
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_feed_entries(request, farm_id):
@@ -291,6 +211,82 @@ def get_feed_entry(request, farm_id, id):
     return Response(serializer.data)
 
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_feed_entry(request, farm_id):
+    """Add feed entry"""
+    request.data["farm"] = farm_id
+    request.data["created_by"] = request.user.id
+    serializer = AnimalFeedEntrySerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(created_by=request.user)
+        return Response(serializer.data, status=201)
+    return Response(serializer.errors, status=400)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_feed_entry(request, farm_id, id):
+    """Delete feed entry"""
+    farm = get_object_or_404(Farm, id=farm_id)
+    # check if feed entry exists
+    try:
+        feed_entry = AnimalFeedEntry.objects.get(id=id, farm=farm)
+        if feed_entry.is_deleted:
+            return Response({"error": f"Feed entry with this id:{id} is already deleted"}, status=400)
+        feed_entry.is_deleted = True
+        feed_entry.deleted_by = request.user
+        feed_entry.deleted_at = datetime.now()
+        feed_entry.save()
+
+        serializer = AnimalFeedEntrySerializer(feed_entry)
+        return Response({"message": "Feed entry deleted successfully", "feed_entry": serializer.data}, status=200)
+    except AnimalFeedEntry.DoesNotExist:
+        return Response({"error": f"Feed entry with this id:{id} does not exist"}, status=400)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_feed_purchase(request, farm_id):
+    """Add feed purchase"""
+    request.data["farm"] = farm_id
+    request.data["created_by"] = request.user.id
+    serializer = AnimalFeedPurchaseSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(created_by=request.user)
+        return Response(serializer.data, status=201)
+    return Response(serializer.errors, status=400)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_feed_purchase(request, farm_id, id):
+    """Delete feed purchase"""
+    farm = get_object_or_404(Farm, id=farm_id)
+    # check if feed purchase exists
+    try:
+        feed_purchase = AnimalFeedPurchase.objects.get(id=id, farm=farm)
+        if feed_purchase.is_deleted:
+            return Response({"error": f"Feed purchase with this id:{id} is already deleted"}, status=400)
+        feed_purchase.is_deleted = True
+        feed_purchase.deleted_by = request.user
+        feed_purchase.deleted_at = datetime.now()
+        feed_purchase.save()
+        serializer = AnimalFeedPurchaseSerializer(feed_purchase)
+        return Response({"message": "Feed purchase deleted successfully", "feed_purchase": serializer.data}, status=200)
+    except AnimalFeedPurchase.DoesNotExist:
+        return Response({"error": f"Feed purchase with this id:{id} does not exist"}, status=400)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_feed(request, farm_id, id):
+    farm = get_object_or_404(Farm, id=farm_id)
+    feed = get_object_or_404(AnimalFeed, id=id, farm=farm)
+    serializer = AnimalFeedSerializer(feed)
+    return Response(serializer.data)
+
+
+
+# Feed Entry Views
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def edit_feed_entry(request, farm_id, id):
@@ -304,38 +300,13 @@ def edit_feed_entry(request, farm_id, id):
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['DELETE'])
-@permission_classes([IsAuthenticated])
-def delete_feed_entry(request, farm_id, id):
-    farm = get_object_or_404(Farm, id=farm_id)
-    entry = get_object_or_404(AnimalFeedEntry, id=id, farm=farm)
-    entry.delete()
-    return Response(status=status.HTTP_204_NO_CONTENT)
 
 # Feed Purchase Views
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_feed_purchases(request, farm_id):
-    farm = get_object_or_404(Farm, id=farm_id, )
-    feed_id = request.query_params.get('feed_id')
-    supplier_id = request.query_params.get('supplier_id')
-    start_date = request.query_params.get('start_date')
-    end_date = request.query_params.get('end_date')
-    payment_status = request.query_params.get('payment_status')
-
+    farm = get_object_or_404(Farm, id=farm_id)
     purchases = AnimalFeedPurchase.objects.filter(farm=farm)
-    
-    if feed_id:
-        purchases = purchases.filter(animal_feed_id=feed_id)
-    if supplier_id:
-        purchases = purchases.filter(supplier_id=supplier_id)
-    if start_date:
-        purchases = purchases.filter(created_at__gte=start_date)
-    if end_date:
-        purchases = purchases.filter(created_at__lte=end_date)
-    if payment_status is not None:
-        purchases = purchases.filter(payment_status=payment_status.lower() == 'true')
-
     serializer = AnimalFeedPurchaseSerializer(purchases, many=True)
     return Response(serializer.data)
 
@@ -347,19 +318,12 @@ def get_feed_purchase(request, farm_id, id):
     serializer = AnimalFeedPurchaseSerializer(purchase)
     return Response(serializer.data)
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def add_feed_purchase(request, farm_id):
-    farm = get_object_or_404(Farm, id=farm_id)
-    serializer = AnimalFeedPurchaseSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save(farm=farm)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def edit_feed_purchase(request, farm_id, id):
+    request.data["farm"] = farm_id
+    request.data["created_by"] = request.user.id
     farm = get_object_or_404(Farm, id=farm_id)
     purchase = get_object_or_404(AnimalFeedPurchase, id=id, farm=farm)
     serializer = AnimalFeedPurchaseSerializer(purchase, data=request.data)
@@ -368,13 +332,6 @@ def edit_feed_purchase(request, farm_id, id):
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['DELETE'])
-@permission_classes([IsAuthenticated])
-def delete_feed_purchase(request, farm_id, id):
-    farm = get_object_or_404(Farm, id=farm_id)
-    purchase = get_object_or_404(AnimalFeedPurchase, id=id, farm=farm)
-    purchase.delete()
-    return Response(status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
