@@ -14,6 +14,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_all_feeds_records(request, farm_id):
     """Get feeds"""
     farm = Farm.objects.get(id=farm_id)
@@ -84,6 +85,7 @@ def edit_feed_type(request, farm_id, id):
         return Response({"error": f"Feed type with this id:{id} does not exist"}, status=400)
 
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def delete_feed_type(request, farm_id, id):
     """Delete feed type"""
     # check if feed type exists
@@ -101,6 +103,7 @@ def delete_feed_type(request, farm_id, id):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_feeds(request, farm_id):
     """Get all feeds"""
     try:
@@ -124,9 +127,11 @@ def add_feed(request, farm_id):
 
 
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def edit_feed(request, farm_id, id):
     """Edit feed"""
-    feed = AnimalFeed.objects.get(id=id)
+    farm = get_object_or_404(Farm, id=farm_id)
+    feed = AnimalFeed.objects.get(id=id, farm=farm)
     request.data["farm"] = farm_id
     serializer = AnimalFeedSerializer(data=request.data, partial=True)
     if serializer.is_valid():
@@ -146,15 +151,17 @@ def edit_feed(request, farm_id, id):
         return Response(serializer.data, status=200)
     return Response(serializer.errors, status=400)
 
-@api_view(['POST'])
-def delete_feed(request, id):
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_feed(request, farm_id, id):
     """Delete feed"""
-    # Check if userprofile has admin role
-    if UserProfile.objects.get(user=request.user).role != "Admin":
-        return Response({"error": "You do not have permission to delete this feed"}, status=400)
+    # # Check if userprofile has admin role
+    # if UserProfile.objects.get(user=request.user).role != "Admin":
+    #     return Response({"error": "Only Admins can delete farm records"}, status=400)
     # check if feed exists
     try:
-        feed = AnimalFeed.objects.get(id=id)
+        farm = get_object_or_404(Farm, id=farm_id)
+        feed = AnimalFeed.objects.get(id=id, farm=farm)
         # check if feed is used by any feed entry or feed purchase
         feed_entries = AnimalFeedEntry.objects.filter(animal_feed=feed)
         if len(feed_entries) > 0:
@@ -171,6 +178,7 @@ def delete_feed(request, id):
 
     
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def add_feed_entry(request, farm_id):
     """Add feed entry"""
     request.data["farm"] = farm_id
@@ -182,6 +190,7 @@ def add_feed_entry(request, farm_id):
     return Response(serializer.errors, status=400)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def delete_feed_entry(request, id):
     """Delete feed entry"""
     #Check if user role is admin
@@ -205,6 +214,7 @@ def delete_feed_entry(request, id):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def add_feed_purchase(request, farm_id):
     """Add feed purchase"""
     farm = Farm.objects.get(id=farm_id)
@@ -216,6 +226,7 @@ def add_feed_purchase(request, farm_id):
     return Response(serializer.errors, status=400)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def delete_feed_purchase(request, id):
     """Delete feed purchase"""
     #Check if user role is admin
