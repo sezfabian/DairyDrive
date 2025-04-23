@@ -3,6 +3,9 @@ from . import views
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
+    # Get all feed records
+    path('get_all_feeds_records/<int:farm_id>', views.get_all_feeds_records, name='get_all_feeds_records'),
+    
     # Feed Type URLs
     path('get_feed_types/<int:farm_id>', views.get_feed_types, name='get_feed_types'),
     path('get_feed_type/<int:farm_id>/<int:id>', views.get_feed_type, name='get_feed_type'),

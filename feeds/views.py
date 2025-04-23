@@ -14,7 +14,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 
 @api_view(['GET'])
-def get_feeds(request, farm_id):
+def get_all_feeds_records(request, farm_id):
     """Get feeds"""
     farm = Farm.objects.get(id=farm_id)
     # get feed types
@@ -36,6 +36,23 @@ def get_feeds(request, farm_id):
     return Response({"feedTypes": typeserializer.data, "feeds": feedserializer.data, "feedEntries": entryserializer.data, "feedPurchases": purchaseserializer.data}, status=200)
 
 
+# Feed Type Views
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_feed_types(request, farm_id):
+    farm = get_object_or_404(Farm, id=farm_id)
+    feed_types = AnimalFeedType.objects.filter(farm=farm)
+    serializer = AnimalFeedTypeSerializer(feed_types, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_feed_type(request, farm_id, id):
+    farm = get_object_or_404(Farm, id=farm_id)
+    feed_type = get_object_or_404(AnimalFeedType, id=id, farm=farm)
+    serializer = AnimalFeedTypeSerializer(feed_type)
+    return Response(serializer.data)
+
 @api_view(['POST'])
 def add_feed_type(request, farm_id):
     """Add feed type"""
@@ -54,8 +71,9 @@ def edit_feed_type(request, farm_id, id):
     """Edit feed type"""
     # check if feed type exists
     request.data["farm"] = farm_id
+    farm = get_object_or_404(Farm, id=farm_id)
     try:
-        feed_type = AnimalFeedType.objects.get(id=id)
+        feed_type = AnimalFeedType.objects.get(id=id, farm=farm)
         serializer = AnimalFeedTypeSerializer(feed_type, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -66,11 +84,12 @@ def edit_feed_type(request, farm_id, id):
         return Response({"error": f"Feed type with this id:{id} does not exist"}, status=400)
 
 @api_view(['DELETE'])
-def delete_feed_type(request, id):
+def delete_feed_type(request, farm_id, id):
     """Delete feed type"""
     # check if feed type exists
+    farm = get_object_or_404(Farm, id=farm_id)
     try:
-        feed_type = AnimalFeedType.objects.get(id=id)
+        feed_type = AnimalFeedType.objects.get(id=id, farm=farm)
         # check if feed type is used by any feed
         feeds = AnimalFeed.objects.filter(animal_feed_type=feed_type)
         if len(feeds) > 0:
@@ -78,7 +97,18 @@ def delete_feed_type(request, id):
         feed_type.delete()
         return Response({"message": "Feed type deleted successfully"}, status=200)
     except AnimalFeedType.DoesNotExist:
-        return Response({"error": f"Feed type with this id:{id} does not exist"}, status=400)
+        return Response({"error": f"Feed type with this id:{id} does not exist on your farm"}, status=400)
+
+
+@api_view(['GET'])
+def get_feeds(request, farm_id):
+    """Get all feeds"""
+    try:
+        feeds = AnimalFeed.objects.filter(farm=farm_id)
+        serializer = AnimalFeedSerializer(feeds, many=True)
+        return Response(serializer.data, status=200)
+    except AnimalFeed.DoesNotExist:
+        return Response({"error": "No feeds found"}, status=404)
 
 
 @api_view(['POST'])
@@ -206,31 +236,6 @@ def delete_feed_purchase(request, id):
     except AnimalFeedPurchase.DoesNotExist:
         return Response({"error": f"Feed purchase with this id:{id} does not exist"}, status=400)
 
-# Feed Type Views
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_feed_types(request, farm_id):
-    farm = get_object_or_404(Farm, id=farm_id)
-    feed_types = AnimalFeedType.objects.filter(farm=farm)
-    serializer = AnimalFeedTypeSerializer(feed_types, many=True)
-    return Response(serializer.data)
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_feed_type(request, farm_id, id):
-    farm = get_object_or_404(Farm, id=farm_id)
-    feed_type = get_object_or_404(AnimalFeedType, id=id, farm=farm)
-    serializer = AnimalFeedTypeSerializer(feed_type)
-    return Response(serializer.data)
-
-
-@api_view(['DELETE'])
-@permission_classes([IsAuthenticated])
-def delete_feed_type(request, farm_id, id):
-    farm = get_object_or_404(Farm, id=farm_id)
-    feed_type = get_object_or_404(AnimalFeedType, id=id, farm=farm)
-    feed_type.delete()
-    return Response(status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
