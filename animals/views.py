@@ -130,7 +130,7 @@ def get_animals(request, farm_id):
         type = request.query_params["type"]
         animals = animals.filter(type__name=type)
     # Serialize the animal data
-    serializer = AnimalSerializer(animals, many=True)
+    serializer = AnimalSerializer(animals, many=True, context={'many': True})
     return Response(serializer.data, status=200)
 
 @api_view(['GET'])
@@ -138,7 +138,7 @@ def get_animal(request, farm_id, id):
     """Get specific animal"""
     try:
         animal = Animal.objects.get(id=id, farm_id=farm_id)
-        serializer = AnimalSerializer(animal)
+        serializer = AnimalSerializer(animal, context={'many': False})
         return Response(serializer.data, status=200)
     except Animal.DoesNotExist:
         return Response({"error": f"Animal with id:{id} not found in farm:{farm_id}"}, status=404)
@@ -154,7 +154,7 @@ def add_animal(request, farm_id):
         return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
 
-@api_view(['POST'])
+@api_view(['PUT'])
 def edit_animal(request, farm_id, id):
     """Edit animal"""
     try:
@@ -167,7 +167,7 @@ def edit_animal(request, farm_id, id):
     except Animal.DoesNotExist:
         return Response({"error": f"Animal with id:{id} not found in farm:{farm_id}"}, status=404)
 
-@api_view(['POST'])
+@api_view(['DELETE'])
 def delete_animal(request, farm_id, id):
     """Delete animal"""
     try:
@@ -191,7 +191,7 @@ def post_animal_image(request, id):
     except Animal.DoesNotExist:
         return Response({"error": f"Animal with this id:{id} does not exist"}, status=400)
 
-@api_view(['POST'])
+@api_view(['DELETE'])
 def delete_animal_image(request, farm_id, id):
     """Delete animal image"""
     try:
@@ -233,7 +233,7 @@ def add_ai_record(request, farm_id):
         return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
 
-@api_view(['POST'])
+@api_view(['PUT'])
 def edit_ai_record(request, farm_id, id):
     """Edit AI record"""
     try:
@@ -246,7 +246,7 @@ def edit_ai_record(request, farm_id, id):
     except ArtificialInsemination.DoesNotExist:
         return Response({"error": f"AI record with id:{id} not found in farm:{farm_id}"}, status=404)
 
-@api_view(['POST'])
+@api_view(['DELETE'])
 def delete_ai_record(request, farm_id, id):
     """Delete AI record"""
     try:
@@ -256,7 +256,7 @@ def delete_ai_record(request, farm_id, id):
     except ArtificialInsemination.DoesNotExist:
         return Response({"error": f"AI record with id:{id} not found in farm:{farm_id}"}, status=404)
 
-@api_view(['POST'])
+@api_view(['PUT'])
 def set_ai_sire(request, animal_id):
     """Set AI sire for an animal"""
     try:
@@ -284,7 +284,7 @@ def set_ai_sire(request, animal_id):
     except Animal.DoesNotExist:
         return Response({"error": f"Animal with id:{animal_id} does not exist"}, status=400)
 
-@api_view(['POST'])
+@api_view(['PUT'])
 def clear_ai_sire(request, animal_id):
     """Clear AI sire for an animal"""
     try:
