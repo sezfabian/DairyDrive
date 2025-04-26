@@ -60,8 +60,19 @@ def signup(request):
         # Login user
         user = authenticate(request, username=serializer.data["email"], password=request.data["password"])
         refresh = RefreshToken.for_user(user)
-        # Return access, refresh token and user profile
-        return Response({"refresh": str(refresh), "access": str(refresh.access_token), "farm": farm_details, "profile": user_profile}, status=201)
+        access_token = refresh.access_token
+        
+        # Calculate token expiration time
+        expires_in = int((access_token.current_time + access_token.lifetime - access_token.current_time).total_seconds())
+        
+        # Return access, refresh token, expiration time and user profile
+        return Response({
+            "refresh": str(refresh),
+            "access": str(access_token),
+            "expires_in": expires_in,
+            "farm": farm_details if "farm_code" in request.data else None,
+            "profile": user_profile
+        }, status=201)
     return Response(serializer.errors, status=400)
 
 
@@ -87,9 +98,8 @@ def login(request):
             return Response({"error": "User with this email or phone number does not exist"}, status=400)
         email = profile.email
 
-
         # Check if user has acces to farm
-        if farm:
+        if "farm_code" in request.data:
             if farm.id in profile.farms.all().values_list('id', flat=True):
                 farm_details = FarmSerializer(farm)
                 animals = Animal.objects.filter(farm=farm)
@@ -98,11 +108,12 @@ def login(request):
             else:
                 return Response({"error": "User does not have access to this farm"}, status=400)
 
-        farm_details = farm_details.data
-        farm_details["id"] = farm.id
-        farm_details["animals"] = AnimalSerializer(animals, many=True).data
-        farm_details["types"] = AnimalTypeSerializer(types, many=True).data
-        farm_details["breeds"] = AnimalBreedSerializer(breeds, many=True).data
+            farm_details = farm_details.data
+            farm_details["id"] = farm.id
+            farm_details["animals"] = AnimalSerializer(animals, many=True).data
+            farm_details["types"] = AnimalTypeSerializer(types, many=True).data
+            farm_details["breeds"] = AnimalBreedSerializer(breeds, many=True).data
+
         # Login user
         try:
             user = User.objects.get(email=email)
@@ -110,9 +121,20 @@ def login(request):
             if not user:
                 return Response({"error": "Your email or password is Invalid"}, status=400)
             refresh = RefreshToken.for_user(user)
+            access_token = refresh.access_token
+            
+            # Calculate token expiration time
+            expires_in = int((access_token.current_time + access_token.lifetime - access_token.current_time).total_seconds())
+            
             serializer = UserProfileSerializer(profile)
-            # Return access, refresh token, farm id and user profile
-            return Response({"refresh": str(refresh), "access": str(refresh.access_token), "farm": farm_details, "profile": serializer.data}, status=200)
+            # Return access, refresh token, expiration time, farm id and user profile
+            return Response({
+                "refresh": str(refresh),
+                "access": str(access_token),
+                "expires_in": expires_in,
+                "farm": farm_details if "farm_code" in request.data else None,
+                "profile": serializer.data
+            }, status=200)
         except User.DoesNotExist:
             return Response({"error": "User with this email does not exist"}, status=400)
     return Response(serializer.errors, status=400)
