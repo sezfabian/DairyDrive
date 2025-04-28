@@ -1,0 +1,3418 @@
+{
+	"info": {
+		"_postman_id": "26ed3606-3696-49ac-94d4-8e74bfd05389",
+		"name": "DairyDrive API",
+		"description": "API collection for DairyDrive project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34516477",
+		"_collection_link": "https://devsfordevs.postman.co/workspace/My-Workspace~a2af2ef0-f3d0-428e-8859-059c6a3e397d/collection/34516477-26ed3606-3696-49ac-94d4-8e74bfd05389?action=share&source=collection_link&creator=34516477"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email_or_phone\": \"user@example.com\",\n    \"password\": \"your_password\",\n    \"farm_code\": \"FARM123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh\": \"your_refresh_token\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/token/refresh/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"token",
+								"refresh",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Signup",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"your_password\",\n    \"phone\": \"1234567890\",\n    \"first_name\": \"John\",\n    \"last_name\": \"Doe\",\n    \"farm_code\": \"FARM123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/signup",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email_or_phone\": \"user@example.com\",\n    \"password\": \"wakanda01#\",\n    \"farm_code\": \"SF1234\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"John\",\n    \"last_name\": \"Doe\",\n    \"phone\": \"1234567890\",\n    \"company\": \"Company Name\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Subscriptions",
+			"item": [
+				{
+					"name": "Get Subscription Plans",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/get_subscription_plans",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"get_subscription_plans"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Subscription",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"plan_id\": 1,\n    \"payment_method_id\": \"pm_card_visa\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/create_subscription",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"create_subscription"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Subscription",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/cancel_subscription",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"cancel_subscription"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Subscription Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/get_subscription_status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"get_subscription_status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Payment History",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/get_payment_history",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"get_payment_history"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Farms",
+			"item": [
+				{
+					"name": "Get Farms",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/farms/get_farms",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"farms",
+								"get_farms"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Farm",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Farm Name\",\n    \"location\": \"Farm Location\",\n    \"description\": \"Farm Description\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/farms/add_farm",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"farms",
+								"add_farm"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Farm",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Farm Name\",\n    \"location\": \"Updated Location\",\n    \"description\": \"Updated Description\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/farms/edit_farm/{{farm_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"farms",
+								"edit_farm",
+								"{{farm_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Farm",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/farms/delete_farm/{{farm_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"farms",
+								"delete_farm",
+								"{{farm_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Animals",
+			"item": [
+				{
+					"name": "Animal Types",
+					"item": [
+						{
+							"name": "Get Animal Types",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/animals/get_animal_types/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"get_animal_types",
+										"{{farm_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Animal Type",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Cow\",\n    \"description\": \"Dairy cattle\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/animals/add_animal_type/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"add_animal_type",
+										"{{farm_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Animal Type",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0MjIzOTY5LCJpYXQiOjE3NDQxMzc1NjksImp0aSI6ImNjYjI5ZmQ4ZThiNTQxYjhiMzI5NDQ3YjcxYjhhNzhjIiwidXNlcl9pZCI6NH0.sVXDnYN3ww-HOqs1hpuVJOPYtd101BtgjB9jO5gxOB0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Horse\",\n    \"description\": \"Updated description\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/animals/edit_animal_type/{{farm_id}}/{{type_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"edit_animal_type",
+										"{{farm_id}}",
+										"{{type_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Animal Type",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/animals/delete_animal_type/{{farm_id}}/{{type_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"delete_animal_type",
+										"{{farm_id}}",
+										"{{type_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Animal Breeds by Type",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/animals/get_animal_breeds_by_type/{{type_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"get_animal_breeds_by_type",
+										"{{type_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Animal Breeds",
+					"item": [
+						{
+							"name": "Get Animal Breeds",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/animals/get_animal_breeds/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"get_animal_breeds",
+										"{{farm_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Animal Breed",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Holstein\",\n    \"type\": {{type_id}},\n    \"description\": \"Dairy breed\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/animals/add_animal_breed/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"add_animal_breed",
+										"{{farm_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Animal Breed",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0MjIzOTY5LCJpYXQiOjE3NDQxMzc1NjksImp0aSI6ImNjYjI5ZmQ4ZThiNTQxYjhiMzI5NDQ3YjcxYjhhNzhjIiwidXNlcl9pZCI6NH0.sVXDnYN3ww-HOqs1hpuVJOPYtd101BtgjB9jO5gxOB0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Updated Holstein\",\n    \"type\": 2,\n    \"description\": \"Updated description\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/animals/edit_animal_breed/{{farm_id}}/{{breed_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"edit_animal_breed",
+										"{{farm_id}}",
+										"{{breed_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Animal Breed",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/animals/delete_animal_breed/{{farm_id}}/{{breed_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"delete_animal_breed",
+										"{{farm_id}}",
+										"{{breed_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Animals",
+					"item": [
+						{
+							"name": "Get Animals",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/animals/get_animals/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"get_animals",
+										"{{farm_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Animal",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/animals/get_animal/{{farm_id}}/{{animal_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"get_animal",
+										"{{farm_id}}",
+										"{{animal_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Animal",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Bessie\",\n    \"type\": {{type_id}},\n    \"breed\": {{breed_id}},\n    \"gender\": \"F\",\n    \"date_of_birth\": \"2020-01-01\",\n    \"weight\": 500.5,\n    \"tag_number\": \"TAG123\",\n    \"status\": \"active\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/animals/create_animal/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"create_animal",
+										"{{farm_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Animal",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0MjIzOTY5LCJpYXQiOjE3NDQxMzc1NjksImp0aSI6ImNjYjI5ZmQ4ZThiNTQxYjhiMzI5NDQ3YjcxYjhhNzhjIiwidXNlcl9pZCI6NH0.sVXDnYN3ww-HOqs1hpuVJOPYtd101BtgjB9jO5gxOB0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Updated Bessie\",\n    \"type\": 2,\n    \"breed\": 3,\n    \"gender\": \"Female\",\n    \"date_of_birth\": \"2020-01-01\",\n    \"weight\": 550.5,\n    \"tag_number\": \"TAG123\",\n    \"status\": \"active\",\n    \"dam\": null,\n    \"sire\": null,\n    \"ai_sire\": null,\n    \"is_on_sale\": true,\n    \"to_be_archived\": false\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/animals/edit_animal/{{farm_id}}/{{animal_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"edit_animal",
+										"{{farm_id}}",
+										"{{animal_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Animal",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/animals/delete_animal/{{farm_id}}/{{animal_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"delete_animal",
+										"{{farm_id}}",
+										"{{animal_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Animal Images",
+					"item": [
+						{
+							"name": "Post Animal Image",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"image_url\": \"wqubdububb\",\n    \"image_refference\": \"yxgewygyeeywgw\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/animals/post_animal_image/{{animal_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"post_animal_image",
+										"{{animal_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Animal Image",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/animals/delete_animal_image/{{farm_id}}/{{image_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"delete_animal_image",
+										"{{farm_id}}",
+										"{{image_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Artificial Insemination",
+					"item": [
+						{
+							"name": "Get AI Records",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/animals/get_ai_records/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"get_ai_records",
+										"{{farm_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add AI Record",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"animal\": {{animal_id}},\n    \"date\": \"2024-03-20\",\n    \"semen_brand\": \"Brand X\",\n    \"semen_code\": \"S123\",\n    \"technician\": \"John Doe\",\n    \"status\": \"successful\",\n    \"cost\": 50.00\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/animals/add_ai_record/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"add_ai_record",
+										"{{farm_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit AI Record",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"animal\": {{animal_id}},\n    \"date\": \"2024-03-20\",\n    \"semen_brand\": \"Updated Brand X\",\n    \"semen_code\": \"S123\",\n    \"technician\": \"John Doe\",\n    \"status\": \"successful\",\n    \"cost\": 55.00\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/animals/edit_ai_record/{{farm_id}}/{{ai_record_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"edit_ai_record",
+										"{{farm_id}}",
+										"{{ai_record_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete AI Record",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/animals/delete_ai_record/{{farm_id}}/{{ai_record_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"delete_ai_record",
+										"{{farm_id}}",
+										"{{ai_record_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Set AI Sire",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"ai_record\": {{ai_record_id}}\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/animals/set_ai_sire/{{animal_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"set_ai_sire",
+										"{{animal_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Clear AI Sire",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/animals/clear_ai_sire/{{animal_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"clear_ai_sire",
+										"{{animal_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Animal Health Records",
+					"item": [
+						{
+							"name": "Get Animal Health Records",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/animals/get_animal_health_records/{{animal_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"animals",
+										"get_animal_health_records",
+										"{{animal_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Health",
+			"item": [
+				{
+					"name": "Veterinarians",
+					"item": [
+						{
+							"name": "Get All Veterinarians",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/health/get_veterinarians/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"health",
+										"get_veterinarians",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Single Veterinarian",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/health/get_veterinarian/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"health",
+										"get_veterinarian",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Veterinarian",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Dr. Smith\",\n    \"phone\": \"+1234567890\",\n    \"email\": \"dr.smith@example.com\",\n    \"specialization\": \"Large Animal\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/health/add_veterinarian/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"health",
+										"add_veterinarian",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Veterinarian",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Dr. Smith Updated\",\n    \"phone\": \"+1234567890\",\n    \"email\": \"dr.smith@example.com\",\n    \"specialization\": \"Large Animal\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/health/edit_veterinarian/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"health",
+										"edit_veterinarian",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Veterinarian",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/health/delete_veterinarian/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"health",
+										"delete_veterinarian",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Health Conditions",
+					"item": [
+						{
+							"name": "Get All Health Conditions",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/health/get_health_conditions/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"health",
+										"get_health_conditions",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Single Health Condition",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/health/get_health_condition/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"health",
+										"get_health_condition",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Health Condition",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Mastitis\",\n    \"description\": \"Inflammation of the mammary gland\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/health/add_health_condition/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"health",
+										"add_health_condition",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Health Condition",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Mastitis Updated\",\n    \"description\": \"Inflammation of the mammary gland\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/health/edit_health_condition/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"health",
+										"edit_health_condition",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Health Condition",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/health/delete_health_condition/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"health",
+										"delete_health_condition",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Vet Services",
+					"item": [
+						{
+							"name": "Get All Vet Services",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0MjIzOTY5LCJpYXQiOjE3NDQxMzc1NjksImp0aSI6ImNjYjI5ZmQ4ZThiNTQxYjhiMzI5NDQ3YjcxYjhhNzhjIiwidXNlcl9pZCI6NH0.sVXDnYN3ww-HOqs1hpuVJOPYtd101BtgjB9jO5gxOB0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/health/get_vet_services/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"health",
+										"get_vet_services",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Single Vet Service",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0MjE3MDgwLCJpYXQiOjE3NDQxMzA2ODAsImp0aSI6IjJjN2RhNzE4YWJhNTRiZTA5ZTk5MzU0Nzg4NGQ1ZjI3IiwidXNlcl9pZCI6Mn0.BRse9Mk8tV6EiIAVORHZ8A7a05QTxoqnP1Ad5v5Jc6w",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/health/get_vet_service/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"health",
+										"get_vet_service",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Vet Service",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Antibiotic Treatment\",\n    \"description\": \"Administration of antibiotics\",\n    \"cost\": \"50.00\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/health/add_vet_service/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"health",
+										"add_vet_service",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Vet Service",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Antibiotic Treatment Updated\",\n    \"description\": \"Administration of antibiotics\",\n    \"cost\": \"60.00\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/health/edit_vet_service/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"health",
+										"edit_vet_service",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Vet Service",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/health/delete_vet_service/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"health",
+										"delete_vet_service",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Health Records",
+					"item": [
+						{
+							"name": "Get All Health Records",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0MjIzOTY5LCJpYXQiOjE3NDQxMzc1NjksImp0aSI6ImNjYjI5ZmQ4ZThiNTQxYjhiMzI5NDQ3YjcxYjhhNzhjIiwidXNlcl9pZCI6NH0.sVXDnYN3ww-HOqs1hpuVJOPYtd101BtgjB9jO5gxOB0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/health/get_health_records/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"health",
+										"get_health_records",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Single Health Record",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/health/get_health_record/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"health",
+										"get_health_record",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Health Record",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"animal\": 1,\n    \"condition\": 1,\n    \"veterinarian\": 1,\n    \"diagnosis_date\": \"2024-03-20\",\n    \"symptoms\": \"Swollen udder, fever\",\n    \"notes\": \"Acute case\",\n    \"image\": \"https://example.com/image.jpg\",\n    \"image_reference\": \"Udder examination\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/health/add_health_record",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"health",
+										"add_health_record"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Health Record",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"animal\": 1,\n    \"condition\": 1,\n    \"veterinarian\": 1,\n    \"diagnosis_date\": \"2024-03-20\",\n    \"symptoms\": \"Swollen udder, fever\",\n    \"notes\": \"Acute case\",\n    \"is_resolved\": true,\n    \"resolution_date\": \"2024-03-25\",\n    \"image\": \"https://example.com/image.jpg\",\n    \"image_reference\": \"Udder examination\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/health/edit_health_record/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"health",
+										"edit_health_record",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Health Record",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/health/delete_health_record/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"health",
+										"delete_health_record",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Treatments",
+					"item": [
+						{
+							"name": "Get All Treatments",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/health/get_treatments/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"health",
+										"get_treatments",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Single Treatment",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/health/get_treatment/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"health",
+										"get_treatment",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Treatment",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"health_record\": 1,\n    \"service\": 1,\n    \"treatment_date\": \"2024-03-20\",\n    \"quantity\": 1,\n    \"unit_cost\": \"50.00\",\n    \"notes\": \"Administered antibiotics\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/health/add_treatment",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"health",
+										"add_treatment"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Treatment",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"health_record\": 1,\n    \"service\": 1,\n    \"treatment_date\": \"2024-03-20\",\n    \"quantity\": 2,\n    \"unit_cost\": \"50.00\",\n    \"notes\": \"Administered antibiotics\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/health/edit_treatment/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"health",
+										"edit_treatment",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Treatment",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/health/delete_treatment/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"health",
+										"delete_treatment",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Feeds",
+			"item": [
+				{
+					"name": "Feed Types",
+					"item": [
+						{
+							"name": "Get All Feed Types",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NDQwMzk1LCJpYXQiOjE3NDUzNTM5OTUsImp0aSI6IjBmMDI3NGI0NGVkMDRkNGRiNDMyNzQ0NjZiNjA1OWZiIiwidXNlcl9pZCI6Mn0.aR2Wo-qIv8Ux5JFBOmDGtIcAQXw0dPt59lNR7QZNtt0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/feeds/get_feed_types/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"feeds",
+										"get_feed_types",
+										"{{farm_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Single Feed Type",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NDQwMzk1LCJpYXQiOjE3NDUzNTM5OTUsImp0aSI6IjBmMDI3NGI0NGVkMDRkNGRiNDMyNzQ0NjZiNjA1OWZiIiwidXNlcl9pZCI6Mn0.aR2Wo-qIv8Ux5JFBOmDGtIcAQXw0dPt59lNR7QZNtt0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/feeds/get_feed_type/{{farm_id}}/{{feed_type_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"feeds",
+										"get_feed_type",
+										"{{farm_id}}",
+										"{{feed_type_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Feed Type",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NDQwMzk1LCJpYXQiOjE3NDUzNTM5OTUsImp0aSI6IjBmMDI3NGI0NGVkMDRkNGRiNDMyNzQ0NjZiNjA1OWZiIiwidXNlcl9pZCI6Mn0.aR2Wo-qIv8Ux5JFBOmDGtIcAQXw0dPt59lNR7QZNtt0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Chilan\",\n    \"description\": \"High protein concentrate feed\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/feeds/add_feed_type/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"feeds",
+										"add_feed_type",
+										"{{farm_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Feed Type",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NDQwMzk1LCJpYXQiOjE3NDUzNTM5OTUsImp0aSI6IjBmMDI3NGI0NGVkMDRkNGRiNDMyNzQ0NjZiNjA1OWZiIiwidXNlcl9pZCI6Mn0.aR2Wo-qIv8Ux5JFBOmDGtIcAQXw0dPt59lNR7QZNtt0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Concentrates\",\n    \"description\": \"High protein concentrate feed - updated\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/feeds/edit_feed_type/{{farm_id}}/{{feed_type_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"feeds",
+										"edit_feed_type",
+										"{{farm_id}}",
+										"{{feed_type_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Feed Type",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NDQwMzk1LCJpYXQiOjE3NDUzNTM5OTUsImp0aSI6IjBmMDI3NGI0NGVkMDRkNGRiNDMyNzQ0NjZiNjA1OWZiIiwidXNlcl9pZCI6Mn0.aR2Wo-qIv8Ux5JFBOmDGtIcAQXw0dPt59lNR7QZNtt0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/feeds/delete_feed_type/{{farm_id}}/{{feed_type_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"feeds",
+										"delete_feed_type",
+										"{{farm_id}}",
+										"{{feed_type_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Feeds",
+					"item": [
+						{
+							"name": "Get All Feeds",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NDQwMzk1LCJpYXQiOjE3NDUzNTM5OTUsImp0aSI6IjBmMDI3NGI0NGVkMDRkNGRiNDMyNzQ0NjZiNjA1OWZiIiwidXNlcl9pZCI6Mn0.aR2Wo-qIv8Ux5JFBOmDGtIcAQXw0dPt59lNR7QZNtt0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/feeds/get_feeds/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"feeds",
+										"get_feeds",
+										"{{farm_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Single Feed",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NDQwMzk1LCJpYXQiOjE3NDUzNTM5OTUsImp0aSI6IjBmMDI3NGI0NGVkMDRkNGRiNDMyNzQ0NjZiNjA1OWZiIiwidXNlcl9pZCI6Mn0.aR2Wo-qIv8Ux5JFBOmDGtIcAQXw0dPt59lNR7QZNtt0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/feeds/get_feed/{{farm_id}}/{{feed_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"feeds",
+										"get_feed",
+										"{{farm_id}}",
+										"{{feed_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Feed",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NDQwMzk1LCJpYXQiOjE3NDUzNTM5OTUsImp0aSI6IjBmMDI3NGI0NGVkMDRkNGRiNDMyNzQ0NjZiNjA1OWZiIiwidXNlcl9pZCI6Mn0.aR2Wo-qIv8Ux5JFBOmDGtIcAQXw0dPt59lNR7QZNtt0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Sillages\",\n    \"animal_feed_type\": {{feed_type_id}},\n    \"unit\": \"kg\",\n    \"description\": \"High quality dairy meal\",\n    \"animal_types\": [1]\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/feeds/add_feed/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"feeds",
+										"add_feed",
+										"{{farm_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Feed",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NDQwMzk1LCJpYXQiOjE3NDUzNTM5OTUsImp0aSI6IjBmMDI3NGI0NGVkMDRkNGRiNDMyNzQ0NjZiNjA1OWZiIiwidXNlcl9pZCI6Mn0.aR2Wo-qIv8Ux5JFBOmDGtIcAQXw0dPt59lNR7QZNtt0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Dairy Meals\",\n    \"animal_feed_type\": {{feed_type_id}},\n    \"unit\": \"kg\",\n    \"description\": \"High quality dairy meal - updated\",\n    \"animal_types\": [1]\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/feeds/edit_feed/{{farm_id}}/{{feed_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"feeds",
+										"edit_feed",
+										"{{farm_id}}",
+										"{{feed_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Feed",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NDQwMzk1LCJpYXQiOjE3NDUzNTM5OTUsImp0aSI6IjBmMDI3NGI0NGVkMDRkNGRiNDMyNzQ0NjZiNjA1OWZiIiwidXNlcl9pZCI6Mn0.aR2Wo-qIv8Ux5JFBOmDGtIcAQXw0dPt59lNR7QZNtt0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/feeds/delete_feed/{{farm_id}}/{{feed_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"feeds",
+										"delete_feed",
+										"{{farm_id}}",
+										"{{feed_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Feed Entries",
+					"item": [
+						{
+							"name": "Get All Feed Entries",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NDQwMzk1LCJpYXQiOjE3NDUzNTM5OTUsImp0aSI6IjBmMDI3NGI0NGVkMDRkNGRiNDMyNzQ0NjZiNjA1OWZiIiwidXNlcl9pZCI6Mn0.aR2Wo-qIv8Ux5JFBOmDGtIcAQXw0dPt59lNR7QZNtt0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/feeds/get_feed_entries/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"feeds",
+										"get_feed_entries",
+										"{{farm_id}}"
+									],
+									"query": [
+										{
+											"key": "feed_id",
+											"value": "{{feed_id}}",
+											"disabled": true
+										},
+										{
+											"key": "animal_id",
+											"value": "{{animal_id}}",
+											"disabled": true
+										},
+										{
+											"key": "start_date",
+											"value": "{{start_date}}",
+											"disabled": true
+										},
+										{
+											"key": "end_date",
+											"value": "{{end_date}}",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Single Feed Entry",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NDQwMzk1LCJpYXQiOjE3NDUzNTM5OTUsImp0aSI6IjBmMDI3NGI0NGVkMDRkNGRiNDMyNzQ0NjZiNjA1OWZiIiwidXNlcl9pZCI6Mn0.aR2Wo-qIv8Ux5JFBOmDGtIcAQXw0dPt59lNR7QZNtt0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/feeds/get_feed_entry/{{farm_id}}/{{feed_entry_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"feeds",
+										"get_feed_entry",
+										"{{farm_id}}",
+										"{{feed_entry_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Feed Entry",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NDQwMzk1LCJpYXQiOjE3NDUzNTM5OTUsImp0aSI6IjBmMDI3NGI0NGVkMDRkNGRiNDMyNzQ0NjZiNjA1OWZiIiwidXNlcl9pZCI6Mn0.aR2Wo-qIv8Ux5JFBOmDGtIcAQXw0dPt59lNR7QZNtt0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"feed_date\": \"2024-03-20\",\n    \"feed_time\": \"10:20\",\n    \"quantity\": 5.5,\n    \"animal_feed\": 1,\n    \"animal_type\": 1\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/feeds/add_feed_entry/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"feeds",
+										"add_feed_entry",
+										"{{farm_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Feed Entry",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NDQwMzk1LCJpYXQiOjE3NDUzNTM5OTUsImp0aSI6IjBmMDI3NGI0NGVkMDRkNGRiNDMyNzQ0NjZiNjA1OWZiIiwidXNlcl9pZCI6Mn0.aR2Wo-qIv8Ux5JFBOmDGtIcAQXw0dPt59lNR7QZNtt0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"feed_date\": \"2024-03-20\",\n    \"feed_time\": \"10:20\",\n    \"quantity\": 5.5,\n    \"animal_feed\": 1,\n    \"animal_type\": 1\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/feeds/edit_feed_entry/{{farm_id}}/{{feed_entry_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"feeds",
+										"edit_feed_entry",
+										"{{farm_id}}",
+										"{{feed_entry_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Feed Entry",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NDQwMzk1LCJpYXQiOjE3NDUzNTM5OTUsImp0aSI6IjBmMDI3NGI0NGVkMDRkNGRiNDMyNzQ0NjZiNjA1OWZiIiwidXNlcl9pZCI6Mn0.aR2Wo-qIv8Ux5JFBOmDGtIcAQXw0dPt59lNR7QZNtt0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/feeds/delete_feed_entry/{{farm_id}}/{{feed_entry_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"feeds",
+										"delete_feed_entry",
+										"{{farm_id}}",
+										"{{feed_entry_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Feed Purchases",
+					"item": [
+						{
+							"name": "Get All Feed Purchases",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NDQwMzk1LCJpYXQiOjE3NDUzNTM5OTUsImp0aSI6IjBmMDI3NGI0NGVkMDRkNGRiNDMyNzQ0NjZiNjA1OWZiIiwidXNlcl9pZCI6Mn0.aR2Wo-qIv8Ux5JFBOmDGtIcAQXw0dPt59lNR7QZNtt0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/feeds/get_feed_purchases/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"feeds",
+										"get_feed_purchases",
+										"{{farm_id}}"
+									],
+									"query": [
+										{
+											"key": "feed_id",
+											"value": "{{feed_id}}",
+											"disabled": true
+										},
+										{
+											"key": "supplier_id",
+											"value": "{{supplier_id}}",
+											"disabled": true
+										},
+										{
+											"key": "start_date",
+											"value": "{{start_date}}",
+											"disabled": true
+										},
+										{
+											"key": "end_date",
+											"value": "{{end_date}}",
+											"disabled": true
+										},
+										{
+											"key": "payment_status",
+											"value": "true",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Single Feed Purchase",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/feeds/get_feed_purchase/{{farm_id}}/{{feed_purchase_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"feeds",
+										"get_feed_purchase",
+										"{{farm_id}}",
+										"{{feed_purchase_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Feed Purchase",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NDQwMzk1LCJpYXQiOjE3NDUzNTM5OTUsImp0aSI6IjBmMDI3NGI0NGVkMDRkNGRiNDMyNzQ0NjZiNjA1OWZiIiwidXNlcl9pZCI6Mn0.aR2Wo-qIv8Ux5JFBOmDGtIcAQXw0dPt59lNR7QZNtt0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"date\": \"2024-03-20\",\n    \"quantity\": 100,\n    \"cost\": 2500,\n    \"animal_feed\": {{feed_id}}\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/feeds/add_feed_purchase/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"feeds",
+										"add_feed_purchase",
+										"{{farm_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Feed Purchase",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"date\": \"2024-03-20\",\n    \"quantity\": 120,\n    \"unit_price\": 2.5,\n    \"feed\": {{feed_id}},\n    \"supplier\": {{supplier_id}}\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/feeds/edit_feed_purchase/{{farm_id}}/{{feed_purchase_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"feeds",
+										"edit_feed_purchase",
+										"{{farm_id}}",
+										"{{feed_purchase_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Feed Purchase",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NDQwMzk1LCJpYXQiOjE3NDUzNTM5OTUsImp0aSI6IjBmMDI3NGI0NGVkMDRkNGRiNDMyNzQ0NjZiNjA1OWZiIiwidXNlcl9pZCI6Mn0.aR2Wo-qIv8Ux5JFBOmDGtIcAQXw0dPt59lNR7QZNtt0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/feeds/delete_feed_purchase/{{farm_id}}/{{feed_purchase_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"feeds",
+										"delete_feed_purchase",
+										"{{farm_id}}",
+										"{{feed_purchase_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Mark Feed Purchase as Paid",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/feeds/mark_feed_purchase_as_paid/{{farm_id}}/{{feed_purchase_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"feeds",
+										"mark_feed_purchase_as_paid",
+										"{{farm_id}}",
+										"{{feed_purchase_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Get All Feeds Records",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NDQwMzk1LCJpYXQiOjE3NDUzNTM5OTUsImp0aSI6IjBmMDI3NGI0NGVkMDRkNGRiNDMyNzQ0NjZiNjA1OWZiIiwidXNlcl9pZCI6Mn0.aR2Wo-qIv8Ux5JFBOmDGtIcAQXw0dPt59lNR7QZNtt0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/feeds/get_all_feeds_records/{{farm_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"feeds",
+								"get_all_feeds_records",
+								"{{farm_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Products",
+					"item": [
+						{
+							"name": "Get All Products",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/products/get_products/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"products",
+										"get_products",
+										"{{farm_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Single Product",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/products/get_product/{{farm_id}}/{{product_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"products",
+										"get_product",
+										"{{farm_id}}",
+										"{{product_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Product",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Milk\",\n    \"unit\": \"liters\",\n    \"description\": \"Fresh cow milk\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/products/add_product/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"products",
+										"add_product",
+										"{{farm_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Product",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Milk\",\n    \"unit\": \"liters\",\n    \"description\": \"Fresh cow milk - updated\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/products/edit_product/{{farm_id}}/{{product_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"products",
+										"edit_product",
+										"{{farm_id}}",
+										"{{product_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Product",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/products/delete_product/{{farm_id}}/{{product_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"products",
+										"delete_product",
+										"{{farm_id}}",
+										"{{product_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Production Records",
+					"item": [
+						{
+							"name": "Get All Production Records",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/products/get_production_records/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"products",
+										"get_production_records",
+										"{{farm_id}}"
+									],
+									"query": [
+										{
+											"key": "animal_id",
+											"value": "{{animal_id}}",
+											"disabled": true
+										},
+										{
+											"key": "animal_type_id",
+											"value": "{{animal_type_id}}",
+											"disabled": true
+										},
+										{
+											"key": "product_id",
+											"value": "{{product_id}}",
+											"disabled": true
+										},
+										{
+											"key": "start_date",
+											"value": "{{start_date}}",
+											"disabled": true
+										},
+										{
+											"key": "end_date",
+											"value": "{{end_date}}",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Single Production Record",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/products/get_production_record/{{farm_id}}/{{record_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"products",
+										"get_production_record",
+										"{{farm_id}}",
+										"{{record_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Production Record",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NDI4NDM1LCJpYXQiOjE3NDUzNDIwMzUsImp0aSI6IjhlNDZjMDkwZDIxYjQwOTk4YjBhNmZmOTEwNzI5NjU4IiwidXNlcl9pZCI6Mn0.NrvbHkQNyXl0aCSzpdtdgXyydVi_7gW9a-habCVTf7k",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"date\": \"2024-03-20\",\n    \"time\": \"10:23\",\n    \"quantity\": 10.5,\n    \"animal\": {{animal_id}},\n    \"product\": {{product_id}},\n    \"record_type\": \"individual\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/products/add_production_record/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"products",
+										"add_production_record",
+										"{{farm_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Production Record",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"date\": \"2024-03-20\",\n    \"quantity\": 12.5,\n    \"animal\": {{animal_id}},\n    \"product\": {{product_id}}\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/products/edit_production_record/{{farm_id}}/{{record_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"products",
+										"edit_production_record",
+										"{{farm_id}}",
+										"{{record_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Production Record",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/products/delete_production_record/{{farm_id}}/{{record_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"products",
+										"delete_production_record",
+										"{{farm_id}}",
+										"{{record_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Buyers",
+					"item": [
+						{
+							"name": "Get All Buyers",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/products/get_buyers/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"products",
+										"get_buyers",
+										"{{farm_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Single Buyer",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/products/get_buyer/{{farm_id}}/{{buyer_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"products",
+										"get_buyer",
+										"{{farm_id}}",
+										"{{buyer_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Buyer",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"John Doe\",\n    \"phone\": \"+1234567890\",\n    \"email\": \"john@example.com\",\n    \"address\": \"123 Main St\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/products/add_buyer/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"products",
+										"add_buyer",
+										"{{farm_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Buyer",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"John Doe\",\n    \"phone\": \"+1234567890\",\n    \"email\": \"john@example.com\",\n    \"address\": \"123 Main St - updated\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/products/edit_buyer/{{farm_id}}/{{buyer_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"products",
+										"edit_buyer",
+										"{{farm_id}}",
+										"{{buyer_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Buyer",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/products/delete_buyer/{{farm_id}}/{{buyer_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"products",
+										"delete_buyer",
+										"{{farm_id}}",
+										"{{buyer_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Sales",
+					"item": [
+						{
+							"name": "Get All Sales",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/products/get_sales/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"products",
+										"get_sales",
+										"{{farm_id}}"
+									],
+									"query": [
+										{
+											"key": "buyer_id",
+											"value": "{{buyer_id}}",
+											"disabled": true
+										},
+										{
+											"key": "product_id",
+											"value": "{{product_id}}",
+											"disabled": true
+										},
+										{
+											"key": "start_date",
+											"value": "{{start_date}}",
+											"disabled": true
+										},
+										{
+											"key": "end_date",
+											"value": "{{end_date}}",
+											"disabled": true
+										},
+										{
+											"key": "payment_status",
+											"value": "true",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Single Sale",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/products/get_sale/{{farm_id}}/{{sale_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"products",
+										"get_sale",
+										"{{farm_id}}",
+										"{{sale_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Sale",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"date\": \"2024-03-20\",\n    \"quantity\": 5,\n    \"unit_price\": 2.5,\n    \"buyer\": {{buyer_id}},\n    \"product\": {{product_id}}\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/products/add_sale/{{farm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"products",
+										"add_sale",
+										"{{farm_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Sale",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"date\": \"2024-03-20\",\n    \"quantity\": 6,\n    \"unit_price\": 2.5,\n    \"buyer\": {{buyer_id}},\n    \"product\": {{product_id}}\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/products/edit_sale/{{farm_id}}/{{sale_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"products",
+										"edit_sale",
+										"{{farm_id}}",
+										"{{sale_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Sale",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/products/delete_sale/{{farm_id}}/{{sale_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"products",
+										"delete_sale",
+										"{{farm_id}}",
+										"{{sale_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Mark Sale as Paid",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/products/mark_sale_as_paid/{{farm_id}}/{{sale_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"products",
+										"mark_sale_as_paid",
+										"{{farm_id}}",
+										"{{sale_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NzM3MzEzLCJpYXQiOjE3NDU2NTA5MTMsImp0aSI6IjQzMWY4OWEzZWQzNjQyYjhiYmMyODE0MDJlZjk5YjNkIiwidXNlcl9pZCI6NH0.nKK3pibRWXyex5FFoEJN1x3aMwoznrgiBzxzB0-FcE0",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "your_access_token",
+			"type": "string"
+		},
+		{
+			"key": "farm_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "animal_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "health_record_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "veterinarian_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "feed_type_id",
+			"value": "1",
+			"type": "string"
+		}
+	]
+}

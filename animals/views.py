@@ -227,6 +227,19 @@ def add_ai_record(request, farm_id):
     """Add AI record"""
     request.data["farm"] = farm_id
     request.data["created_by"] = request.user.id
+    
+    # Validate that the animal exists and is female
+    try:
+        animal_id = request.data.get('animal')
+        if not animal_id:
+            return Response({"error": "Animal ID is required"}, status=400)
+            
+        animal = Animal.objects.get(id=animal_id, farm_id=farm_id)
+        if animal.gender != 'Female':
+            return Response({"error": "AI can only be performed on female animals"}, status=400)
+    except Animal.DoesNotExist:
+        return Response({"error": f"Animal with id:{animal_id} not found in farm:{farm_id}"}, status=404)
+    
     serializer = ArtificialInseminationSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save(created_by=request.user)
