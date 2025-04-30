@@ -251,6 +251,16 @@ def edit_ai_record(request, farm_id, id):
     """Edit AI record"""
     try:
         ai_record = ArtificialInsemination.objects.get(id=id, animal__farm_id=farm_id)
+        
+        # If animal is being updated, validate it's female
+        if 'animal' in request.data:
+            try:
+                animal = Animal.objects.get(id=request.data['animal'], farm_id=farm_id)
+                if animal.gender != 'Female':
+                    return Response({"error": "AI can only be performed on female animals"}, status=400)
+            except Animal.DoesNotExist:
+                return Response({"error": f"Animal with id:{request.data['animal']} not found in farm:{farm_id}"}, status=404)
+        
         serializer = ArtificialInseminationSerializer(ai_record, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()

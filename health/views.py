@@ -93,7 +93,7 @@ def add_health_condition(request, farm_id):
         return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
 
-@api_view(['POST'])
+@api_view(['PUT'])
 def edit_health_condition(request, farm_id, id):
     """Edit health condition"""
     try:
@@ -106,7 +106,7 @@ def edit_health_condition(request, farm_id, id):
     except HealthCondition.DoesNotExist:
         return Response({"error": f"Health condition with id:{id} not found in farm:{farm_id}"}, status=404)
 
-@api_view(['POST'])
+@api_view(['DELETE'])
 def delete_health_condition(request, farm_id, id):
     """Delete health condition"""
     try:
@@ -114,7 +114,7 @@ def delete_health_condition(request, farm_id, id):
         condition.delete()
         return Response({"message": "Health condition deleted successfully"}, status=200)
     except HealthCondition.DoesNotExist:
-        return Response({"error": f"Health condition with id:{id} not found in farm:{farm_id}"}, status=404)
+        return Response({"error": f"Health condition with id:{id} not found in this farm"}, status=404)
 
 ###################### VET SERVICES ########################
 
@@ -136,7 +136,7 @@ def add_vet_service(request, farm_id):
         return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
 
-@api_view(['POST'])
+@api_view(['PUT'])
 def edit_vet_service(request, id, farm_id):
     """Edit vet service"""
     try:
@@ -149,7 +149,7 @@ def edit_vet_service(request, id, farm_id):
     except VetService.DoesNotExist:
         return Response({"error": f"Vet service with id:{id} not found in farm:{farm_id}"}, status=404)
 
-@api_view(['POST'])
+@api_view(['DELETE'])
 def delete_vet_service(request, id, farm_id):
     """Delete vet service"""
     try:
@@ -215,7 +215,7 @@ def add_health_record(request):
         return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
 
-@api_view(['POST'])
+@api_view(['PUT'])
 def edit_health_record(request, farm_id, id):
     """Edit health record"""
     try:
@@ -228,7 +228,7 @@ def edit_health_record(request, farm_id, id):
     except HealthRecord.DoesNotExist:
         return Response({"error": f"Health record with id:{id} not found in farm:{farm_id}"}, status=404)
 
-@api_view(['POST'])
+@api_view(['DELETE'])
 def delete_health_record(request, farm_id, id):
     """Delete health record"""
     try:
@@ -256,7 +256,7 @@ def add_treatment(request):
         return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
 
-@api_view(['POST'])
+@api_view(['PUT'])
 def edit_treatment(request, farm_id, id):
     """Edit treatment"""
     try:
@@ -269,7 +269,7 @@ def edit_treatment(request, farm_id, id):
     except Treatment.DoesNotExist:
         return Response({"error": f"Treatment with id:{id} not found in farm:{farm_id}"}, status=404)
 
-@api_view(['POST'])
+@api_view(['DELETE'])
 def delete_treatment(request, farm_id, id):
     """Delete treatment"""
     try:
