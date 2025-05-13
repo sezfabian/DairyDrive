@@ -45,7 +45,7 @@ class TreatmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Treatment
         fields = ['id', 'health_record', 'service', 'service_name', 
-                 'treatment_date', 'quantity', 'unit_cost', 'total_cost',
+                 'treatment_date', 'quantity', 'cost',
                  'notes', 'animal_tag', 'created_at', 'updated_at']
 
     def get_service_name(self, obj):
