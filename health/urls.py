@@ -31,7 +31,8 @@ urlpatterns = [
     path("delete_health_record/<int:farm_id>/<int:id>", delete_health_record, name="delete_health_record"),
 
     # Treatments
-    path("get_treatments/<int:health_record_id>", get_treatments, name="get_treatments"),
+    path("get_treatments/<int:farm_id>", get_treatments, name="get_treatments"),
+    path("get_treatments_by_health_record/<int:health_record_id>", get_treatments_by_health_record, name="get_treatments_by_health_record"),
     path("get_treatment/<int:farm_id>/<int:id>", get_treatment, name="get_treatment"),
     path("add_treatment", add_treatment, name="add_treatment"),
     path("edit_treatment/<int:farm_id>/<int:id>", edit_treatment, name="edit_treatment"),

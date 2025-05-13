@@ -241,7 +241,14 @@ def delete_health_record(request, farm_id, id):
 ###################### TREATMENTS ########################
 
 @api_view(['GET'])
-def get_treatments(request, health_record_id):
+def get_treatments(request, farm_id):
+    """Get treatments for a farm"""
+    treatments = Treatment.objects.filter(health_record__animal__farm_id=farm_id)
+    serializer = TreatmentSerializer(treatments, many=True)
+    return Response(serializer.data, status=200)
+
+@api_view(['GET'])
+def get_treatments_by_health_record(request, health_record_id):
     """Get treatments for a health record"""
     treatments = Treatment.objects.filter(health_record_id=health_record_id)
     serializer = TreatmentSerializer(treatments, many=True)
