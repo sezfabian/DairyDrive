@@ -85,10 +85,6 @@ class Treatment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def save(self, *args, **kwargs):
-        self.total_cost = self.quantity * self.unit_cost
-        super().save(*args, **kwargs)
-
     def __str__(self):
         return f"{self.health_record.animal.name} - {self.service.name} ({self.treatment_date})"
 
