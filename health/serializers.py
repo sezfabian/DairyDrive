@@ -40,18 +40,18 @@ class VetServiceSerializer(serializers.ModelSerializer):
 
 class TreatmentSerializer(serializers.ModelSerializer):
     service_name = serializers.SerializerMethodField()
-    animal_tag = serializers.SerializerMethodField()
+    animal_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Treatment
         fields = ['id', 'health_record', 'service', 'service_name', 
-                 'treatment_date', 'cost', 'notes', 'animal_tag', 'created_at', 'updated_at']
+                 'treatment_date', 'cost', 'notes', 'animal_name', 'created_at', 'updated_at']
 
     def get_service_name(self, obj):
         return obj.service.name if obj.service else None
 
-    def get_animal_tag(self, obj):
-        return obj.health_record.animal.tag_number if obj.health_record and obj.health_record.animal else None
+    def get_animal_name(self, obj):
+        return obj.health_record.animal.name if obj.health_record and obj.health_record.animal else None
 
 class HealthRecordSerializer(serializers.ModelSerializer):
     animal_details = serializers.SerializerMethodField()
