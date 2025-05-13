@@ -45,8 +45,7 @@ class TreatmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Treatment
         fields = ['id', 'health_record', 'service', 'service_name', 
-                 'treatment_date', 'quantity', 'cost',
-                 'notes', 'animal_tag', 'created_at', 'updated_at']
+                 'treatment_date', 'cost', 'notes', 'animal_tag', 'created_at', 'updated_at']
 
     def get_service_name(self, obj):
         return obj.service.name if obj.service else None

@@ -32,7 +32,7 @@ class HealthRecordAdmin(admin.ModelAdmin):
 
 @admin.register(Treatment)
 class TreatmentAdmin(admin.ModelAdmin):
-    list_display = ('health_record', 'service', 'treatment_date', 'quantity', 'cost')
+    list_display = ('health_record', 'service', 'treatment_date', 'cost')
     list_filter = ('service', 'treatment_date')
     search_fields = ('health_record__animal__tag_number', 'notes')
     ordering = ('-treatment_date',)

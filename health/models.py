@@ -79,7 +79,6 @@ class Treatment(models.Model):
     health_record = models.ForeignKey(HealthRecord, on_delete=models.CASCADE, related_name='treatments')
     service = models.ForeignKey(VetService, on_delete=models.CASCADE)
     treatment_date = models.DateField()
-    quantity = models.PositiveIntegerField(default=1)
     cost = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     notes = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
