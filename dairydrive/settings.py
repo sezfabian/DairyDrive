@@ -30,7 +30,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*', '13.58.161.110']
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173", "http://172.16.0.103:5173", "https://dairydrive.netlify.app"
+    "http://localhost:5173", "http://172.16.0.103:5173", "https://dairydrive.netlify.app",
+    "https://www.trackyourfarm.com", "https://trackyourfarm.com", "https://app.trackyourfarm.com"
 ]
 
 # Application definition
@@ -101,7 +102,7 @@ WSGI_APPLICATION = 'dairydrive.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         default='postgresql://postgres:postgres@localhost:5432/mysite',
-        conn_max_age=80
+        conn_max_age=100
     )
 }
 
