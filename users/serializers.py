@@ -8,7 +8,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     farms = FarmSerializer(many=True, read_only=True)  
     class Meta:
         model = UserProfile
-        fields = ("email", "first_name", "last_name", "phone", "profile_img", "img_refference", "company", "farms", "user", "role")
+        fields = ("email", "first_name", "last_name", "phone", "profile_img", "img_refference", "company", "country", "city", "address", "zip_code", "currency", "language", "timezone", "farms", "user", "role")
 
 class LoginSerializer(serializers.ModelSerializer):
     """Login serializer"""

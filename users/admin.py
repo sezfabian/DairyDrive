@@ -5,7 +5,7 @@ from import_export.admin import ImportExportModelAdmin
 
 @admin.register(UserProfile)
 class UserProfileAdmin(ImportExportModelAdmin):
-    list_display = ('email', 'first_name', 'last_name', 'phone', 'company', 'role', 'created_at')
+    list_display = ('email', 'first_name', 'last_name', 'phone', 'company', 'country', 'city', 'address', 'zip_code', 'currency', 'language', 'timezone', 'role', 'created_at')
     search_fields = ('email', 'first_name', 'last_name', 'phone')
     list_filter = ('company', 'role', 'created_at')
     filter_horizontal = ('farms',)
