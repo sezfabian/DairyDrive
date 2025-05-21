@@ -159,7 +159,7 @@ def get_profile(request):
     serializer = UserProfileSerializer(profile)
     return Response(serializer.data, status=200)
 
-@api_view(['POST'])
+@api_view(['PUT'])
 def edit_profile(request):
     """Update user profile"""
     profile = UserProfile.objects.get(user=request.user)
