@@ -164,8 +164,6 @@ def edit_profile(request):
     """Update user profile"""
     request.data["user"] = request.user.id
     profile = UserProfile.objects.get(user=request.user)
-    if request.data["email"] != profile.email:
-        return Response({"error": "You cannot change your email"}, status=400)
     serializer = UserProfileSerializer(profile, data=request.data)
     if serializer.is_valid():
         serializer.save()
