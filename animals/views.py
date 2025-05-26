@@ -23,6 +23,7 @@ def add_animal_type(request, farm_id):
     """Add animal type"""
     request.data["farm"] = farm_id
     request.data["created_by"] = request.user.id
+    request.data["date_of_death"] = None
     serializer = AnimalTypeSerializer(data=request.data)
     if serializer.is_valid():
         if serializer.validated_data["name"] in [type.name for type in AnimalType.objects.filter(farm=farm_id)]:
