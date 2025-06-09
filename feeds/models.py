@@ -1,8 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
-from farms.models import Farm
+from farms.models import Farm, Transaction
 from animals.models import AnimalType, Animal
 from datetime import date, datetime
+from django.db.models import Sum
 
 class AnimalFeedType(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -71,6 +72,8 @@ class AnimalFeedPurchase(models.Model):
     animal_feed = models.ForeignKey(AnimalFeed, on_delete=models.CASCADE)
     quantity = models.DecimalField(decimal_places=2,  max_digits=10, null=False, blank=False)
     cost = models.DecimalField(decimal_places=2, max_digits=10, null=False, blank=False)
+    transactions = models.ManyToManyField(Transaction, related_name='feed_purchases', blank=True)
+    is_paid = models.BooleanField(default=False)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -87,6 +90,11 @@ class AnimalFeedPurchase(models.Model):
             self.animal_feed.inventory -= self.quantity
             self.animal_feed.save()
             self.deleted_at = datetime.now()
+        
+        # Calculate if the purchase is fully paid
+        total_transactions = self.transactions.filter(transaction_type='incoming').aggregate(total=Sum('amount'))['total'] or 0
+        self.is_paid = total_transactions >= self.cost
+        
         super(AnimalFeedPurchase, self).save(*args, **kwargs)
 
     def __str__(self):
