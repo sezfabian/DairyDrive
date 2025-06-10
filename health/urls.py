@@ -37,4 +37,6 @@ urlpatterns = [
     path("add_treatment", add_treatment, name="add_treatment"),
     path("edit_treatment/<int:farm_id>/<int:id>", edit_treatment, name="edit_treatment"),
     path("delete_treatment/<int:farm_id>/<int:id>", delete_treatment, name="delete_treatment"),
+    path('treatments/<int:farm_id>/<int:treatment_id>/add_transaction/', add_transaction_to_treatment, name='add_transaction_to_treatment'),
+    path('treatments/<int:farm_id>/<int:treatment_id>/remove_transaction/<int:transaction_id>/', remove_transaction_from_treatment, name='remove_transaction_from_treatment'),
 ] 

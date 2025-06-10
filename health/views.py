@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Veterinarian, HealthCondition, VetService, HealthRecord, Treatment
+from .models import Veterinarian, HealthCondition, VetService, HealthRecord, Treatment, Transaction
 from .serializers import (
     VeterinarianSerializer, HealthConditionSerializer, 
     VetServiceSerializer, HealthRecordSerializer, TreatmentSerializer
@@ -295,3 +295,53 @@ def get_treatment(request, farm_id, id):
         return Response(serializer.data, status=200)
     except Treatment.DoesNotExist:
         return Response({"error": f"Treatment with id:{id} not found in farm:{farm_id}"}, status=404)
+
+@api_view(['POST'])
+def add_transaction_to_treatment(request, farm_id, treatment_id):
+    """Add a transaction to a treatment"""
+    try:
+        treatment = Treatment.objects.get(id=treatment_id, health_record__animal__farm_id=farm_id)
+        transaction_id = request.data.get('transaction_id')
+        
+        if not transaction_id:
+            return Response({"error": "Transaction ID is required"}, status=400)
+            
+        try:
+            transaction = Transaction.objects.get(id=transaction_id, farm_id=farm_id)
+        except Transaction.DoesNotExist:
+            return Response({"error": "Transaction not found"}, status=404)
+            
+        # Add transaction to treatment
+        treatment.add_transaction(transaction)
+        
+        # Return updated treatment data
+        serializer = TreatmentSerializer(treatment)
+        return Response(serializer.data, status=200)
+        
+    except Treatment.DoesNotExist:
+        return Response({"error": f"Treatment with id:{treatment_id} not found in farm:{farm_id}"}, status=404)
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)
+
+@api_view(['DELETE'])
+def remove_transaction_from_treatment(request, farm_id, treatment_id, transaction_id):
+    """Remove a transaction from a treatment"""
+    try:
+        treatment = Treatment.objects.get(id=treatment_id, health_record__animal__farm_id=farm_id)
+        
+        try:
+            transaction = Transaction.objects.get(id=transaction_id, farm_id=farm_id)
+        except Transaction.DoesNotExist:
+            return Response({"error": "Transaction not found"}, status=404)
+            
+        # Remove transaction from treatment
+        treatment.remove_transaction(transaction)
+        
+        # Return updated treatment data
+        serializer = TreatmentSerializer(treatment)
+        return Response(serializer.data, status=200)
+        
+    except Treatment.DoesNotExist:
+        return Response({"error": f"Treatment with id:{treatment_id} not found in farm:{farm_id}"}, status=404)
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)

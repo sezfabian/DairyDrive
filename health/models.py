@@ -1,7 +1,8 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from animals.models import Animal
-from farms.models import Farm
+from farms.models import Farm, Transaction
+from django.db.models import Sum
 
 class Veterinarian(models.Model):
     name = models.CharField(max_length=100)
@@ -81,6 +82,8 @@ class Treatment(models.Model):
     treatment_date = models.DateField()
     cost = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     notes = models.TextField(blank=True, null=True)
+    is_paid = models.BooleanField(default=False)
+    transactions = models.ManyToManyField(Transaction, related_name="treatment", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -89,3 +92,40 @@ class Treatment(models.Model):
 
     class Meta:
         ordering = ['-treatment_date']
+
+    @property
+    def total_paid(self):
+        """Calculate total amount paid through transactions"""
+        if not self.pk:  # If the object hasn't been saved yet
+            return 0
+        return self.transactions.filter(transaction_type='outgoing').aggregate(total=Sum('amount'))['total'] or 0
+
+    @property
+    def pending_amount(self):
+        """Calculate pending payment amount"""
+        return max(0, self.cost - self.total_paid)
+
+    def save(self, *args, **kwargs):
+        # First save to get an ID
+        super().save(*args, **kwargs)
+        
+        # Now we can safely access the transactions
+        total_paid = self.total_paid
+        if total_paid >= self.cost:
+            self.is_paid = True
+            super().save(update_fields=['is_paid'])
+        else:
+            self.is_paid = False
+            super().save(update_fields=['is_paid'])
+
+
+
+    def add_transaction(self, transaction):
+        """Add a transaction and update payment status"""
+        self.transactions.add(transaction)
+        self.save()  # This will trigger the payment status update
+
+    def remove_transaction(self, transaction):
+        """Remove a transaction and update payment status"""
+        self.transactions.remove(transaction)
+        self.save()  # This will trigger the payment status update

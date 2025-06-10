@@ -42,11 +42,15 @@ class TreatmentSerializer(serializers.ModelSerializer):
     service_name = serializers.SerializerMethodField()
     animal_name = serializers.SerializerMethodField()
     health_record_condition = serializers.SerializerMethodField()
+    total_paid = serializers.SerializerMethodField()
+    pending_amount = serializers.SerializerMethodField()
+    transactions = serializers.SerializerMethodField()
 
     class Meta:
         model = Treatment
         fields = ['id', 'health_record', 'service', 'service_name', 'health_record_condition',
-                 'treatment_date', 'cost', 'notes', 'animal_name', 'created_at', 'updated_at']
+                 'treatment_date', 'cost', 'notes', 'animal_name', 'is_paid', 'total_paid',
+                 'pending_amount', 'transactions', 'created_at', 'updated_at']
 
     def get_service_name(self, obj):
         return obj.service.name if obj.service else None
@@ -56,6 +60,16 @@ class TreatmentSerializer(serializers.ModelSerializer):
 
     def get_health_record_condition(self, obj):
         return obj.health_record.condition.name if obj.health_record and obj.health_record.condition else None
+
+    def get_total_paid(self, obj):
+        return obj.total_paid
+
+    def get_pending_amount(self, obj):
+        return obj.pending_amount
+
+    def get_transactions(self, obj):
+        from farms.serializers import TransactionSerializer
+        return TransactionSerializer(obj.transactions.all(), many=True).data
 
 class HealthRecordSerializer(serializers.ModelSerializer):
     animal_details = serializers.SerializerMethodField()
