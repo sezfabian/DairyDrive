@@ -348,7 +348,7 @@ def edit_farm_user(request, farm_id, user_id):
         serializer = UserProfileSerializer(user_profile, data=request.data, partial=True)
         if serializer.is_valid():
             # Ensure only allowed fields can be updated
-            allowed_fields = ['role', 'farms']  # Add more fields if needed
+            allowed_fields = ['role', 'farms', 'phone', 'first_name', 'last_name']  # Add more fields if needed
             for field in request.data:
                 if field not in allowed_fields:
                     return Response({"error": f"Cannot update {field} field"}, status=400)
