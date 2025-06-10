@@ -393,3 +393,48 @@ def change_password(request):
         
     except Exception as e:
         return Response({"error": str(e)}, status=400)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_farm_user(request, farm_id, user_id):
+    """Delete a user from a farm and their account"""
+    try:
+        # Check if the requesting user is an admin of the farm
+        farm = Farm.objects.get(id=farm_id)
+        admin_profile = UserProfile.objects.get(user=request.user)
+        
+        if not (admin_profile.role == "Admin" and farm in admin_profile.farms.all()):
+            return Response({"error": "You do not have admin access to this farm"}, status=403)
+        
+        # Get the user profile to be deleted
+        user_profile = UserProfile.objects.get(id=user_id)
+        
+        # Check if the user has access to the farm
+        if farm not in user_profile.farms.all():
+            return Response({"error": "User does not have access to this farm"}, status=400)
+        
+        # Prevent admin from deleting themselves
+        if user_profile.user == request.user:
+            return Response({"error": "You cannot delete your own account"}, status=400)
+        
+        # Get the associated user account
+        user = user_profile.user
+        
+        # Remove the farm from user's farms
+        user_profile.farms.remove(farm)
+        
+        # If user has no other farms, delete their account
+        if not user_profile.farms.exists():
+            user.delete()  # This will also delete the profile due to CASCADE
+            return Response({"message": "User account and profile deleted successfully"}, status=200)
+        else:
+            # If user has other farms, just remove them from this farm
+            user_profile.save()
+            return Response({"message": "User removed from farm successfully"}, status=200)
+        
+    except Farm.DoesNotExist:
+        return Response({"error": "Farm not found"}, status=404)
+    except UserProfile.DoesNotExist:
+        return Response({"error": "User not found"}, status=404)
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)

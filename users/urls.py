@@ -17,5 +17,6 @@ urlpatterns = [
     path("get_payment_history", get_payment_history, name="get_payment_history"),
     path('get_by_farm/<int:farm_id>', views.get_users_by_farm, name='get_users_by_farm'),
     path('edit_farm_user/<int:farm_id>/<int:user_id>', views.edit_farm_user, name='edit_farm_user'),
+    path('delete_farm_user/<int:farm_id>/<int:user_id>', views.delete_farm_user, name='delete_farm_user'),
     path('change_password/', views.change_password, name='change_password'),
 ]
