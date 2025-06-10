@@ -301,3 +301,95 @@ def get_payment_history(request):
         'payment_date': payment.payment_date,
         'plan_name': payment.subscription.plan.name
     } for payment in payments])
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_users_by_farm(request, farm_id):
+    """Get all users associated with a specific farm"""
+    try:
+        # Check if the requesting user has access to the farm
+        farm = Farm.objects.get(id=farm_id)
+        profile = UserProfile.objects.get(user=request.user)
+        if profile.role == "Admin" and farm in profile.farms.all():
+            pass
+        else:
+            return Response({"error": "You do not have admin access to this farm"}, status=403)
+        
+        # Get all user profiles that have access to this farm
+        users = UserProfile.objects.filter(farms=farm)
+        
+        serializer = UserProfileSerializer(users, many=True)
+        return Response(serializer.data)
+    except Farm.DoesNotExist:
+        return Response({"error": "Farm not found or you don't have access to it"}, status=404)
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def edit_farm_user(request, farm_id, user_id):
+    """Edit a user's role and access for a specific farm"""
+    try:
+        # Check if the requesting user is an admin of the farm
+        farm = Farm.objects.get(id=farm_id)
+        admin_profile = UserProfile.objects.get(user=request.user)
+        
+        if not (admin_profile.role == "Admin" and farm in admin_profile.farms.all()):
+            return Response({"error": "You do not have admin access to this farm"}, status=403)
+        
+        # Get the user profile to be edited
+        user_profile = UserProfile.objects.get(id=user_id)
+        
+        # Check if the user has access to the farm
+        if farm not in user_profile.farms.all():
+            return Response({"error": "User does not have access to this farm"}, status=400)
+        
+        # Update user profile
+        serializer = UserProfileSerializer(user_profile, data=request.data, partial=True)
+        if serializer.is_valid():
+            # Ensure only allowed fields can be updated
+            allowed_fields = ['role', 'farms']  # Add more fields if needed
+            for field in request.data:
+                if field not in allowed_fields:
+                    return Response({"error": f"Cannot update {field} field"}, status=400)
+            
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+        
+    except Farm.DoesNotExist:
+        return Response({"error": "Farm not found"}, status=404)
+    except UserProfile.DoesNotExist:
+        return Response({"error": "User not found"}, status=404)
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    """Change user password"""
+    try:
+        user = request.user
+        old_password = request.data.get('old_password')
+        new_password = request.data.get('new_password')
+        
+        # Validate input
+        if not old_password or not new_password:
+            return Response({"error": "Both old and new passwords are required"}, status=400)
+        
+        # Check if old password is correct
+        if not user.check_password(old_password):
+            return Response({"error": "Current password is incorrect"}, status=400)
+        
+        # Validate new password
+        if len(new_password) < 8:
+            return Response({"error": "New password must be at least 8 characters long"}, status=400)
+        
+        # Change password
+        user.set_password(new_password)
+        user.save()
+        
+        return Response({"message": "Password changed successfully"}, status=200)
+        
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)
