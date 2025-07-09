@@ -72,7 +72,7 @@ class AnimalFeedPurchase(models.Model):
     animal_feed = models.ForeignKey(AnimalFeed, on_delete=models.CASCADE)
     quantity = models.DecimalField(decimal_places=2,  max_digits=10, null=False, blank=False)
     cost = models.DecimalField(decimal_places=2, max_digits=10, null=False, blank=False)
-    transactions = models.ManyToManyField(Transaction, related_name='feed_purchases', blank=True)
+    date = models.DateField(null=False, blank=False, default=datetime.now)
     is_paid = models.BooleanField(default=False)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -83,19 +83,17 @@ class AnimalFeedPurchase(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            self.animal_feed.cost_per_unit = ((self.animal_feed.cost_per_unit * self.animal_feed.inventory) + (self.cost * self.quantity)) / (self.animal_feed.inventory + self.quantity)
+            self.animal_feed.cost_per_unit = ((self.animal_feed.cost_per_unit * self.animal_feed.inventory) + (self.cost)) / (self.animal_feed.inventory + self.quantity)
             self.animal_feed.inventory += self.quantity
             self.animal_feed.save()
         if self.is_deleted:
             self.animal_feed.inventory -= self.quantity
             self.animal_feed.save()
             self.deleted_at = datetime.now()
-        
-        # Calculate if the purchase is fully paid
-        total_transactions = self.transactions.filter(transaction_type='incoming').aggregate(total=Sum('amount'))['total'] or 0
-        self.is_paid = total_transactions >= self.cost
-        
+        if self.is_paid:
+            self.animal_feed.cost_per_unit = self.cost / self.quantity
+            self.animal_feed.save()
         super(AnimalFeedPurchase, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.animal_feed.name} - {self.quantity} - {self.created_at.strftime('%Y-%m-%d %H:%M')}"
+        return f"{self.animal_feed.name} - {self.quantity}"

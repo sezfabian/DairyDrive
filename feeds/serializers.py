@@ -83,12 +83,11 @@ class AnimalFeedEntrySerializer(serializers.ModelSerializer):
 class AnimalFeedPurchaseSerializer(serializers.ModelSerializer):
     animal_feed_name = serializers.SerializerMethodField()
     created_by_name = serializers.SerializerMethodField()
-    pending_payment = serializers.SerializerMethodField()
     is_paid = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = AnimalFeedPurchase
-        fields = ['id', 'animal_feed', 'animal_feed_name', 'farm', 'quantity', 'cost', 'pending_payment', 'is_paid', 'created_by', 'created_by_name', 'created_at', 'updated_at', 'is_deleted', 'deleted_by', 'deleted_at']
+        fields = ['id', 'animal_feed', 'animal_feed_name', 'date', 'farm', 'quantity', 'cost', 'is_paid', 'created_by', 'created_by_name', 'created_at', 'updated_at', 'is_deleted', 'deleted_by', 'deleted_at']
 
     def get_animal_feed_name(self, obj):
         return obj.animal_feed.name if obj.animal_feed else None
@@ -97,11 +96,6 @@ class AnimalFeedPurchaseSerializer(serializers.ModelSerializer):
         User = obj.created_by if obj.created_by else None
         name = UserProfile.objects.get(email=User.email).first_name
         return name
-
-    def get_pending_payment(self, obj):
-        total_paid = obj.transactions.filter(transaction_type='incoming').aggregate(total=Sum('amount'))['total'] or 0
-        pending = obj.cost - total_paid
-        return max(0, pending)  # Return 0 if pending is negative
 
     def __str__(self):
         return f"{self.animal_feed.name} - {self.quantity} - {self.created_at.strftime('%Y-%m-%d %H:%M')}"
