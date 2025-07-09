@@ -53,16 +53,20 @@ class AnimalFeedSerializer(serializers.ModelSerializer):
 
 class AnimalFeedEntrySerializer(serializers.ModelSerializer):
     animal_feed_name = serializers.SerializerMethodField()
+    animal_feed_unit = serializers.SerializerMethodField()
     inventory = serializers.SerializerMethodField()
     animal_type_name = serializers.SerializerMethodField()
     created_by_name = serializers.SerializerMethodField()
 
     class Meta:
         model = AnimalFeedEntry
-        fields = ['id', 'animal_feed', 'animal_feed_name', 'farm', 'inventory', 'cost_per_unit', 'total_cost', 'animal_type', 'animal_type_name', 'feed_date', 'feed_time', 'quantity', 'created_by','created_by_name', 'created_at', 'updated_at', 'is_deleted', 'deleted_by', 'deleted_at']
+        fields = ['id', 'animal_feed', 'animal_feed_name', 'animal_feed_unit', 'farm', 'inventory', 'cost_per_unit', 'total_cost', 'animal_type', 'animal_type_name', 'feed_date', 'feed_time', 'quantity', 'created_by','created_by_name', 'created_at', 'updated_at', 'is_deleted', 'deleted_by', 'deleted_at']
     
     def get_animal_feed_name(self, obj):
         return obj.animal_feed.name if obj.animal_feed else None
+    
+    def get_animal_feed_unit(self, obj):
+        return obj.animal_feed.unit if obj.animal_feed else None
     
     def get_inventory(self, obj):
         return obj.animal_feed.inventory
