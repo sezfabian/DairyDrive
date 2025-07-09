@@ -82,15 +82,19 @@ class AnimalFeedEntrySerializer(serializers.ModelSerializer):
 
 class AnimalFeedPurchaseSerializer(serializers.ModelSerializer):
     animal_feed_name = serializers.SerializerMethodField()
+    animal_feed_unit = serializers.SerializerMethodField()
     created_by_name = serializers.SerializerMethodField()
     is_paid = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = AnimalFeedPurchase
-        fields = ['id', 'animal_feed', 'animal_feed_name', 'date', 'farm', 'quantity', 'cost', 'is_paid', 'created_by', 'created_by_name', 'created_at', 'updated_at', 'is_deleted', 'deleted_by', 'deleted_at']
+        fields = ['id', 'animal_feed', 'animal_feed_name', 'animal_feed_unit', 'date', 'farm', 'quantity', 'cost', 'is_paid', 'created_by', 'created_by_name', 'created_at', 'updated_at', 'is_deleted', 'deleted_by', 'deleted_at']
 
     def get_animal_feed_name(self, obj):
         return obj.animal_feed.name if obj.animal_feed else None
+    
+    def get_animal_feed_unit(self, obj):
+        return obj.animal_feed.unit if obj.animal_feed else None
     
     def get_created_by_name(self, obj):
         User = obj.created_by if obj.created_by else None
