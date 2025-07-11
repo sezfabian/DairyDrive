@@ -7,6 +7,7 @@ from farms.models import Farm
 class Product(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
+    inventory = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))], default=0)
     unit = models.CharField(max_length=20)  # e.g., liters, kg, pieces
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE, related_name='products')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -32,6 +33,22 @@ class ProductionRecord(models.Model):
     notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if self.record_type == 'individual':
+            self.product.inventory += self.quantity
+        else:
+            self.product.inventory += self.quantity
+        self.product.save()
+        super().save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs):
+        if self.record_type == 'individual':
+            self.product.inventory -= self.quantity
+        else:
+            self.product.inventory -= self.quantity
+        self.product.save()
+        super().delete(*args, **kwargs)
 
     class Meta:
         ordering = ['-date', '-time']
@@ -80,8 +97,15 @@ class Sale(models.Model):
         ordering = ['-date']
 
     def save(self, *args, **kwargs):
+        self.product.inventory -= self.quantity
+        self.product.save()
         self.total_amount = self.quantity * self.unit_price
         super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        self.product.inventory += self.quantity
+        self.product.save()
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return f"Sale of {self.quantity} {self.product.unit} to {self.buyer} on {self.date}" 
