@@ -435,7 +435,7 @@ def remove_equipment_purchase_transaction(request, farm_id, pk):
 def get_expense_categories(request, farm_id):
     """Get expense categories for specific farm"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         categories = Expense.EXPENSE_CATEGORIES
         return Response([{'value': cat[0], 'label': cat[1]} for cat in categories])
     except Farm.DoesNotExist:
