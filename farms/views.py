@@ -81,7 +81,7 @@ def delete_farm(request, farm_id):
 def get_transactions(request, farm_id):
     """Get all transactions for specific farm"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         transactions = Transaction.objects.filter(farm=farm)
         serializer = TransactionSerializer(transactions, many=True)
         return Response(serializer.data, status=200)
@@ -92,7 +92,7 @@ def get_transactions(request, farm_id):
 def create_transaction(request, farm_id):
     """Create a new transaction"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         request.data["farm"] = farm_id
         request.data["created_by"] = request.user.id
         serializer = TransactionSerializer(data=request.data)
@@ -107,7 +107,7 @@ def create_transaction(request, farm_id):
 def edit_transaction(request, farm_id, pk):
     """Edit an existing transaction"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         transaction = Transaction.objects.get(pk=pk, farm=farm)
     except (Farm.DoesNotExist, Transaction.DoesNotExist):
         return Response({"message": f"Transaction id:{pk} not found"}, status=404)
@@ -122,7 +122,7 @@ def edit_transaction(request, farm_id, pk):
 def delete_transaction(request, farm_id, pk):
     """Delete a transaction"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         transaction = Transaction.objects.get(pk=pk, farm=farm)
         transaction.delete()
         return Response({"message": f"Transaction id:{pk} deleted successfully"}, status=200)
@@ -133,7 +133,7 @@ def delete_transaction(request, farm_id, pk):
 def get_transaction(request, farm_id, pk):
     """Get a specific transaction"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         transaction = Transaction.objects.get(pk=pk, farm=farm)
         serializer = TransactionSerializer(transaction)
         return Response(serializer.data, status=200)
@@ -165,7 +165,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
 def get_equipment(request, farm_id):
     """Get all equipment for specific farm"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         equipment = Equipment.objects.filter(farm=farm)
         serializer = EquipmentSerializer(equipment, many=True)
         return Response(serializer.data)
@@ -177,7 +177,7 @@ def get_equipment(request, farm_id):
 def create_equipment(request, farm_id):
     """Create new equipment"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         request.data['farm'] = farm_id
         request.data['created_by'] = request.user.id
         serializer = EquipmentSerializer(data=request.data)
@@ -193,7 +193,7 @@ def create_equipment(request, farm_id):
 def edit_equipment(request, farm_id, pk):
     """Edit existing equipment"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         equipment = Equipment.objects.get(pk=pk, farm=farm)
         serializer = EquipmentSerializer(equipment, data=request.data, partial=True)
         if serializer.is_valid():
@@ -220,7 +220,7 @@ def delete_equipment(request, farm_id, pk):
 def get_equipment_detail(request, farm_id, pk):
     """Get specific equipment details"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         equipment = Equipment.objects.get(pk=pk, farm=farm)
         serializer = EquipmentSerializer(equipment)
         return Response(serializer.data)
@@ -233,7 +233,7 @@ def get_equipment_detail(request, farm_id, pk):
 def get_expenses(request, farm_id):
     """Get all expenses for specific farm"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         expenses = Expense.objects.filter(farm=farm)
         serializer = ExpenseSerializer(expenses, many=True)
         return Response(serializer.data)
@@ -245,7 +245,7 @@ def get_expenses(request, farm_id):
 def create_expense(request, farm_id):
     """Create new expense"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         request.data['farm'] = farm_id
         request.data['created_by'] = request.user.id
         serializer = ExpenseSerializer(data=request.data)
@@ -261,7 +261,7 @@ def create_expense(request, farm_id):
 def edit_expense(request, farm_id, pk):
     """Edit existing expense"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         expense = Expense.objects.get(pk=pk, farm=farm)
         serializer = ExpenseSerializer(expense, data=request.data, partial=True)
         if serializer.is_valid():
@@ -276,7 +276,7 @@ def edit_expense(request, farm_id, pk):
 def delete_expense(request, farm_id, pk):
     """Delete expense"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         expense = Expense.objects.get(pk=pk, farm=farm)
         expense.delete()
         return Response(status=204)
@@ -288,7 +288,7 @@ def delete_expense(request, farm_id, pk):
 def get_expense_detail(request, farm_id, pk):
     """Get specific expense details"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         expense = Expense.objects.get(pk=pk, farm=farm)
         serializer = ExpenseSerializer(expense)
         return Response(serializer.data)
@@ -300,7 +300,7 @@ def get_expense_detail(request, farm_id, pk):
 def add_expense_transaction(request, farm_id, pk):
     """Add a transaction to an expense"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         expense = Expense.objects.get(pk=pk, farm=farm)
         transaction = Transaction.objects.get(pk=request.data.get('transaction_id'))
         
@@ -318,7 +318,7 @@ def add_expense_transaction(request, farm_id, pk):
 def remove_expense_transaction(request, farm_id, pk):
     """Remove a transaction from an expense"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         expense = Expense.objects.get(pk=pk, farm=farm)
         transaction = Transaction.objects.get(pk=request.data.get('transaction_id'))
         
@@ -334,7 +334,7 @@ def remove_expense_transaction(request, farm_id, pk):
 def get_equipment_purchases(request, farm_id):
     """Get all equipment purchases for specific farm"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         purchases = EquipmentPurchase.objects.filter(farm=farm)
         serializer = EquipmentPurchaseSerializer(purchases, many=True)
         return Response(serializer.data)
@@ -346,7 +346,7 @@ def get_equipment_purchases(request, farm_id):
 def create_equipment_purchase(request, farm_id):
     """Create new equipment purchase"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         request.data['farm'] = farm_id
         request.data['created_by'] = request.user.id
         serializer = EquipmentPurchaseSerializer(data=request.data)
@@ -362,7 +362,7 @@ def create_equipment_purchase(request, farm_id):
 def edit_equipment_purchase(request, farm_id, pk):
     """Edit existing equipment purchase"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         purchase = EquipmentPurchase.objects.get(pk=pk, farm=farm)
         serializer = EquipmentPurchaseSerializer(purchase, data=request.data, partial=True)
         if serializer.is_valid():
@@ -377,7 +377,7 @@ def edit_equipment_purchase(request, farm_id, pk):
 def delete_equipment_purchase(request, farm_id, pk):
     """Delete equipment purchase"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         purchase = EquipmentPurchase.objects.get(pk=pk, farm=farm)
         purchase.delete()
         return Response(status=204)
@@ -389,7 +389,7 @@ def delete_equipment_purchase(request, farm_id, pk):
 def get_equipment_purchase_detail(request, farm_id, pk):
     """Get specific equipment purchase details"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         purchase = EquipmentPurchase.objects.get(pk=pk, farm=farm)
         serializer = EquipmentPurchaseSerializer(purchase)
         return Response(serializer.data)
@@ -465,7 +465,7 @@ def delete_expense_category(request, farm_id, pk):
 def get_farm_statistics(request, farm_id):
     """Get farm statistics"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         
         # Calculate statistics
         total_income = Transaction.objects.filter(
@@ -500,7 +500,7 @@ def get_farm_statistics(request, farm_id):
 def get_farm_income(request, farm_id):
     """Get farm income data"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         income_transactions = Transaction.objects.filter(
             farm=farm, 
             transaction_type='incoming'
@@ -516,7 +516,7 @@ def get_farm_income(request, farm_id):
 def get_farm_expenses(request, farm_id):
     """Get farm expenses data"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         expense_transactions = Transaction.objects.filter(
             farm=farm, 
             transaction_type='outgoing'
@@ -533,7 +533,7 @@ def get_farm_expenses(request, farm_id):
 def get_farm_users(request, farm_id):
     """Get farm users (placeholder for future implementation)"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         # For now, return the farm owner
         users = [{
             'id': farm.created_by.id,
@@ -563,7 +563,7 @@ def remove_farm_user(request, farm_id, user_id):
 def get_farm_settings(request, farm_id):
     """Get farm settings"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         settings = {
             'farm_id': farm.id,
             'name': farm.name,
@@ -586,7 +586,7 @@ def get_farm_settings(request, farm_id):
 def update_farm_settings(request, farm_id):
     """Update farm settings"""
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
         serializer = FarmSerializer(farm, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()

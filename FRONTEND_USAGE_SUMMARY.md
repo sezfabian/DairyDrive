@@ -46,6 +46,19 @@ const getFarms = async () => {
 };
 ```
 
+### Get Specific Farm
+```javascript
+const getFarm = async (farmId) => {
+  try {
+    const farm = await apiCall(`get_farm/${farmId}`);
+    return farm;
+  } catch (error) {
+    console.error('Error fetching farm:', error);
+    throw error;
+  }
+};
+```
+
 ### Create Farm
 ```javascript
 const createFarm = async (farmData) => {
@@ -91,9 +104,9 @@ const editFarm = async (farmId, updates) => {
 
 ### Get All Transactions
 ```javascript
-const getTransactions = async () => {
+const getTransactions = async (farmId) => {
   try {
-    const transactions = await apiCall('get_transactions');
+    const transactions = await apiCall(`get_transactions/${farmId}`);
     return transactions;
   } catch (error) {
     console.error('Error fetching transactions:', error);
@@ -104,12 +117,11 @@ const getTransactions = async () => {
 
 ### Create Transaction
 ```javascript
-const createTransaction = async (transactionData) => {
+const createTransaction = async (farmId, transactionData) => {
   try {
-    const newTransaction = await apiCall('create_transaction', {
+    const newTransaction = await apiCall(`add_transaction/${farmId}`, {
       method: 'POST',
       body: JSON.stringify({
-        farm: transactionData.farmId,
         transaction_type: transactionData.type, // 'incoming' or 'outgoing'
         payment_method: transactionData.paymentMethod,
         amount: transactionData.amount,
@@ -125,15 +137,59 @@ const createTransaction = async (transactionData) => {
 };
 ```
 
+### Get Transaction by ID
+```javascript
+const getTransactionById = async (farmId, transactionId) => {
+  try {
+    const transaction = await apiCall(`get_transaction/${farmId}/${transactionId}`);
+    return transaction;
+  } catch (error) {
+    console.error('Error fetching transaction:', error);
+    throw error;
+  }
+};
+```
+
+### Edit Transaction
+```javascript
+const editTransaction = async (farmId, transactionId, updates) => {
+  try {
+    const updatedTransaction = await apiCall(`edit_transaction/${farmId}/${transactionId}`, {
+      method: 'POST',
+      body: JSON.stringify(updates)
+    });
+    return updatedTransaction;
+  } catch (error) {
+    console.error('Error updating transaction:', error);
+    throw error;
+  }
+};
+```
+
+### Delete Transaction
+```javascript
+const deleteTransaction = async (farmId, transactionId) => {
+  try {
+    const result = await apiCall(`delete_transaction/${farmId}/${transactionId}`, {
+      method: 'POST'
+    });
+    return result;
+  } catch (error) {
+    console.error('Error deleting transaction:', error);
+    throw error;
+  }
+};
+```
+
 ---
 
 ## 3. EQUIPMENT MANAGEMENT
 
 ### Get All Equipment
 ```javascript
-const getEquipment = async () => {
+const getEquipment = async (farmId) => {
   try {
-    const equipment = await apiCall('get_equipment');
+    const equipment = await apiCall(`get_equipment/${farmId}`);
     return equipment;
   } catch (error) {
     console.error('Error fetching equipment:', error);
@@ -144,12 +200,11 @@ const getEquipment = async () => {
 
 ### Create Equipment
 ```javascript
-const createEquipment = async (equipmentData) => {
+const createEquipment = async (farmId, equipmentData) => {
   try {
-    const newEquipment = await apiCall('create_equipment', {
+    const newEquipment = await apiCall(`add_equipment/${farmId}`, {
       method: 'POST',
       body: JSON.stringify({
-        farm: equipmentData.farmId,
         name: equipmentData.name,
         description: equipmentData.description,
         quantity: equipmentData.quantity,
@@ -168,15 +223,59 @@ const createEquipment = async (equipmentData) => {
 };
 ```
 
+### Get Equipment by ID
+```javascript
+const getEquipmentById = async (farmId, equipmentId) => {
+  try {
+    const equipment = await apiCall(`get_equipment_item/${farmId}/${equipmentId}`);
+    return equipment;
+  } catch (error) {
+    console.error('Error fetching equipment:', error);
+    throw error;
+  }
+};
+```
+
+### Edit Equipment
+```javascript
+const editEquipment = async (farmId, equipmentId, updates) => {
+  try {
+    const updatedEquipment = await apiCall(`edit_equipment/${farmId}/${equipmentId}`, {
+      method: 'POST',
+      body: JSON.stringify(updates)
+    });
+    return updatedEquipment;
+  } catch (error) {
+    console.error('Error updating equipment:', error);
+    throw error;
+  }
+};
+```
+
+### Delete Equipment
+```javascript
+const deleteEquipment = async (farmId, equipmentId) => {
+  try {
+    const result = await apiCall(`delete_equipment/${farmId}/${equipmentId}`, {
+      method: 'POST'
+    });
+    return result;
+  } catch (error) {
+    console.error('Error deleting equipment:', error);
+    throw error;
+  }
+};
+```
+
 ---
 
 ## 4. EQUIPMENT PURCHASE MANAGEMENT
 
 ### Get All Equipment Purchases
 ```javascript
-const getEquipmentPurchases = async () => {
+const getEquipmentPurchases = async (farmId) => {
   try {
-    const purchases = await apiCall('get_equipment_purchases');
+    const purchases = await apiCall(`get_equipment_purchases/${farmId}`);
     return purchases;
   } catch (error) {
     console.error('Error fetching equipment purchases:', error);
@@ -187,12 +286,11 @@ const getEquipmentPurchases = async () => {
 
 ### Create Equipment Purchase
 ```javascript
-const createEquipmentPurchase = async (purchaseData) => {
+const createEquipmentPurchase = async (farmId, purchaseData) => {
   try {
-    const newPurchase = await apiCall('create_equipment_purchase', {
+    const newPurchase = await apiCall(`add_equipment_purchase/${farmId}`, {
       method: 'POST',
       body: JSON.stringify({
-        farm: purchaseData.farmId,
         equipment_name: purchaseData.equipmentName,
         description: purchaseData.description,
         quantity: purchaseData.quantity,
@@ -215,11 +313,55 @@ const createEquipmentPurchase = async (purchaseData) => {
 };
 ```
 
+### Get Equipment Purchase by ID
+```javascript
+const getEquipmentPurchaseById = async (farmId, purchaseId) => {
+  try {
+    const purchase = await apiCall(`get_equipment_purchase/${farmId}/${purchaseId}`);
+    return purchase;
+  } catch (error) {
+    console.error('Error fetching equipment purchase:', error);
+    throw error;
+  }
+};
+```
+
+### Edit Equipment Purchase
+```javascript
+const editEquipmentPurchase = async (farmId, purchaseId, updates) => {
+  try {
+    const updatedPurchase = await apiCall(`edit_equipment_purchase/${farmId}/${purchaseId}`, {
+      method: 'POST',
+      body: JSON.stringify(updates)
+    });
+    return updatedPurchase;
+  } catch (error) {
+    console.error('Error updating equipment purchase:', error);
+    throw error;
+  }
+};
+```
+
+### Delete Equipment Purchase
+```javascript
+const deleteEquipmentPurchase = async (farmId, purchaseId) => {
+  try {
+    const result = await apiCall(`delete_equipment_purchase/${farmId}/${purchaseId}`, {
+      method: 'POST'
+    });
+    return result;
+  } catch (error) {
+    console.error('Error deleting equipment purchase:', error);
+    throw error;
+  }
+};
+```
+
 ### Link Transaction to Equipment Purchase
 ```javascript
-const linkTransactionToPurchase = async (purchaseId, transactionId) => {
+const linkTransactionToPurchase = async (farmId, purchaseId, transactionId) => {
   try {
-    const updatedPurchase = await apiCall(`add_equipment_purchase_transaction/${purchaseId}`, {
+    const updatedPurchase = await apiCall(`add_equipment_purchase_transaction/${farmId}/${purchaseId}`, {
       method: 'POST',
       body: JSON.stringify({
         transaction_id: transactionId
@@ -239,9 +381,9 @@ const linkTransactionToPurchase = async (purchaseId, transactionId) => {
 
 ### Get All Expenses
 ```javascript
-const getExpenses = async () => {
+const getExpenses = async (farmId) => {
   try {
-    const expenses = await apiCall('get_expenses');
+    const expenses = await apiCall(`get_expenses/${farmId}`);
     return expenses;
   } catch (error) {
     console.error('Error fetching expenses:', error);
@@ -252,12 +394,11 @@ const getExpenses = async () => {
 
 ### Create Expense
 ```javascript
-const createExpense = async (expenseData) => {
+const createExpense = async (farmId, expenseData) => {
   try {
-    const newExpense = await apiCall('create_expense', {
+    const newExpense = await apiCall(`add_expense/${farmId}`, {
       method: 'POST',
       body: JSON.stringify({
-        farm: expenseData.farmId,
         category: expenseData.category,
         description: expenseData.description,
         amount: expenseData.amount,
@@ -272,25 +413,202 @@ const createExpense = async (expenseData) => {
 };
 ```
 
+### Get Expense by ID
+```javascript
+const getExpenseById = async (farmId, expenseId) => {
+  try {
+    const expense = await apiCall(`get_expense/${farmId}/${expenseId}`);
+    return expense;
+  } catch (error) {
+    console.error('Error fetching expense:', error);
+    throw error;
+  }
+};
+```
+
+### Edit Expense
+```javascript
+const editExpense = async (farmId, expenseId, updates) => {
+  try {
+    const updatedExpense = await apiCall(`edit_expense/${farmId}/${expenseId}`, {
+      method: 'POST',
+      body: JSON.stringify(updates)
+    });
+    return updatedExpense;
+  } catch (error) {
+    console.error('Error updating expense:', error);
+    throw error;
+  }
+};
+```
+
+### Delete Expense
+```javascript
+const deleteExpense = async (farmId, expenseId) => {
+  try {
+    const result = await apiCall(`delete_expense/${farmId}/${expenseId}`, {
+      method: 'POST'
+    });
+    return result;
+  } catch (error) {
+    console.error('Error deleting expense:', error);
+    throw error;
+  }
+};
+```
+
+### Link Transaction to Expense
+```javascript
+const linkTransactionToExpense = async (farmId, expenseId, transactionId) => {
+  try {
+    const updatedExpense = await apiCall(`add_expense_transaction/${farmId}/${expenseId}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        transaction_id: transactionId
+      })
+    });
+    return updatedExpense;
+  } catch (error) {
+    console.error('Error linking transaction to expense:', error);
+    throw error;
+  }
+};
+```
+
 ---
 
-## 6. REACT COMPONENT EXAMPLES
+## 6. EXPENSE CATEGORIES
 
-### Farm List Component
+### Get Expense Categories
+```javascript
+const getExpenseCategories = async (farmId) => {
+  try {
+    const categories = await apiCall(`get_expense_categories/${farmId}`);
+    return categories;
+  } catch (error) {
+    console.error('Error fetching expense categories:', error);
+    throw error;
+  }
+};
+```
+
+---
+
+## 7. FARM STATISTICS
+
+### Get Farm Statistics
+```javascript
+const getFarmStatistics = async (farmId) => {
+  try {
+    const statistics = await apiCall(`get_farm_statistics/${farmId}`);
+    return statistics;
+  } catch (error) {
+    console.error('Error fetching farm statistics:', error);
+    throw error;
+  }
+};
+```
+
+### Get Farm Income
+```javascript
+const getFarmIncome = async (farmId) => {
+  try {
+    const income = await apiCall(`get_farm_income/${farmId}`);
+    return income;
+  } catch (error) {
+    console.error('Error fetching farm income:', error);
+    throw error;
+  }
+};
+```
+
+### Get Farm Expenses
+```javascript
+const getFarmExpenses = async (farmId) => {
+  try {
+    const expenses = await apiCall(`get_farm_expenses/${farmId}`);
+    return expenses;
+  } catch (error) {
+    console.error('Error fetching farm expenses:', error);
+    throw error;
+  }
+};
+```
+
+---
+
+## 8. FARM USERS
+
+### Get Farm Users
+```javascript
+const getFarmUsers = async (farmId) => {
+  try {
+    const users = await apiCall(`get_farm_users/${farmId}`);
+    return users;
+  } catch (error) {
+    console.error('Error fetching farm users:', error);
+    throw error;
+  }
+};
+```
+
+---
+
+## 9. FARM SETTINGS
+
+### Get Farm Settings
+```javascript
+const getFarmSettings = async (farmId) => {
+  try {
+    const settings = await apiCall(`get_farm_settings/${farmId}`);
+    return settings;
+  } catch (error) {
+    console.error('Error fetching farm settings:', error);
+    throw error;
+  }
+};
+```
+
+### Update Farm Settings
+```javascript
+const updateFarmSettings = async (farmId, settingsData) => {
+  try {
+    const updatedSettings = await apiCall(`update_farm_settings/${farmId}`, {
+      method: 'POST',
+      body: JSON.stringify(settingsData)
+    });
+    return updatedSettings;
+  } catch (error) {
+    console.error('Error updating farm settings:', error);
+    throw error;
+  }
+};
+```
+
+---
+
+## 10. REACT COMPONENT EXAMPLES
+
+### Farm Dashboard Component
 ```jsx
 import React, { useState, useEffect } from 'react';
 
-const FarmList = () => {
-  const [farms, setFarms] = useState([]);
+const FarmDashboard = ({ farmId }) => {
+  const [farm, setFarm] = useState(null);
+  const [statistics, setStatistics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchFarms = async () => {
+    const fetchFarmData = async () => {
       try {
         setLoading(true);
-        const farmsData = await getFarms();
-        setFarms(farmsData);
+        const [farmData, statsData] = await Promise.all([
+          getFarm(farmId),
+          getFarmStatistics(farmId)
+        ]);
+        setFarm(farmData);
+        setStatistics(statsData);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -298,23 +616,36 @@ const FarmList = () => {
       }
     };
 
-    fetchFarms();
-  }, []);
+    if (farmId) {
+      fetchFarmData();
+    }
+  }, [farmId]);
 
-  if (loading) return <div>Loading farms...</div>;
+  if (loading) return <div>Loading farm data...</div>;
   if (error) return <div>Error: {error}</div>;
+  if (!farm) return <div>Farm not found</div>;
 
   return (
     <div>
-      <h2>My Farms</h2>
-      {farms.map(farm => (
-        <div key={farm.id} className="farm-card">
-          <h3>{farm.name}</h3>
-          <p>{farm.address}</p>
-          <p>Size: {farm.size} {farm.size_unit}</p>
-          <p>Code: {farm.code}</p>
+      <h2>{farm.name}</h2>
+      <div className="farm-stats">
+        <div className="stat-card">
+          <h3>Total Income</h3>
+          <p>${statistics.total_income}</p>
         </div>
-      ))}
+        <div className="stat-card">
+          <h3>Total Expenses</h3>
+          <p>${statistics.total_expenses}</p>
+        </div>
+        <div className="stat-card">
+          <h3>Net Income</h3>
+          <p>${statistics.net_income}</p>
+        </div>
+        <div className="stat-card">
+          <h3>Equipment Count</h3>
+          <p>{statistics.total_equipment}</p>
+        </div>
+      </div>
     </div>
   );
 };
@@ -343,10 +674,7 @@ const EquipmentPurchaseForm = ({ farmId, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const newPurchase = await createEquipmentPurchase({
-        farmId,
-        ...formData
-      });
+      const newPurchase = await createEquipmentPurchase(farmId, formData);
       onSuccess(newPurchase);
       // Reset form or redirect
     } catch (error) {
@@ -417,7 +745,7 @@ const EquipmentPurchaseForm = ({ farmId, onSuccess }) => {
 
 ---
 
-## 7. DATA STRUCTURES
+## 11. DATA STRUCTURES
 
 ### Farm Object
 ```javascript
@@ -474,9 +802,22 @@ const EquipmentPurchaseForm = ({ farmId, onSuccess }) => {
 }
 ```
 
+### Farm Statistics Object
+```javascript
+{
+  total_income: "50000.00",
+  total_expenses: "30000.00",
+  net_income: "20000.00",
+  total_equipment: 15,
+  total_expense_records: 25,
+  farm_name: "Sunshine Dairy Farm",
+  farm_id: 1
+}
+```
+
 ---
 
-## 8. ERROR HANDLING
+## 12. ERROR HANDLING
 
 ### Global Error Handler
 ```javascript
@@ -530,25 +871,25 @@ const validateEquipmentPurchase = (data) => {
 
 ---
 
-## 9. STATE MANAGEMENT (Redux/Context)
+## 13. STATE MANAGEMENT (Redux/Context)
 
 ### Equipment Purchase Actions
 ```javascript
 // Actions
-export const fetchEquipmentPurchases = () => async (dispatch) => {
+export const fetchEquipmentPurchases = (farmId) => async (dispatch) => {
   dispatch({ type: 'FETCH_PURCHASES_START' });
   try {
-    const purchases = await getEquipmentPurchases();
+    const purchases = await getEquipmentPurchases(farmId);
     dispatch({ type: 'FETCH_PURCHASES_SUCCESS', payload: purchases });
   } catch (error) {
     dispatch({ type: 'FETCH_PURCHASES_ERROR', payload: error.message });
   }
 };
 
-export const createEquipmentPurchase = (purchaseData) => async (dispatch) => {
+export const createEquipmentPurchase = (farmId, purchaseData) => async (dispatch) => {
   dispatch({ type: 'CREATE_PURCHASE_START' });
   try {
-    const newPurchase = await createEquipmentPurchase(purchaseData);
+    const newPurchase = await createEquipmentPurchase(farmId, purchaseData);
     dispatch({ type: 'CREATE_PURCHASE_SUCCESS', payload: newPurchase });
     return newPurchase;
   } catch (error) {
@@ -560,28 +901,30 @@ export const createEquipmentPurchase = (purchaseData) => async (dispatch) => {
 
 ---
 
-## 10. BEST PRACTICES FOR FRONTEND
+## 14. BEST PRACTICES FOR FRONTEND
 
-1. **Error Handling**: Always implement proper error handling for API calls
-2. **Loading States**: Show loading indicators during API operations
-3. **Form Validation**: Validate data on both client and server side
-4. **Optimistic Updates**: Update UI immediately, then sync with server
-5. **Caching**: Cache frequently accessed data to reduce API calls
-6. **Pagination**: Implement pagination for large datasets
-7. **Real-time Updates**: Consider WebSocket connections for real-time data
-8. **Mobile Responsiveness**: Ensure forms work well on mobile devices
-9. **Accessibility**: Follow WCAG guidelines for accessibility
-10. **Testing**: Write unit and integration tests for API interactions
+1. **Authentication**: Always include your authentication token in requests
+2. **Farm Scoping**: All operations are farm-scoped - always include farm_id in URLs
+3. **Error Handling**: Always implement proper error handling for API calls
+4. **Loading States**: Show loading indicators during API operations
+5. **Form Validation**: Validate data on both client and server side
+6. **Optimistic Updates**: Update UI immediately, then sync with server
+7. **Caching**: Cache frequently accessed data to reduce API calls
+8. **Pagination**: Implement pagination for large datasets
+9. **Real-time Updates**: Consider WebSocket connections for real-time data
+10. **Mobile Responsiveness**: Ensure forms work well on mobile devices
+11. **Accessibility**: Follow WCAG guidelines for accessibility
+12. **Testing**: Write unit and integration tests for API interactions
 
 ---
 
-## 11. COMMON PATTERNS
+## 15. COMMON PATTERNS
 
 ### CRUD Operations Pattern
 ```javascript
 // Create
-const create = async (data) => {
-  const result = await apiCall('create_endpoint', {
+const create = async (farmId, data) => {
+  const result = await apiCall(`create_endpoint/${farmId}`, {
     method: 'POST',
     body: JSON.stringify(data)
   });
@@ -589,28 +932,57 @@ const create = async (data) => {
 };
 
 // Read
-const getAll = async () => {
-  return await apiCall('get_endpoint');
+const getAll = async (farmId) => {
+  return await apiCall(`get_endpoint/${farmId}`);
 };
 
-const getById = async (id) => {
-  return await apiCall(`get_endpoint/${id}`);
+const getById = async (farmId, id) => {
+  return await apiCall(`get_endpoint/${farmId}/${id}`);
 };
 
 // Update
-const update = async (id, data) => {
-  return await apiCall(`edit_endpoint/${id}`, {
+const update = async (farmId, id, data) => {
+  return await apiCall(`edit_endpoint/${farmId}/${id}`, {
     method: 'POST',
     body: JSON.stringify(data)
   });
 };
 
 // Delete
-const remove = async (id) => {
-  return await apiCall(`delete_endpoint/${id}`, {
+const remove = async (farmId, id) => {
+  return await apiCall(`delete_endpoint/${farmId}/${id}`, {
     method: 'POST'
   });
 };
 ```
 
-This summary provides everything a frontend developer needs to integrate with the DairyDrive Farm API, including practical examples, error handling, and best practices. 
+### Farm-Scoped Hook Pattern
+```javascript
+const useFarmData = (farmId, endpoint) => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const result = await apiCall(`${endpoint}/${farmId}`);
+        setData(result);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (farmId) {
+      fetchData();
+    }
+  }, [farmId, endpoint]);
+
+  return { data, loading, error };
+};
+```
+
+This summary provides everything a frontend developer needs to integrate with the DairyDrive Farm API, including practical examples, error handling, and best practices for farm-scoped operations. 
