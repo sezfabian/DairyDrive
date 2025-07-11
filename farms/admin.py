@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Farm, Transaction, Equipment, Expense
+from .models import Farm, Transaction, Equipment, Expense, EquipmentPurchase
 from import_export.admin import ImportExportModelAdmin
 
 
@@ -15,6 +15,31 @@ class EquipmentAdmin(ImportExportModelAdmin):
     search_fields = ('name', 'description', 'farm__name')
     date_hierarchy = 'created_at'
     readonly_fields = ('created_at', 'updated_at')
+
+@admin.register(EquipmentPurchase)
+class EquipmentPurchaseAdmin(ImportExportModelAdmin):
+    list_display = ('equipment_name', 'farm', 'quantity', 'unit_cost', 'total_cost', 'supplier', 'payment_status', 'purchase_date', 'due_date', 'created_by', 'created_at')
+    list_filter = ('payment_status', 'payment_method', 'farm', 'purchase_date', 'created_at')
+    search_fields = ('equipment_name', 'description', 'supplier', 'farm__name')
+    date_hierarchy = 'purchase_date'
+    readonly_fields = ('payment_status', 'total_cost', 'total_paid', 'pending_amount', 'created_at', 'updated_at')
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('farm', 'equipment_name', 'description', 'quantity', 'unit_cost', 'total_cost')
+        }),
+        ('Supplier Information', {
+            'fields': ('supplier', 'supplier_contact')
+        }),
+        ('Dates', {
+            'fields': ('purchase_date', 'delivery_date', 'warranty_expiry', 'due_date', 'payment_date')
+        }),
+        ('Payment', {
+            'fields': ('payment_method', 'payment_status', 'total_paid', 'pending_amount')
+        }),
+        ('Additional', {
+            'fields': ('notes', 'transactions', 'created_by', 'created_at', 'updated_at')
+        }),
+    )
 
 @admin.register(Expense)
 class ExpenseAdmin(ImportExportModelAdmin):
