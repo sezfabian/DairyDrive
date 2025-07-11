@@ -28,6 +28,15 @@ urlpatterns = [
     path("delete_equipment/<int:pk>", views.delete_equipment, name="delete_equipment"),
     path("get_equipment/<int:pk>", views.get_equipment_detail, name="get_equipment_detail"),
     
+    # Equipment Purchase URLs
+    path("get_equipment_purchases", views.get_equipment_purchases, name="get_equipment_purchases"),
+    path("create_equipment_purchase", views.create_equipment_purchase, name="create_equipment_purchase"),
+    path("edit_equipment_purchase/<int:pk>", views.edit_equipment_purchase, name="edit_equipment_purchase"),
+    path("delete_equipment_purchase/<int:pk>", views.delete_equipment_purchase, name="delete_equipment_purchase"),
+    path("get_equipment_purchase/<int:pk>", views.get_equipment_purchase_detail, name="get_equipment_purchase_detail"),
+    path("add_equipment_purchase_transaction/<int:pk>", views.add_equipment_purchase_transaction, name="add_equipment_purchase_transaction"),
+    path("remove_equipment_purchase_transaction/<int:pk>", views.remove_equipment_purchase_transaction, name="remove_equipment_purchase_transaction"),
+    
     # Expense URLs
     path("get_expenses", views.get_expenses, name="get_expenses"),
     path("create_expense", views.create_expense, name="create_expense"),

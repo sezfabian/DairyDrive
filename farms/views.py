@@ -5,7 +5,7 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.response import Response
 import random
 from rest_framework import viewsets, permissions
-from .models import Farm, Transaction, Equipment, Expense
+from .models import Farm, Transaction, Equipment, Expense, EquipmentPurchase
 from django.shortcuts import get_object_or_404
 
 
@@ -251,4 +251,76 @@ def remove_expense_transaction(request, pk):
     
     expense.remove_transaction(transaction)
     serializer = ExpenseSerializer(expense)
+    return Response(serializer.data)
+
+# Equipment Purchase Views
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_equipment_purchases(request):
+    """Get all equipment purchases for user's farms"""
+    purchases = EquipmentPurchase.objects.filter(farm__created_by=request.user)
+    serializer = EquipmentPurchaseSerializer(purchases, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def create_equipment_purchase(request):
+    """Create new equipment purchase"""
+    request.data['created_by'] = request.user.id
+    serializer = EquipmentPurchaseSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(created_by=request.user)
+        return Response(serializer.data, status=201)
+    return Response(serializer.errors, status=400)
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def edit_equipment_purchase(request, pk):
+    """Edit existing equipment purchase"""
+    purchase = get_object_or_404(EquipmentPurchase, pk=pk, farm__created_by=request.user)
+    serializer = EquipmentPurchaseSerializer(purchase, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=400)
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def delete_equipment_purchase(request, pk):
+    """Delete equipment purchase"""
+    purchase = get_object_or_404(EquipmentPurchase, pk=pk, farm__created_by=request.user)
+    purchase.delete()
+    return Response(status=204)
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_equipment_purchase_detail(request, pk):
+    """Get specific equipment purchase details"""
+    purchase = get_object_or_404(EquipmentPurchase, pk=pk, farm__created_by=request.user)
+    serializer = EquipmentPurchaseSerializer(purchase)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def add_equipment_purchase_transaction(request, pk):
+    """Add a transaction to an equipment purchase"""
+    purchase = get_object_or_404(EquipmentPurchase, pk=pk, farm__created_by=request.user)
+    transaction = get_object_or_404(Transaction, pk=request.data.get('transaction_id'))
+    
+    if transaction.farm != purchase.farm:
+        return Response({"error": "Transaction must be from the same farm"}, status=400)
+    
+    purchase.add_transaction(transaction)
+    serializer = EquipmentPurchaseSerializer(purchase)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def remove_equipment_purchase_transaction(request, pk):
+    """Remove a transaction from an equipment purchase"""
+    purchase = get_object_or_404(EquipmentPurchase, pk=pk, farm__created_by=request.user)
+    transaction = get_object_or_404(Transaction, pk=request.data.get('transaction_id'))
+    
+    purchase.remove_transaction(transaction)
+    serializer = EquipmentPurchaseSerializer(purchase)
     return Response(serializer.data)

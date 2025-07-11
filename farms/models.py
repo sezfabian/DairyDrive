@@ -52,6 +52,93 @@ class Equipment(models.Model):
         ordering = ['-created_at']
         unique_together = ['farm', 'name']  # Prevent duplicate equipment names within the same farm
 
+
+class EquipmentPurchase(models.Model):
+    PURCHASE_STATUS = [
+        ('pending', 'Pending'),
+        ('partial', 'Partially Paid'),
+        ('paid', 'Paid'),
+        ('overdue', 'Overdue'),
+        ('cancelled', 'Cancelled'),
+    ]
+
+    PAYMENT_METHODS = [
+        ('cash', 'Cash'),
+        ('bank_transfer', 'Bank Transfer'),
+        ('mobile_money', 'Mobile Money'),
+        ('cheque', 'Cheque'),
+        ('credit', 'Credit'),
+        ('lease', 'Lease'),
+        ('other', 'Other'),
+    ]
+
+    farm = models.ForeignKey(Farm, on_delete=models.CASCADE, related_name='equipment_purchases')
+    equipment_name = models.CharField(max_length=255)
+    description = models.TextField()
+    quantity = models.PositiveIntegerField(default=1)
+    unit_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    total_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    supplier = models.CharField(max_length=255, blank=True, null=True)
+    supplier_contact = models.CharField(max_length=255, blank=True, null=True)
+    purchase_date = models.DateField()
+    delivery_date = models.DateField(null=True, blank=True)
+    warranty_expiry = models.DateField(null=True, blank=True)
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_METHODS, default='bank_transfer')
+    payment_status = models.CharField(max_length=20, choices=PURCHASE_STATUS, default='pending')
+    due_date = models.DateField()
+    payment_date = models.DateField(null=True, blank=True)
+    transactions = models.ManyToManyField('Transaction', related_name='equipment_purchases', blank=True)
+    notes = models.TextField(blank=True, null=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.equipment_name} - {self.farm.name} - {self.total_cost}"
+
+    class Meta:
+        ordering = ['-purchase_date']
+
+    def save(self, *args, **kwargs):
+        # Calculate total cost if not provided
+        if not self.total_cost:
+            self.total_cost = self.unit_cost * self.quantity
+        super().save(*args, **kwargs)
+
+    @property
+    def total_paid(self):
+        """Calculate total amount paid through transactions"""
+        return self.transactions.filter(transaction_type='outgoing').aggregate(total=Sum('amount'))['total'] or 0
+
+    @property
+    def pending_amount(self):
+        """Calculate pending payment amount"""
+        return max(0, self.total_cost - self.total_paid)
+
+    def update_payment_status(self):
+        """Update payment status based on transactions"""
+        total_paid = self.total_paid
+        if total_paid >= self.total_cost:
+            self.payment_status = 'paid'
+            self.payment_date = timezone.now().date()
+        elif total_paid > 0:
+            self.payment_status = 'partial'
+        elif self.due_date < timezone.now().date():
+            self.payment_status = 'overdue'
+        else:
+            self.payment_status = 'pending'
+        self.save()
+
+    def add_transaction(self, transaction):
+        """Add a transaction and update payment status"""
+        self.transactions.add(transaction)
+        self.update_payment_status()
+
+    def remove_transaction(self, transaction):
+        """Remove a transaction and update payment status"""
+        self.transactions.remove(transaction)
+        self.update_payment_status()
+
 class Transaction(models.Model):
     TRANSACTION_TYPES = [
         ('incoming', 'Incoming'),
