@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Farm, Transaction, Equipment, Expense, EquipmentPurchase
+from .models import Farm, Transaction, Equipment, Expense, EquipmentPurchase, ExpenseCategory
 from import_export.admin import ImportExportModelAdmin
 
 
@@ -15,6 +15,17 @@ class EquipmentAdmin(ImportExportModelAdmin):
     search_fields = ('name', 'description', 'farm__name')
     date_hierarchy = 'created_at'
     readonly_fields = ('created_at', 'updated_at')
+
+@admin.register(ExpenseCategory)
+class ExpenseCategoryAdmin(ImportExportModelAdmin):
+    list_display = ('name', 'farm', 'description', 'color', 'is_active', 'expense_count', 'created_by', 'created_at')
+    list_filter = ('is_active', 'farm', 'created_at')
+    search_fields = ('name', 'description', 'farm__name')
+    readonly_fields = ('expense_count', 'created_at', 'updated_at')
+    
+    def expense_count(self, obj):
+        return obj.expenses.count()
+    expense_count.short_description = 'Expense Count'
 
 @admin.register(EquipmentPurchase)
 class EquipmentPurchaseAdmin(ImportExportModelAdmin):
@@ -45,7 +56,7 @@ class EquipmentPurchaseAdmin(ImportExportModelAdmin):
 class ExpenseAdmin(ImportExportModelAdmin):
     list_display = ('category', 'farm', 'amount', 'payment_status', 'due_date', 'payment_date', 'created_by', 'created_at')
     list_filter = ('category', 'payment_status', 'farm', 'created_at')
-    search_fields = ('description', 'farm__name', 'category')
+    search_fields = ('description', 'farm__name', 'category__name')
     date_hierarchy = 'created_at'
     readonly_fields = ('payment_status', 'created_at', 'updated_at')
 

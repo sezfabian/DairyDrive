@@ -44,8 +44,6 @@ urlpatterns = [
     path("edit_expense/<int:farm_id>/<int:pk>", views.edit_expense, name="edit_expense"),
     path("delete_expense/<int:farm_id>/<int:pk>", views.delete_expense, name="delete_expense"),
     path("get_expense/<int:farm_id>/<int:pk>", views.get_expense_detail, name="get_expense_detail"),
-    path("add_expense_transaction/<int:farm_id>/<int:pk>", views.add_expense_transaction, name="add_expense_transaction"),
-    path("remove_expense_transaction/<int:farm_id>/<int:pk>", views.remove_expense_transaction, name="remove_expense_transaction"),
     
     # Expense Categories URLs
     path("get_expense_categories/<int:farm_id>", views.get_expense_categories, name="get_expense_categories"),

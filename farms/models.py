@@ -23,6 +23,25 @@ class Farm(models.Model):
         return self.name
 
 
+class ExpenseCategory(models.Model):
+    farm = models.ForeignKey(Farm, on_delete=models.CASCADE, related_name='expense_categories')
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+    color = models.CharField(max_length=7, default='#3B82F6', help_text='Hex color code (e.g., #3B82F6)')
+    is_active = models.BooleanField(default=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.farm.name}"
+
+    class Meta:
+        ordering = ['name']
+        unique_together = ['farm', 'name']  # Prevent duplicate category names within the same farm
+        verbose_name_plural = 'Expense Categories'
+
+
 class Equipment(models.Model):
     CONDITION_CHOICES = [
         ('new', 'New'),
@@ -139,6 +158,7 @@ class EquipmentPurchase(models.Model):
         self.transactions.remove(transaction)
         self.update_payment_status()
 
+
 class Transaction(models.Model):
     TRANSACTION_TYPES = [
         ('incoming', 'Incoming'),
@@ -164,27 +184,20 @@ class Transaction(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        # Generate transaction code if not provided
+        if not self.transaction_code:
+            self.transaction_code = f"TXN{str(uuid.uuid4())[:8].upper()}"
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"{self.transaction_type} - {self.amount} - {self.transaction_date}"
+        return f"{self.transaction_type} - {self.amount} - {self.farm.name}"
 
     class Meta:
         ordering = ['-transaction_date']
 
 
 class Expense(models.Model):
-    EXPENSE_CATEGORIES = [
-        ('labor', 'Labor'),
-        ('utilities', 'Utilities'),
-        ('maintenance', 'Maintenance'),
-        ('supplies', 'Supplies'),
-        ('equipment', 'Equipment'),
-        ('transportation', 'Transportation'),
-        ('marketing', 'Marketing'),
-        ('insurance', 'Insurance'),
-        ('taxes', 'Taxes'),
-        ('other', 'Other'),
-    ]
-
     PAYMENT_STATUS = [
         ('pending', 'Pending'),
         ('partial', 'Partially Paid'),
@@ -193,53 +206,24 @@ class Expense(models.Model):
     ]
 
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE, related_name='expenses')
-    category = models.CharField(max_length=20, choices=EXPENSE_CATEGORIES)
+    category = models.ForeignKey(ExpenseCategory, on_delete=models.CASCADE, related_name='expenses')
     description = models.TextField()
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS, default='pending')
     due_date = models.DateField()
     payment_date = models.DateField(null=True, blank=True)
-    transactions = models.ManyToManyField(Transaction, related_name='expenses', blank=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.category} - {self.amount} - {self.farm.name}"
+        return f"{self.category.name} - {self.amount} - {self.farm.name}"
 
     class Meta:
         ordering = ['-due_date']
 
-    @property
-    def total_paid(self):
-        """Calculate total amount paid through transactions"""
-        return self.transactions.filter(transaction_type='outgoing').aggregate(total=Sum('amount'))['total'] or 0
-
-    @property
-    def pending_amount(self):
-        """Calculate pending payment amount"""
-        return max(0, self.amount - self.total_paid)
-
     def save(self, *args, **kwargs):
-        # Calculate payment status based on transactions
-        total_paid = self.total_paid
-        if total_paid >= self.amount:
-            self.payment_status = 'paid'
-            self.payment_date = timezone.now().date()
-        elif total_paid > 0:
-            self.payment_status = 'partial'
-        elif self.due_date < timezone.now().date():
+        # Update payment status based on due date
+        if self.due_date < timezone.now().date():
             self.payment_status = 'overdue'
-        else:
-            self.payment_status = 'pending'
         super().save(*args, **kwargs)
-
-    def add_transaction(self, transaction):
-        """Add a transaction and update payment status"""
-        self.transactions.add(transaction)
-        self.save()  # This will trigger the payment status update
-
-    def remove_transaction(self, transaction):
-        """Remove a transaction and update payment status"""
-        self.transactions.remove(transaction)
-        self.save()  # This will trigger the payment status update

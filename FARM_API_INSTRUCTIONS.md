@@ -445,7 +445,9 @@ All endpoints follow the pattern: `/api/farms/{endpoint}/{farm_id}` or `/api/far
     "id": 1,
     "farm": 1,
     "farm_name": "Sunshine Dairy Farm",
-    "category": "maintenance",
+    "category": 1,
+    "category_name": "Maintenance",
+    "category_color": "#10B981",
     "description": "Equipment maintenance and repairs",
     "amount": "2500.00",
     "payment_status": "partial",
@@ -470,7 +472,7 @@ All endpoints follow the pattern: `/api/farms/{endpoint}/{farm_id}` or `/api/far
 **Request Body:**
 ```json
 {
-  "category": "maintenance",
+  "category": 1,
   "description": "Equipment maintenance and repairs",
   "amount": "2500.00",
   "due_date": "2024-02-15"
@@ -478,22 +480,12 @@ All endpoints follow the pattern: `/api/farms/{endpoint}/{farm_id}` or `/api/far
 ```
 
 **Required Fields:**
-- `category` (string - expense category)
+- `category` (integer - expense category ID from the farm's categories)
 - `description` (text)
 - `amount` (decimal - max 10 digits, 2 decimal places)
 - `due_date` (date)
 
-**Expense Categories:**
-- `labor`: Labor costs
-- `utilities`: Utility bills
-- `maintenance`: Maintenance and repairs
-- `supplies`: Farm supplies
-- `equipment`: Equipment purchases
-- `transportation`: Transportation costs
-- `marketing`: Marketing expenses
-- `insurance`: Insurance premiums
-- `taxes`: Tax payments
-- `other`: Other expenses
+**Note:** The category must be an existing expense category ID for the farm. Use the expense categories endpoint to get available categories.
 
 **Payment Status (Auto-calculated):**
 - `pending`: No payments made
@@ -552,22 +544,100 @@ All endpoints follow the pattern: `/api/farms/{endpoint}/{farm_id}` or `/api/far
 ### 6.1 Get Expense Categories
 **Endpoint:** `GET /api/farms/get_expense_categories/{farm_id}`
 
-**Description:** Get available expense categories for a specific farm.
+**Description:** Get all active expense categories for a specific farm.
 
 **Response:**
 ```json
 [
-  {"value": "labor", "label": "Labor"},
-  {"value": "utilities", "label": "Utilities"},
-  {"value": "maintenance", "label": "Maintenance"},
-  {"value": "supplies", "label": "Supplies"},
-  {"value": "equipment", "label": "Equipment"},
-  {"value": "transportation", "label": "Transportation"},
-  {"value": "marketing", "label": "Marketing"},
-  {"value": "insurance", "label": "Insurance"},
-  {"value": "taxes", "label": "Taxes"},
-  {"value": "other", "label": "Other"}
+  {
+    "id": 1,
+    "farm": 1,
+    "farm_name": "Sunshine Dairy Farm",
+    "name": "Labor",
+    "description": "Employee wages and labor costs",
+    "color": "#3B82F6",
+    "is_active": true,
+    "expense_count": 5,
+    "created_by": 1,
+    "created_by_name": "John Doe",
+    "created_at": "2024-01-15T10:30:00Z",
+    "updated_at": "2024-01-15T10:30:00Z"
+  },
+  {
+    "id": 2,
+    "farm": 1,
+    "farm_name": "Sunshine Dairy Farm",
+    "name": "Utilities",
+    "description": "Electricity, water, and other utilities",
+    "color": "#EF4444",
+    "is_active": true,
+    "expense_count": 3,
+    "created_by": 1,
+    "created_by_name": "John Doe",
+    "created_at": "2024-01-15T10:30:00Z",
+    "updated_at": "2024-01-15T10:30:00Z"
+  }
 ]
+```
+
+### 6.2 Create Expense Category
+**Endpoint:** `POST /api/farms/add_expense_category/{farm_id}`
+
+**Description:** Create a new expense category for a specific farm.
+
+**Request Body:**
+```json
+{
+  "name": "Maintenance",
+  "description": "Equipment maintenance and repairs",
+  "color": "#10B981",
+  "is_active": true
+}
+```
+
+**Required Fields:**
+- `name` (string, max 100 chars, unique within farm)
+
+**Optional Fields:**
+- `description` (text)
+- `color` (string, max 7 chars, hex color code, default: "#3B82F6")
+- `is_active` (boolean, default: true)
+
+**Response:** Returns the created expense category object.
+
+### 6.3 Edit Expense Category
+**Endpoint:** `POST /api/farms/edit_expense_category/{farm_id}/{pk}`
+
+**Description:** Update an existing expense category.
+
+**Request Body:** (Same structure as create_expense_category, all fields optional)
+```json
+{
+  "name": "Updated Maintenance",
+  "description": "Updated description for maintenance costs",
+  "color": "#F59E0B"
+}
+```
+
+**Response:** Returns the updated expense category object.
+
+### 6.4 Delete Expense Category
+**Endpoint:** `POST /api/farms/delete_expense_category/{farm_id}/{pk}`
+
+**Description:** Soft delete an expense category by setting is_active to false. Cannot delete categories that have associated expenses.
+
+**Response:**
+```json
+{
+  "message": "Expense category deleted successfully"
+}
+```
+
+**Error Response (if category has expenses):**
+```json
+{
+  "message": "Cannot delete category that has associated expenses. Please reassign or delete the expenses first."
+}
 ```
 
 ---

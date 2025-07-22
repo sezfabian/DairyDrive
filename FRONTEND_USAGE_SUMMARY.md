@@ -492,6 +492,58 @@ const getExpenseCategories = async (farmId) => {
 };
 ```
 
+### Create Expense Category
+```javascript
+const createExpenseCategory = async (farmId, categoryData) => {
+  try {
+    const newCategory = await apiCall(`add_expense_category/${farmId}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        name: categoryData.name,
+        description: categoryData.description,
+        color: categoryData.color || '#3B82F6',
+        is_active: categoryData.isActive !== false
+      })
+    });
+    return newCategory;
+  } catch (error) {
+    console.error('Error creating expense category:', error);
+    throw error;
+  }
+};
+```
+
+### Edit Expense Category
+```javascript
+const editExpenseCategory = async (farmId, categoryId, updates) => {
+  try {
+    const updatedCategory = await apiCall(`edit_expense_category/${farmId}/${categoryId}`, {
+      method: 'POST',
+      body: JSON.stringify(updates)
+    });
+    return updatedCategory;
+  } catch (error) {
+    console.error('Error updating expense category:', error);
+    throw error;
+  }
+};
+```
+
+### Delete Expense Category
+```javascript
+const deleteExpenseCategory = async (farmId, categoryId) => {
+  try {
+    const result = await apiCall(`delete_expense_category/${farmId}/${categoryId}`, {
+      method: 'POST'
+    });
+    return result;
+  } catch (error) {
+    console.error('Error deleting expense category:', error);
+    throw error;
+  }
+};
+```
+
 ---
 
 ## 7. FARM STATISTICS
@@ -533,6 +585,37 @@ const getFarmExpenses = async (farmId) => {
     throw error;
   }
 };
+```
+
+### Farm Statistics Object
+```javascript
+{
+  total_income: "50000.00",
+  total_expenses: "30000.00",
+  net_income: "20000.00",
+  total_equipment: 15,
+  total_expense_records: 25,
+  farm_name: "Sunshine Dairy Farm",
+  farm_id: 1
+}
+```
+
+### ExpenseCategory Object
+```javascript
+{
+  id: 1,
+  farm: 1,
+  farm_name: "Sunshine Dairy Farm",
+  name: "Maintenance",
+  description: "Equipment maintenance and repairs",
+  color: "#10B981",
+  is_active: true,
+  expense_count: 5,
+  created_by: 1,
+  created_by_name: "John Doe",
+  created_at: "2024-01-15T10:30:00Z",
+  updated_at: "2024-01-15T10:30:00Z"
+}
 ```
 
 ---
@@ -743,6 +826,148 @@ const EquipmentPurchaseForm = ({ farmId, onSuccess }) => {
 };
 ```
 
+### Expense Category Management Component
+```jsx
+import React, { useState, useEffect } from 'react';
+
+const ExpenseCategoryManager = ({ farmId }) => {
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    color: '#3B82F6',
+    is_active: true
+  });
+
+  useEffect(() => {
+    fetchCategories();
+  }, [farmId]);
+
+  const fetchCategories = async () => {
+    try {
+      setLoading(true);
+      const data = await getExpenseCategories(farmId);
+      setCategories(data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (editingCategory) {
+        await editExpenseCategory(farmId, editingCategory.id, formData);
+      } else {
+        await createExpenseCategory(farmId, formData);
+      }
+      setShowForm(false);
+      setEditingCategory(null);
+      setFormData({ name: '', description: '', color: '#3B82F6', is_active: true });
+      fetchCategories();
+    } catch (error) {
+      console.error('Error saving category:', error);
+    }
+  };
+
+  const handleEdit = (category) => {
+    setEditingCategory(category);
+    setFormData({
+      name: category.name,
+      description: category.description,
+      color: category.color,
+      is_active: category.is_active
+    });
+    setShowForm(true);
+  };
+
+  const handleDelete = async (categoryId) => {
+    if (window.confirm('Are you sure you want to delete this category?')) {
+      try {
+        await deleteExpenseCategory(farmId, categoryId);
+        fetchCategories();
+      } catch (error) {
+        console.error('Error deleting category:', error);
+      }
+    }
+  };
+
+  if (loading) return <div>Loading categories...</div>;
+
+  return (
+    <div>
+      <div className="category-header">
+        <h3>Expense Categories</h3>
+        <button onClick={() => setShowForm(true)}>Add Category</button>
+      </div>
+
+      {showForm && (
+        <form onSubmit={handleSubmit} className="category-form">
+          <input
+            type="text"
+            placeholder="Category Name"
+            value={formData.name}
+            onChange={(e) => setFormData({...formData, name: e.target.value})}
+            required
+          />
+          <textarea
+            placeholder="Description"
+            value={formData.description}
+            onChange={(e) => setFormData({...formData, description: e.target.value})}
+          />
+          <input
+            type="color"
+            value={formData.color}
+            onChange={(e) => setFormData({...formData, color: e.target.value})}
+          />
+          <label>
+            <input
+              type="checkbox"
+              checked={formData.is_active}
+              onChange={(e) => setFormData({...formData, is_active: e.target.checked})}
+            />
+            Active
+          </label>
+          <button type="submit">
+            {editingCategory ? 'Update Category' : 'Create Category'}
+          </button>
+          <button type="button" onClick={() => {
+            setShowForm(false);
+            setEditingCategory(null);
+            setFormData({ name: '', description: '', color: '#3B82F6', is_active: true });
+          }}>
+            Cancel
+          </button>
+        </form>
+      )}
+
+      <div className="categories-list">
+        {categories.map(category => (
+          <div key={category.id} className="category-item" style={{borderLeftColor: category.color}}>
+            <div className="category-info">
+              <h4>{category.name}</h4>
+              <p>{category.description}</p>
+              <span className="expense-count">{category.expense_count} expenses</span>
+            </div>
+            <div className="category-actions">
+              <button onClick={() => handleEdit(category)}>Edit</button>
+              <button onClick={() => handleDelete(category.id)} disabled={category.expense_count > 0}>
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+```
+
 ---
 
 ## 11. DATA STRUCTURES
@@ -812,6 +1037,24 @@ const EquipmentPurchaseForm = ({ farmId, onSuccess }) => {
   total_expense_records: 25,
   farm_name: "Sunshine Dairy Farm",
   farm_id: 1
+}
+```
+
+### ExpenseCategory Object
+```javascript
+{
+  id: 1,
+  farm: 1,
+  farm_name: "Sunshine Dairy Farm",
+  name: "Maintenance",
+  description: "Equipment maintenance and repairs",
+  color: "#10B981",
+  is_active: true,
+  expense_count: 5,
+  created_by: 1,
+  created_by_name: "John Doe",
+  created_at: "2024-01-15T10:30:00Z",
+  updated_at: "2024-01-15T10:30:00Z"
 }
 ```
 

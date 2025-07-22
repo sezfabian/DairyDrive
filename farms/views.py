@@ -5,7 +5,7 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.response import Response
 import random
 from rest_framework import viewsets, permissions
-from .models import Farm, Transaction, Equipment, Expense, EquipmentPurchase
+from .models import Farm, Transaction, Equipment, Expense, EquipmentPurchase, ExpenseCategory
 from django.shortcuts import get_object_or_404
 from django.db.models import Sum, Count, Q
 from django.utils import timezone
@@ -295,39 +295,6 @@ def get_expense_detail(request, farm_id, pk):
     except (Farm.DoesNotExist, Expense.DoesNotExist):
         return Response({"message": f"Expense id:{pk} not found"}, status=404)
 
-@api_view(['POST'])
-@permission_classes([permissions.IsAuthenticated])
-def add_expense_transaction(request, farm_id, pk):
-    """Add a transaction to an expense"""
-    try:
-        farm = Farm.objects.get(id=farm_id)
-        expense = Expense.objects.get(pk=pk, farm=farm)
-        transaction = Transaction.objects.get(pk=request.data.get('transaction_id'))
-        
-        if transaction.farm != expense.farm:
-            return Response({"error": "Transaction must be from the same farm"}, status=400)
-        
-        expense.add_transaction(transaction)
-        serializer = ExpenseSerializer(expense)
-        return Response(serializer.data)
-    except (Farm.DoesNotExist, Expense.DoesNotExist, Transaction.DoesNotExist):
-        return Response({"message": "Resource not found"}, status=404)
-
-@api_view(['POST'])
-@permission_classes([permissions.IsAuthenticated])
-def remove_expense_transaction(request, farm_id, pk):
-    """Remove a transaction from an expense"""
-    try:
-        farm = Farm.objects.get(id=farm_id)
-        expense = Expense.objects.get(pk=pk, farm=farm)
-        transaction = Transaction.objects.get(pk=request.data.get('transaction_id'))
-        
-        expense.remove_transaction(transaction)
-        serializer = ExpenseSerializer(expense)
-        return Response(serializer.data)
-    except (Farm.DoesNotExist, Expense.DoesNotExist, Transaction.DoesNotExist):
-        return Response({"message": "Resource not found"}, status=404)
-
 # Equipment Purchase Views
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
@@ -436,28 +403,62 @@ def get_expense_categories(request, farm_id):
     """Get expense categories for specific farm"""
     try:
         farm = Farm.objects.get(id=farm_id)
-        categories = Expense.EXPENSE_CATEGORIES
-        return Response([{'value': cat[0], 'label': cat[1]} for cat in categories])
+        categories = ExpenseCategory.objects.filter(farm=farm, is_active=True)
+        serializer = ExpenseCategorySerializer(categories, many=True)
+        return Response(serializer.data)
     except Farm.DoesNotExist:
         return Response({"message": f"Farm id:{farm_id} not found"}, status=404)
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def create_expense_category(request, farm_id):
-    """Create new expense category (placeholder for future implementation)"""
-    return Response({"message": "Expense categories are predefined"}, status=400)
+    """Create new expense category"""
+    try:
+        farm = Farm.objects.get(id=farm_id)
+        request.data['farm'] = farm_id
+        request.data['created_by'] = request.user.id
+        serializer = ExpenseCategorySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(created_by=request.user)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+    except Farm.DoesNotExist:
+        return Response({"message": f"Farm id:{farm_id} not found"}, status=404)
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def edit_expense_category(request, farm_id, pk):
-    """Edit expense category (placeholder for future implementation)"""
-    return Response({"message": "Expense categories are predefined"}, status=400)
+    """Edit expense category"""
+    try:
+        farm = Farm.objects.get(id=farm_id)
+        category = ExpenseCategory.objects.get(pk=pk, farm=farm)
+        serializer = ExpenseCategorySerializer(category, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+    except (Farm.DoesNotExist, ExpenseCategory.DoesNotExist):
+        return Response({"message": f"Expense category id:{pk} not found"}, status=404)
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def delete_expense_category(request, farm_id, pk):
-    """Delete expense category (placeholder for future implementation)"""
-    return Response({"message": "Expense categories are predefined"}, status=400)
+    """Delete expense category (soft delete by setting is_active to False)"""
+    try:
+        farm = Farm.objects.get(id=farm_id)
+        category = ExpenseCategory.objects.get(pk=pk, farm=farm)
+        
+        # Check if category has associated expenses
+        if category.expenses.exists():
+            return Response({
+                "message": "Cannot delete category that has associated expenses. Please reassign or delete the expenses first."
+            }, status=400)
+        
+        category.is_active = False
+        category.save()
+        return Response({"message": "Expense category deleted successfully"})
+    except (Farm.DoesNotExist, ExpenseCategory.DoesNotExist):
+        return Response({"message": f"Expense category id:{pk} not found"}, status=404)
 
 # Farm Statistics Views
 @api_view(['GET'])
