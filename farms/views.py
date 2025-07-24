@@ -464,32 +464,274 @@ def delete_expense_category(request, farm_id, pk):
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def get_farm_statistics(request, farm_id):
-    """Get farm statistics"""
+    """Get comprehensive farm statistics with custom date filtering"""
     try:
         farm = Farm.objects.get(id=farm_id)
         
-        # Calculate statistics
-        total_income = Transaction.objects.filter(
-            farm=farm, 
-            transaction_type='incoming'
+        # Get date parameters from request
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
+        
+        # Parse dates if provided, otherwise use defaults
+        if start_date:
+            start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+        else:
+            start_date = timezone.now().date() - timedelta(days=30)  # Last 30 days default
+            
+        if end_date:
+            end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+        else:
+            end_date = timezone.now().date()
+        
+        # Import required models
+        from products.models import Sale, ProductionRecord
+        from health.models import Treatment
+        from feeds.models import AnimalFeedEntry, AnimalFeedPurchase
+        
+        # Calculate revenue from product sales
+        sales_revenue = Sale.objects.filter(
+            farm=farm,
+            date__range=[start_date, end_date]
+        ).aggregate(total=Sum('total_amount'))['total'] or 0
+        
+        # Calculate costs from various sources
+        # 1. Expenses
+        expenses_cost = Expense.objects.filter(
+            farm=farm,
+            due_date__range=[start_date, end_date]
         ).aggregate(total=Sum('amount'))['total'] or 0
         
-        total_expenses = Transaction.objects.filter(
-            farm=farm, 
-            transaction_type='outgoing'
+        # 2. Health treatments
+        treatments_cost = Treatment.objects.filter(
+            health_record__animal__farm=farm,
+            treatment_date__range=[start_date, end_date]
+        ).aggregate(total=Sum('cost'))['total'] or 0
+        
+        # 3. Equipment purchases
+        equipment_cost = EquipmentPurchase.objects.filter(
+            farm=farm,
+            purchase_date__range=[start_date, end_date]
+        ).aggregate(total=Sum('total_cost'))['total'] or 0
+        
+        # 4. Animal feed purchases
+        feed_purchases_cost = AnimalFeedPurchase.objects.filter(
+            farm=farm,
+            date__range=[start_date, end_date],
+            is_deleted=False
+        ).aggregate(total=Sum('cost'))['total'] or 0
+        
+        # 5. Animal feed consumption (from feed entries)
+        feed_consumption_cost = AnimalFeedEntry.objects.filter(
+            farm=farm,
+            feed_date__range=[start_date, end_date],
+            is_deleted=False
+        ).aggregate(total=Sum('total_cost'))['total'] or 0
+        
+        # 6. General transactions (incoming and outgoing)
+        income_transactions = Transaction.objects.filter(
+            farm=farm,
+            transaction_type='incoming',
+            transaction_date__date__range=[start_date, end_date]
         ).aggregate(total=Sum('amount'))['total'] or 0
         
-        total_equipment = Equipment.objects.filter(farm=farm).count()
-        total_expense_records = Expense.objects.filter(farm=farm).count()
+        expense_transactions = Transaction.objects.filter(
+            farm=farm,
+            transaction_type='outgoing',
+            transaction_date__date__range=[start_date, end_date]
+        ).aggregate(total=Sum('amount'))['total'] or 0
+        
+        # Calculate totals
+        total_revenue = sales_revenue + income_transactions
+        total_costs = (expenses_cost + treatments_cost + equipment_cost + 
+                      feed_purchases_cost + feed_consumption_cost + expense_transactions)
+        net_income = total_revenue - total_costs
+        
+        # Generate time-based summaries
+        current_date = timezone.now().date()
+        
+        # This week's daily summary (last 7 days)
+        week_start = current_date - timedelta(days=6)
+        daily_summary = []
+        for i in range(7):
+            day_date = week_start + timedelta(days=i)
+            day_sales = Sale.objects.filter(
+                farm=farm,
+                date=day_date
+            ).aggregate(total=Sum('total_amount'))['total'] or 0
+            
+            day_costs = (Expense.objects.filter(farm=farm, due_date=day_date).aggregate(total=Sum('amount'))['total'] or 0 +
+                        Treatment.objects.filter(health_record__animal__farm=farm, treatment_date=day_date).aggregate(total=Sum('cost'))['total'] or 0 +
+                        EquipmentPurchase.objects.filter(farm=farm, purchase_date=day_date).aggregate(total=Sum('total_cost'))['total'] or 0 +
+                        AnimalFeedPurchase.objects.filter(farm=farm, date=day_date, is_deleted=False).aggregate(total=Sum('cost'))['total'] or 0)
+            
+            daily_summary.append({
+                'date': day_date.strftime('%Y-%m-%d'),
+                'day_name': day_date.strftime('%A'),
+                'revenue': float(day_sales),
+                'costs': float(day_costs),
+                'net': float(day_sales - day_costs)
+            })
+        
+        # Last 8 weeks summary
+        weekly_summary = []
+        for i in range(8):
+            week_start_date = current_date - timedelta(weeks=i+1, days=current_date.weekday())
+            week_end_date = week_start_date + timedelta(days=6)
+            
+            week_sales = Sale.objects.filter(
+                farm=farm,
+                date__range=[week_start_date, week_end_date]
+            ).aggregate(total=Sum('total_amount'))['total'] or 0
+            
+            week_costs = (Expense.objects.filter(farm=farm, due_date__range=[week_start_date, week_end_date]).aggregate(total=Sum('amount'))['total'] or 0 +
+                         Treatment.objects.filter(health_record__animal__farm=farm, treatment_date__range=[week_start_date, week_end_date]).aggregate(total=Sum('cost'))['total'] or 0 +
+                         EquipmentPurchase.objects.filter(farm=farm, purchase_date__range=[week_start_date, week_end_date]).aggregate(total=Sum('total_cost'))['total'] or 0 +
+                         AnimalFeedPurchase.objects.filter(farm=farm, date__range=[week_start_date, week_end_date], is_deleted=False).aggregate(total=Sum('cost'))['total'] or 0)
+            
+            weekly_summary.append({
+                'week_start': week_start_date.strftime('%Y-%m-%d'),
+                'week_end': week_end_date.strftime('%Y-%m-%d'),
+                'week_number': f"Week {8-i}",
+                'revenue': float(week_sales),
+                'costs': float(week_costs),
+                'net': float(week_sales - week_costs)
+            })
+        
+        # Last 6 months summary
+        monthly_summary = []
+        for i in range(6):
+            month_start = current_date.replace(day=1) - timedelta(days=30*i)
+            if month_start.month == 1:
+                month_end = month_start.replace(year=month_start.year-1, month=12, day=31)
+            else:
+                month_end = month_start.replace(month=month_start.month-1, day=31)
+            
+            month_sales = Sale.objects.filter(
+                farm=farm,
+                date__range=[month_start, month_end]
+            ).aggregate(total=Sum('total_amount'))['total'] or 0
+            
+            month_costs = (Expense.objects.filter(farm=farm, due_date__range=[month_start, month_end]).aggregate(total=Sum('amount'))['total'] or 0 +
+                          Treatment.objects.filter(health_record__animal__farm=farm, treatment_date__range=[month_start, month_end]).aggregate(total=Sum('cost'))['total'] or 0 +
+                          EquipmentPurchase.objects.filter(farm=farm, purchase_date__range=[month_start, month_end]).aggregate(total=Sum('total_cost'))['total'] or 0 +
+                          AnimalFeedPurchase.objects.filter(farm=farm, date__range=[month_start, month_end], is_deleted=False).aggregate(total=Sum('cost'))['total'] or 0)
+            
+            monthly_summary.append({
+                'month': month_start.strftime('%B %Y'),
+                'month_start': month_start.strftime('%Y-%m-%d'),
+                'month_end': month_end.strftime('%Y-%m-%d'),
+                'revenue': float(month_sales),
+                'costs': float(month_costs),
+                'net': float(month_sales - month_costs)
+            })
+        
+        # This year and last year summary
+        current_year = current_date.year
+        this_year_start = datetime(current_year, 1, 1).date()
+        this_year_end = datetime(current_year, 12, 31).date()
+        last_year_start = datetime(current_year-1, 1, 1).date()
+        last_year_end = datetime(current_year-1, 12, 31).date()
+        
+        # This year
+        this_year_sales = Sale.objects.filter(
+            farm=farm,
+            date__range=[this_year_start, this_year_end]
+        ).aggregate(total=Sum('total_amount'))['total'] or 0
+        
+        this_year_costs = (Expense.objects.filter(farm=farm, due_date__range=[this_year_start, this_year_end]).aggregate(total=Sum('amount'))['total'] or 0 +
+                          Treatment.objects.filter(health_record__animal__farm=farm, treatment_date__range=[this_year_start, this_year_end]).aggregate(total=Sum('cost'))['total'] or 0 +
+                          EquipmentPurchase.objects.filter(farm=farm, purchase_date__range=[this_year_start, this_year_end]).aggregate(total=Sum('total_cost'))['total'] or 0 +
+                          AnimalFeedPurchase.objects.filter(farm=farm, date__range=[this_year_start, this_year_end], is_deleted=False).aggregate(total=Sum('cost'))['total'] or 0)
+        
+        # Last year
+        last_year_sales = Sale.objects.filter(
+            farm=farm,
+            date__range=[last_year_start, last_year_end]
+        ).aggregate(total=Sum('total_amount'))['total'] or 0
+        
+        last_year_costs = (Expense.objects.filter(farm=farm, due_date__range=[last_year_start, last_year_end]).aggregate(total=Sum('amount'))['total'] or 0 +
+                          Treatment.objects.filter(health_record__animal__farm=farm, treatment_date__range=[last_year_start, last_year_end]).aggregate(total=Sum('cost'))['total'] or 0 +
+                          EquipmentPurchase.objects.filter(farm=farm, purchase_date__range=[last_year_start, last_year_end]).aggregate(total=Sum('total_cost'))['total'] or 0 +
+                          AnimalFeedPurchase.objects.filter(farm=farm, date__range=[last_year_start, last_year_end], is_deleted=False).aggregate(total=Sum('cost'))['total'] or 0)
+        
+        yearly_summary = {
+            'this_year': {
+                'year': current_year,
+                'revenue': float(this_year_sales),
+                'costs': float(this_year_costs),
+                'net': float(this_year_sales - this_year_costs)
+            },
+            'last_year': {
+                'year': current_year - 1,
+                'revenue': float(last_year_sales),
+                'costs': float(last_year_costs),
+                'net': float(last_year_sales - last_year_costs)
+            }
+        }
+        
+        # Detailed cost breakdown
+        cost_breakdown = {
+            'expenses': {
+                'amount': float(expenses_cost),
+                'percentage': float((expenses_cost / total_costs * 100) if total_costs > 0 else 0)
+            },
+            'health_treatments': {
+                'amount': float(treatments_cost),
+                'percentage': float((treatments_cost / total_costs * 100) if total_costs > 0 else 0)
+            },
+            'equipment_purchases': {
+                'amount': float(equipment_cost),
+                'percentage': float((equipment_cost / total_costs * 100) if total_costs > 0 else 0)
+            },
+            'feed_purchases': {
+                'amount': float(feed_purchases_cost),
+                'percentage': float((feed_purchases_cost / total_costs * 100) if total_costs > 0 else 0)
+            },
+            'feed_consumption': {
+                'amount': float(feed_consumption_cost),
+                'percentage': float((feed_consumption_cost / total_costs * 100) if total_costs > 0 else 0)
+            },
+            'general_transactions': {
+                'amount': float(expense_transactions),
+                'percentage': float((expense_transactions / total_costs * 100) if total_costs > 0 else 0)
+            }
+        }
+        
+        # Revenue breakdown
+        revenue_breakdown = {
+            'product_sales': {
+                'amount': float(sales_revenue),
+                'percentage': float((sales_revenue / total_revenue * 100) if total_revenue > 0 else 0)
+            },
+            'general_transactions': {
+                'amount': float(income_transactions),
+                'percentage': float((income_transactions / total_revenue * 100) if total_revenue > 0 else 0)
+            }
+        }
         
         statistics = {
-            'total_income': total_income,
-            'total_expenses': total_expenses,
-            'net_income': total_income - total_expenses,
-            'total_equipment': total_equipment,
-            'total_expense_records': total_expense_records,
-            'farm_name': farm.name,
-            'farm_id': farm.id
+            'farm_info': {
+                'farm_id': farm.id,
+                'farm_name': farm.name,
+                'period': {
+                    'start_date': start_date.strftime('%Y-%m-%d'),
+                    'end_date': end_date.strftime('%Y-%m-%d')
+                }
+            },
+            'summary': {
+                'total_revenue': float(total_revenue),
+                'total_costs': float(total_costs),
+                'net_income': float(net_income),
+                'profit_margin': float((net_income / total_revenue * 100) if total_revenue > 0 else 0)
+            },
+            'revenue_breakdown': revenue_breakdown,
+            'cost_breakdown': cost_breakdown,
+            'time_series': {
+                'daily_summary': daily_summary,
+                'weekly_summary': weekly_summary,
+                'monthly_summary': monthly_summary,
+                'yearly_summary': yearly_summary
+            }
         }
         
         return Response(statistics)

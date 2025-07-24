@@ -383,7 +383,6 @@ All endpoints follow the pattern: `/api/farms/{endpoint}/{farm_id}` or `/api/far
 - `partial`: Partial payment made
 - `paid`: Fully paid
 - `overdue`: Past due date with no payment
-- `cancelled`: Purchase cancelled
 
 ### 4.3 Edit Equipment Purchase
 **Endpoint:** `POST /api/farms/edit_equipment_purchase/{farm_id}/{pk}`
@@ -645,22 +644,133 @@ All endpoints follow the pattern: `/api/farms/{endpoint}/{farm_id}` or `/api/far
 ## 7. FARM STATISTICS ENDPOINTS
 
 ### 7.1 Get Farm Statistics
-**Endpoint:** `GET /api/farms/get_farm_statistics/{farm_id}`
+**GET** `/farms/get_farm_statistics/{farm_id}/`
 
-**Description:** Get comprehensive statistics for a specific farm.
+**Description:** Get comprehensive farm statistics with custom date filtering, detailed cost and revenue breakdowns, and time-based summaries.
 
-**Response:**
+**Query Parameters:**
+- `start_date` (optional): Start date for filtering (format: YYYY-MM-DD)
+- `end_date` (optional): End date for filtering (format: YYYY-MM-DD)
+
+**Example Request:**
+```bash
+# Get statistics for last 30 days (default)
+GET /farms/get_farm_statistics/1/
+
+# Get statistics for custom date range
+GET /farms/get_farm_statistics/1/?start_date=2024-01-01&end_date=2024-01-31
+```
+
+**Response Example:**
 ```json
 {
-  "total_income": "50000.00",
-  "total_expenses": "30000.00",
-  "net_income": "20000.00",
-  "total_equipment": 15,
-  "total_expense_records": 25,
-  "farm_name": "Sunshine Dairy Farm",
-  "farm_id": 1
+  "farm_info": {
+    "farm_id": 1,
+    "farm_name": "Sunshine Dairy Farm",
+    "period": {
+      "start_date": "2024-01-01",
+      "end_date": "2024-01-31"
+    }
+  },
+  "summary": {
+    "total_revenue": 15000.00,
+    "total_costs": 8500.00,
+    "net_income": 6500.00,
+    "profit_margin": 43.33
+  },
+  "revenue_breakdown": {
+    "product_sales": {
+      "amount": 12000.00,
+      "percentage": 80.00
+    },
+    "general_transactions": {
+      "amount": 3000.00,
+      "percentage": 20.00
+    }
+  },
+  "cost_breakdown": {
+    "expenses": {
+      "amount": 2000.00,
+      "percentage": 23.53
+    },
+    "health_treatments": {
+      "amount": 1500.00,
+      "percentage": 17.65
+    },
+    "equipment_purchases": {
+      "amount": 1000.00,
+      "percentage": 11.76
+    },
+    "feed_purchases": {
+      "amount": 2500.00,
+      "percentage": 29.41
+    },
+    "feed_consumption": {
+      "amount": 800.00,
+      "percentage": 9.41
+    },
+    "general_transactions": {
+      "amount": 700.00,
+      "percentage": 8.24
+    }
+  },
+  "time_series": {
+    "daily_summary": [
+      {
+        "date": "2024-01-15",
+        "day_name": "Monday",
+        "revenue": 500.00,
+        "costs": 200.00,
+        "net": 300.00
+      }
+    ],
+    "weekly_summary": [
+      {
+        "week_start": "2024-01-08",
+        "week_end": "2024-01-14",
+        "week_number": "Week 1",
+        "revenue": 3500.00,
+        "costs": 1800.00,
+        "net": 1700.00
+      }
+    ],
+    "monthly_summary": [
+      {
+        "month": "January 2024",
+        "month_start": "2024-01-01",
+        "month_end": "2024-01-31",
+        "revenue": 15000.00,
+        "costs": 8500.00,
+        "net": 6500.00
+      }
+    ],
+    "yearly_summary": {
+      "this_year": {
+        "year": 2024,
+        "revenue": 15000.00,
+        "costs": 8500.00,
+        "net": 6500.00
+      },
+      "last_year": {
+        "year": 2023,
+        "revenue": 12000.00,
+        "costs": 7000.00,
+        "net": 5000.00
+      }
+    }
+  }
 }
 ```
+
+**Data Sources:**
+- **Revenue:** Product sales, General income transactions
+- **Costs:** Expenses, Health treatments, Equipment purchases, Animal feed purchases, Animal feed consumption, General expense transactions
+
+**Time Series Data:**
+- **Daily Summary:** Last 7 days with day-by-day breakdown
+- **Weekly Summary:** Last 8 weeks with week-by-week breakdown
+- **Monthly Summary:** Last 6 months with month-by-month breakdown
+- **Yearly Summary:** Current year and previous year comparison
 
 ### 7.2 Get Farm Income
 **Endpoint:** `GET /api/farms/get_farm_income/{farm_id}`

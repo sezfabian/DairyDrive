@@ -548,74 +548,255 @@ const deleteExpenseCategory = async (farmId, categoryId) => {
 
 ## 7. FARM STATISTICS
 
-### Get Farm Statistics
+### Get Comprehensive Farm Statistics
 ```javascript
+// Get statistics for last 30 days (default)
 const getFarmStatistics = async (farmId) => {
   try {
-    const statistics = await apiCall(`get_farm_statistics/${farmId}`);
-    return statistics;
+    const response = await apiCall(`/farms/get_farm_statistics/${farmId}`, 'GET');
+    return response;
   } catch (error) {
     console.error('Error fetching farm statistics:', error);
     throw error;
   }
 };
-```
 
-### Get Farm Income
-```javascript
-const getFarmIncome = async (farmId) => {
+// Get statistics for custom date range
+const getFarmStatisticsWithDateRange = async (farmId, startDate, endDate) => {
   try {
-    const income = await apiCall(`get_farm_income/${farmId}`);
-    return income;
+    const params = new URLSearchParams({
+      start_date: startDate,
+      end_date: endDate
+    });
+    const response = await apiCall(`/farms/get_farm_statistics/${farmId}/?${params}`, 'GET');
+    return response;
   } catch (error) {
-    console.error('Error fetching farm income:', error);
+    console.error('Error fetching farm statistics:', error);
     throw error;
   }
 };
+
+// Example usage with date range
+const stats = await getFarmStatisticsWithDateRange(1, '2024-01-01', '2024-01-31');
+console.log('Farm Summary:', stats.summary);
+console.log('Cost Breakdown:', stats.cost_breakdown);
+console.log('Revenue Breakdown:', stats.revenue_breakdown);
+console.log('Daily Summary:', stats.time_series.daily_summary);
 ```
 
-### Get Farm Expenses
-```javascript
-const getFarmExpenses = async (farmId) => {
-  try {
-    const expenses = await apiCall(`get_farm_expenses/${farmId}`);
-    return expenses;
-  } catch (error) {
-    console.error('Error fetching farm expenses:', error);
-    throw error;
-  }
+### React Component Example - Farm Dashboard
+```jsx
+import React, { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/vue-query';
+
+const FarmDashboard = ({ farmId }) => {
+  const [dateRange, setDateRange] = useState({
+    startDate: '',
+    endDate: ''
+  });
+
+  const { data: statistics, isLoading, error } = useQuery({
+    queryKey: ['farmStatistics', farmId, dateRange.startDate, dateRange.endDate],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (dateRange.startDate) params.append('start_date', dateRange.startDate);
+      if (dateRange.endDate) params.append('end_date', dateRange.endDate);
+      
+      const response = await api.get(`/farms/get_farm_statistics/${farmId}/?${params}`);
+      return response.data;
+    },
+    enabled: !!farmId
+  });
+
+  if (isLoading) return <div>Loading statistics...</div>;
+  if (error) return <div>Error loading statistics: {error.message}</div>;
+
+  return (
+    <div className="farm-dashboard">
+      <div className="dashboard-header">
+        <h2>{statistics.farm_info.farm_name} Dashboard</h2>
+        <div className="date-filters">
+          <input
+            type="date"
+            value={dateRange.startDate}
+            onChange={(e) => setDateRange(prev => ({ ...prev, startDate: e.target.value }))}
+            placeholder="Start Date"
+          />
+          <input
+            type="date"
+            value={dateRange.endDate}
+            onChange={(e) => setDateRange(prev => ({ ...prev, endDate: e.target.value }))}
+            placeholder="End Date"
+          />
+        </div>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="summary-cards">
+        <div className="card">
+          <h3>Total Revenue</h3>
+          <p className="amount">${statistics.summary.total_revenue.toFixed(2)}</p>
+        </div>
+        <div className="card">
+          <h3>Total Costs</h3>
+          <p className="amount">${statistics.summary.total_costs.toFixed(2)}</p>
+        </div>
+        <div className="card">
+          <h3>Net Income</h3>
+          <p className={`amount ${statistics.summary.net_income >= 0 ? 'positive' : 'negative'}`}>
+            ${statistics.summary.net_income.toFixed(2)}
+          </p>
+        </div>
+        <div className="card">
+          <h3>Profit Margin</h3>
+          <p className="amount">{statistics.summary.profit_margin.toFixed(1)}%</p>
+        </div>
+      </div>
+
+      {/* Cost Breakdown Chart */}
+      <div className="chart-section">
+        <h3>Cost Breakdown</h3>
+        <div className="cost-breakdown">
+          {Object.entries(statistics.cost_breakdown).map(([category, data]) => (
+            <div key={category} className="cost-item">
+              <span className="category">{category.replace('_', ' ').toUpperCase()}</span>
+              <span className="amount">${data.amount.toFixed(2)}</span>
+              <span className="percentage">({data.percentage.toFixed(1)}%)</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Revenue Breakdown Chart */}
+      <div className="chart-section">
+        <h3>Revenue Breakdown</h3>
+        <div className="revenue-breakdown">
+          {Object.entries(statistics.revenue_breakdown).map(([source, data]) => (
+            <div key={source} className="revenue-item">
+              <span className="source">{source.replace('_', ' ').toUpperCase()}</span>
+              <span className="amount">${data.amount.toFixed(2)}</span>
+              <span className="percentage">({data.percentage.toFixed(1)}%)</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Time Series Data */}
+      <div className="time-series">
+        <h3>Daily Summary (Last 7 Days)</h3>
+        <div className="daily-chart">
+          {statistics.time_series.daily_summary.map((day, index) => (
+            <div key={index} className="day-bar">
+              <div className="day-label">{day.day_name}</div>
+              <div className="bar-container">
+                <div 
+                  className="revenue-bar" 
+                  style={{ height: `${(day.revenue / Math.max(...statistics.time_series.daily_summary.map(d => d.revenue))) * 100}%` }}
+                ></div>
+                <div 
+                  className="cost-bar" 
+                  style={{ height: `${(day.costs / Math.max(...statistics.time_series.daily_summary.map(d => d.costs))) * 100}%` }}
+                ></div>
+              </div>
+              <div className="day-totals">
+                <span className="revenue">${day.revenue.toFixed(0)}</span>
+                <span className="costs">${day.costs.toFixed(0)}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Weekly Summary */}
+      <div className="weekly-summary">
+        <h3>Weekly Summary (Last 8 Weeks)</h3>
+        <div className="weekly-chart">
+          {statistics.time_series.weekly_summary.map((week, index) => (
+            <div key={index} className="week-item">
+              <div className="week-label">{week.week_number}</div>
+              <div className="week-data">
+                <span>Revenue: ${week.revenue.toFixed(0)}</span>
+                <span>Costs: ${week.costs.toFixed(0)}</span>
+                <span className={`net ${week.net >= 0 ? 'positive' : 'negative'}`}>
+                  Net: ${week.net.toFixed(0)}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Monthly Summary */}
+      <div className="monthly-summary">
+        <h3>Monthly Summary (Last 6 Months)</h3>
+        <div className="monthly-chart">
+          {statistics.time_series.monthly_summary.map((month, index) => (
+            <div key={index} className="month-item">
+              <div className="month-label">{month.month}</div>
+              <div className="month-data">
+                <span>Revenue: ${month.revenue.toFixed(0)}</span>
+                <span>Costs: ${month.costs.toFixed(0)}</span>
+                <span className={`net ${month.net >= 0 ? 'positive' : 'negative'}`}>
+                  Net: ${month.net.toFixed(0)}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Yearly Comparison */}
+      <div className="yearly-comparison">
+        <h3>Yearly Comparison</h3>
+        <div className="yearly-data">
+          <div className="year-card">
+            <h4>{statistics.time_series.yearly_summary.this_year.year}</h4>
+            <p>Revenue: ${statistics.time_series.yearly_summary.this_year.revenue.toFixed(0)}</p>
+            <p>Costs: ${statistics.time_series.yearly_summary.this_year.costs.toFixed(0)}</p>
+            <p className={`net ${statistics.time_series.yearly_summary.this_year.net >= 0 ? 'positive' : 'negative'}`}>
+              Net: ${statistics.time_series.yearly_summary.this_year.net.toFixed(0)}
+            </p>
+          </div>
+          <div className="year-card">
+            <h4>{statistics.time_series.yearly_summary.last_year.year}</h4>
+            <p>Revenue: ${statistics.time_series.yearly_summary.last_year.revenue.toFixed(0)}</p>
+            <p>Costs: ${statistics.time_series.yearly_summary.last_year.costs.toFixed(0)}</p>
+            <p className={`net ${statistics.time_series.yearly_summary.last_year.net >= 0 ? 'positive' : 'negative'}`}>
+              Net: ${statistics.time_series.yearly_summary.last_year.net.toFixed(0)}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 ```
 
-### Farm Statistics Object
+### Vue Query Hook for Farm Statistics
 ```javascript
-{
-  total_income: "50000.00",
-  total_expenses: "30000.00",
-  net_income: "20000.00",
-  total_equipment: 15,
-  total_expense_records: 25,
-  farm_name: "Sunshine Dairy Farm",
-  farm_id: 1
+// Farm Statistics Hook
+export function useFarmStatisticsQuery(farmId, startDate = null, endDate = null) {
+  const user = useUserStore();
+  const actualFarmId = farmId || user.farm.id;
+  
+  return useQuery({
+    queryKey: ['farmStatistics', actualFarmId, startDate, endDate],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (startDate) params.append('start_date', startDate);
+      if (endDate) params.append('end_date', endDate);
+      
+      const response = await api.get(`/farms/get_farm_statistics/${actualFarmId}/?${params}`);
+      return response.data;
+    },
+    enabled: !!actualFarmId,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: 1,
+  });
 }
-```
 
-### ExpenseCategory Object
-```javascript
-{
-  id: 1,
-  farm: 1,
-  farm_name: "Sunshine Dairy Farm",
-  name: "Maintenance",
-  description: "Equipment maintenance and repairs",
-  color: "#10B981",
-  is_active: true,
-  expense_count: 5,
-  created_by: 1,
-  created_by_name: "John Doe",
-  created_at: "2024-01-15T10:30:00Z",
-  updated_at: "2024-01-15T10:30:00Z"
-}
+// Usage example
+const { data: statistics, isLoading, error } = useFarmStatisticsQuery(1, '2024-01-01', '2024-01-31');
 ```
 
 ---
