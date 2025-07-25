@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator, MaxValueValidator
 import uuid
 from django.db.models import Sum
 from django.utils import timezone
@@ -15,6 +16,7 @@ class Farm(models.Model):
     code = models.CharField(max_length=255, blank=True, null=True)
     image = models.CharField(max_length=255, blank=True, null=True)
     image_refference = models.CharField(max_length=255, blank=True, null=True)
+    max_users = models.PositiveIntegerField(default=5, validators=[MinValueValidator(1), MaxValueValidator(10)])
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

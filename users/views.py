@@ -29,6 +29,9 @@ def signup(request):
     if "farm_code" in request.data:
         if Farm.objects.filter(code=request.data["farm_code"].upper()).exists():
             farm = Farm.objects.get(code=request.data["farm_code"].upper())
+            # Check if farm is already full
+            if UserProfile.objects.filter(farms__contains=farm).count() >= farm.max_users:
+                return Response({"error": "This farm has reached the maximum number of users"}, status=400)
             farm_details = FarmSerializer(farm).data
             farm_details["id"] = farm.id
         elif request.data["farm_code"].upper() == "":
