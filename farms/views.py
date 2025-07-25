@@ -50,7 +50,7 @@ def edit_farm(request, farm_id):
     request.data["created_by"] = request.user.id
 
     try:
-        farm = Farm.objects.get(id=farm_id, created_by=request.user)
+        farm = Farm.objects.get(id=farm_id)
     except Farm.DoesNotExist:
         return Response({"message": f"Farm id:{farm_id} not found"}, status=404)
     
